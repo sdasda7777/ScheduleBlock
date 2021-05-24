@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="button.css">
+	<title>ScheduleBlock</title>
+	<meta charset="UTF-8">
+  </head>
+  <body>
+    <h1>ScheduleBlock</h1>
+	<input type="button" id="export" value="Export settings">
+	<input type="button" id="import" value="Import settings">
+	<input type="file" id="import2" name="import2" style="display: none;" />
+	
+	<p>Enter websites, times when you want them blocked, and where you want them to redirect you:</p>
+	<div id="display"></div>
+	<br>
+	<div id="input">
+		<input type="text" id="newsite" name="newsite" placeholder="Regex that matches the site you want to be blocked">
+		<input type="button" id="newsiteadd" value="Add to the list">
+	</div>
+  </body>
+  <script src="options.js"></script>
+</html>

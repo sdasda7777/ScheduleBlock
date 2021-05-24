@@ -1,0 +1,16 @@
+{
+  "name": "ScheduleBlock",
+  "description": "Block websites on a schedule",
+  "version": "1.0.1",
+  "manifest_version": 3,
+  "permissions": ["storage"],
+  "content_scripts" : [{
+        "matches" : [ "<all_urls>"],
+        "js" : ["content.js"],
+		"run_at": "document_start"
+    }],
+  "icons": {
+    "128": "/images/ScheduleBlock128.png"
+  },
+  "options_page": "options.html"
+}
