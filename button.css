@@ -1,0 +1,33 @@
+*{
+	background-color: gray;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: black;
+  opacity: 1; /* Firefox */
+}
+
+#newsite{
+	width: 75%;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.display >> table{
+	width: 75%;
+}
+
+td, th{
+	padding: 3px 5px;
+}
+
+h1, #import, #export{
+	display: inline;
+}
+
+#import, #export{
+	float: right;
+}
