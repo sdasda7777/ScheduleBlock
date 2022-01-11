@@ -96,4 +96,8 @@ chrome.storage.sync.get(['websites'], function(result){
 	}
 });
 
-setInterval(CheckHardhours, 15000);
+let checker = setInterval(CheckHardhours, 15000);
+
+chrome.runtime.connect().onDisconnect.addListener(function() {
+    clearInterval(checker);
+})
