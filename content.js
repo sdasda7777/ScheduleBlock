@@ -1,4 +1,4 @@
-function CheckHardhours(){
+function CheckHours(soft){
 	chrome.storage.sync.get(['websites'], function(result){
 		if(result.websites){
 			let arr = JSON.parse(result.websites);
@@ -7,9 +7,9 @@ function CheckHardhours(){
 				if(arr[i].regex){
 					let re = new RegExp(arr[i].regex);
 		
-					if(window.location.href.match(re) && arr[i].hardhours){
+					if(window.location.href.match(re) && ((!soft && arr[i].hardhours) || (soft && arr[i].softhours))){
 						let d = new Date();
-						let days = arr[i].hardhours.split("|");
+						let days = (soft? arr[i].softhours: arr[i].hardhours).split("|");
 						
 						let dayno = d.getDay();
 						
@@ -36,6 +36,7 @@ function CheckHardhours(){
 								
 								if(begind <= d && d < endd && arr[i].destination){
 									window.location = arr[i].destination;
+									console.log("Matched");
 									break loop1;
 								}
 							}
@@ -47,10 +48,13 @@ function CheckHardhours(){
 	});
 }
 
-CheckHardhours();
+CheckHours(true);
 
-let checker = setInterval(CheckHardhours, 15000);
-
-chrome.runtime.connect().onDisconnect.addListener(function() {
-    clearInterval(checker);
-})
+let checker = setInterval(function(){
+	//Prevents "Uncaught error: Extension context invalidated"
+	if(chrome.runtime.id == undefined) {
+		clearInterval(checker);
+		return;
+	}
+	CheckHours(false);
+}, 15000);
