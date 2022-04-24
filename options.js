@@ -283,6 +283,19 @@ function RemoveRecord(){
 	});
 }
 
+function TestRegex(){
+	let re = document.getElementById("testerinput1").value, str = document.getElementById("testerinput2").value;
+	
+	if(str.match(new RegExp(re))){
+		console.log("Tester: '" + re + "' matches '" + str + "'");
+		document.getElementById("testerresult").value = "Check (Matching)";
+	}else{
+		console.log("Tester: '" + re + "' does not match '" + str + "'");
+		document.getElementById("testerresult").value = "Check (Not matching)";
+	}
+	
+}
+
 document.getElementById("newsite").addEventListener("keyup", e => {
 	if (e.keyCode === 13) {
 		e.preventDefault();
@@ -290,6 +303,7 @@ document.getElementById("newsite").addEventListener("keyup", e => {
 	}
 });
 document.getElementById("newsiteadd").addEventListener("click", AddSite);
+document.getElementById("testerresult").addEventListener("click", TestRegex);
 document.getElementById("import").addEventListener("click", () => {document.getElementById("import2").click();});
 document.getElementById("import2").addEventListener("change", () => {
 	if(document.getElementById("import2").files){
