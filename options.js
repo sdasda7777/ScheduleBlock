@@ -19,7 +19,7 @@ function Export(){
 		var a = document.createElement("a");
 		var file = new Blob([result.websites], {type: 'application/json'});
 		a.href = URL.createObjectURL(file);
-		a.download = "ScheduleBlockBackup" + new Date().toISOString().slice(0, 10);;
+		a.download = "ScheduleBlockBackup" + new Date().toISOString().slice(0, 10);
 		a.click();
 	});
 }
@@ -63,8 +63,11 @@ function ConstructView(){
 			th3.innerText = "Destination";
 			tr0.appendChild(th3);
 			let th4 = document.createElement("th");
-			th4.innerText = "Changes";
+			th4.innerText = "Change record";
 			tr0.appendChild(th4);
+			let th5 = document.createElement("th");
+			th5.innerText = "Move record";
+			tr0.appendChild(th5);
 			t.appendChild(tr0);
 			
 			for(let i = 0; i < arr.length; i++){
@@ -95,36 +98,55 @@ function ConstructView(){
 				let changepattern = document.createElement("input");
 				changepattern.id = "chp"+i;
 				changepattern.type = "button";
-				changepattern.value = "Change pattern";
+				changepattern.value = "Pattern";
 				changepattern.addEventListener("click", ChangePattern);
 				changes.appendChild(changepattern);
 				
 				let changesofthours = document.createElement("input");
 				changesofthours.id = "chs"+i;
 				changesofthours.type = "button";
-				changesofthours.value = "Change soft hours";
+				changesofthours.value = "Soft hours";
 				changesofthours.addEventListener("click", ChangeSoftHours);
 				changes.appendChild(changesofthours);
 				let changehardhours = document.createElement("input");
 				changehardhours.id = "chh"+i;
 				changehardhours.type = "button";
-				changehardhours.value = "Change hard hours";
+				changehardhours.value = "Hard hours";
 				changehardhours.addEventListener("click", ChangeHardHours);
 				changes.appendChild(changehardhours);
 				
 				let changedestination = document.createElement("input");
 				changedestination.id = "chd"+i;
 				changedestination.type = "button";
-				changedestination.value = "Change destination";
+				changedestination.value = "Destination";
 				changedestination.addEventListener("click", ChangeDestination);
 				changes.appendChild(changedestination);
+				
 				let removerec = document.createElement("input");
 				removerec.id = "rmr"+i;
 				removerec.type = "button";
-				removerec.value = "Remove record";
+				removerec.value = "Remove";
 				removerec.addEventListener("click", RemoveRecord);
 				changes.appendChild(removerec);
 				row.appendChild(changes);
+				
+				let moves = document.createElement("td");
+				let moveup = document.createElement("input");
+				moveup.id = "mvu"+i;
+				moveup.type = "button";
+				moveup.value = "Up";
+				moveup.addEventListener("click", MoveUp);
+				moves.appendChild(moveup);
+				
+				let movedown = document.createElement("input");
+				movedown.id = "mvd"+i;
+				movedown.type = "button";
+				movedown.value = "Down";
+				movedown.addEventListener("click", MoveDown);
+				moves.appendChild(movedown);
+				
+				row.appendChild(moves);
+				
 				t.appendChild(row);
 			}
 			
@@ -278,6 +300,46 @@ function RemoveRecord(){
 					chrome.storage.sync.set({websites:JSON.stringify(arr)});
 					ConstructView();
 				}
+			}
+		}		
+	});
+}
+
+function MoveUp(){
+	recnum = parseInt(this.id.substr(3));
+	
+	chrome.storage.sync.get(['websites'], function(result){
+		let arr = result.websites;
+		if(arr){
+			arr = JSON.parse(arr);
+			
+			if(recnum < arr.length && recnum > 0){
+				let tmp = arr[recnum];
+				arr[recnum] = arr[recnum - 1];
+				arr[recnum - 1] = tmp;
+				
+				chrome.storage.sync.set({websites:JSON.stringify(arr)});
+				ConstructView();
+			}
+		}
+	});
+}
+
+function MoveDown(){
+	recnum = parseInt(this.id.substr(3));
+	
+	chrome.storage.sync.get(['websites'], function(result){
+		let arr = result.websites;
+		if(arr){
+			arr = JSON.parse(arr);
+			
+			if(recnum < (arr.length - 1)){
+				let tmp = arr[recnum];
+				arr[recnum] = arr[recnum + 1];
+				arr[recnum + 1] = tmp;
+					
+				chrome.storage.sync.set({websites:JSON.stringify(arr)});
+				ConstructView();
 			}
 		}		
 	});
