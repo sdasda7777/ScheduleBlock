@@ -9,5 +9,5 @@
 
 ### How to install
 - This extension is on both Chrome and Firefox stores, so you can just install it from there with one click
-- You can also install it by downloading this repository and then pointing your browser towards it (although on Firefox it requires some adjustments of both code and Firefox itself)
-- If you use different browser, some manual code adjustments will most likely be necessary
+- You can also install it by downloading this repository and then pointing your browser towards it (use firefox branch on Firefox)
+- If you use different browser, some manual code adjustments might be necessary
