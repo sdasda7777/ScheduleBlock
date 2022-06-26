@@ -7,6 +7,10 @@
   opacity: 1; /* Firefox */
 }
 
+input[type=number]{
+    width: 40px;
+}
+
 #newsite{
 	width: 75%;
 }
