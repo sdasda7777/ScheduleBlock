@@ -1,4 +1,5 @@
 var recnum = -1;
+var destnum = -1;
 var jsonstring = "";
 
 function Import(jsonstr){
@@ -47,31 +48,45 @@ function ConstructView(){
 	chrome.storage.sync.get(['websites'], function(result) {
 		if(result.websites){
 			let arr = JSON.parse(result.websites);
+			
 			document.getElementById("display").innerHTML = "";
+			
 			let t = document.createElement("table");
 			let tr0 = document.createElement("tr");
 			let th0 = document.createElement("th");
-			th0.innerText = "Pattern";
+			th0.innerText = "#";
 			tr0.appendChild(th0);
 			let th1 = document.createElement("th");
-			th1.innerText = "Soft locked hours/days";
+			th1.innerText = "Pattern";
 			tr0.appendChild(th1);
 			let th2 = document.createElement("th");
-			th2.innerText = "Hard locked hours/days";
+			th2.innerText = "Soft locked hours/days";
 			tr0.appendChild(th2);
 			let th3 = document.createElement("th");
-			th3.innerText = "Destination";
+			th3.innerText = "Hard locked hours/days";
 			tr0.appendChild(th3);
 			let th4 = document.createElement("th");
-			th4.innerText = "Change record";
+			th4.innerText = "Destination";
 			tr0.appendChild(th4);
 			let th5 = document.createElement("th");
-			th5.innerText = "Move record";
+			th5.innerText = "Change record";
 			tr0.appendChild(th5);
 			t.appendChild(tr0);
 			
 			for(let i = 0; i < arr.length; i++){
 				let row = document.createElement("tr");
+				
+				let recordNo = document.createElement("td");
+				let recordNoInput = document.createElement("input");
+				recordNoInput.id = "mvt"+i;
+				recordNoInput.type = "number";
+				recordNoInput.value = (i+1);
+				recordNoInput.min = "1";
+				recordNoInput.max = (arr.length);
+				recordNoInput.addEventListener("keyup", RecordNoEventHandler);
+				recordNo.appendChild(recordNoInput);
+				row.appendChild(recordNo);
+				
 				let pattern = document.createElement("td");
 				pattern.innerText = arr[i].regex;
 				row.appendChild(pattern);
@@ -129,23 +144,6 @@ function ConstructView(){
 				removerec.addEventListener("click", RemoveRecord);
 				changes.appendChild(removerec);
 				row.appendChild(changes);
-				
-				let moves = document.createElement("td");
-				let moveup = document.createElement("input");
-				moveup.id = "mvu"+i;
-				moveup.type = "button";
-				moveup.value = "Up";
-				moveup.addEventListener("click", MoveUp);
-				moves.appendChild(moveup);
-				
-				let movedown = document.createElement("input");
-				movedown.id = "mvd"+i;
-				movedown.type = "button";
-				movedown.value = "Down";
-				movedown.addEventListener("click", MoveDown);
-				moves.appendChild(movedown);
-				
-				row.appendChild(moves);
 				
 				t.appendChild(row);
 			}
@@ -305,44 +303,30 @@ function RemoveRecord(){
 	});
 }
 
-function MoveUp(){
-	recnum = parseInt(this.id.substr(3));
-	
-	chrome.storage.sync.get(['websites'], function(result){
-		let arr = result.websites;
-		if(arr){
-			arr = JSON.parse(arr);
+function RecordNoEventHandler(e){
+	if (e.keyCode === 13) {
+		e.preventDefault();
+		
+		recnum = parseInt(this.id.substr(3));
+		destnum = this.valueAsNumber - 1;
 			
-			if(recnum < arr.length && recnum > 0){
-				let tmp = arr[recnum];
-				arr[recnum] = arr[recnum - 1];
-				arr[recnum - 1] = tmp;
+		chrome.storage.sync.get(['websites'], function(result){
+			let arr = result.websites;
+			if(arr){
+				arr = JSON.parse(arr);
 				
-				chrome.storage.sync.set({websites:JSON.stringify(arr)});
-				ConstructView();
-			}
-		}
-	});
-}
-
-function MoveDown(){
-	recnum = parseInt(this.id.substr(3));
-	
-	chrome.storage.sync.get(['websites'], function(result){
-		let arr = result.websites;
-		if(arr){
-			arr = JSON.parse(arr);
-			
-			if(recnum < (arr.length - 1)){
-				let tmp = arr[recnum];
-				arr[recnum] = arr[recnum + 1];
-				arr[recnum + 1] = tmp;
+				if(recnum < arr.length){
+					if(destnum >= 0){
+						let tmp = arr.splice(recnum, 1);
+						arr.splice(destnum, 0, tmp[0]);
+					}
 					
-				chrome.storage.sync.set({websites:JSON.stringify(arr)});
-				ConstructView();
+					chrome.storage.sync.set({websites:JSON.stringify(arr)});
+					ConstructView();
+				}
 			}
-		}		
-	});
+		});		
+	}
 }
 
 function TestRegex(){
