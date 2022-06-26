@@ -12,11 +12,11 @@
 #### Chrome
 - Simplest way is to install it from [Chrome Store](https://chrome.google.com/webstore/detail/scheduleblock/hkcbacbpfhlbmaifoakhifmopmgdajkn)
 - Another way is to download [release zip file](https://github.com/sdasda7777/ScheduleBlock/releases)
-- Lastly, you can clone this repo and point Chrome toward it ([Extensions](chrome://extensions/) > Load Unpacked)
+- Lastly, you can clone this repo and point Chrome toward it ( [Extensions](chrome://extensions/) - Load Unpacked)
 
 #### Firefox
 - Simplest way is to install it from [Firefox Browser Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/scheduleblock/)
-- Another way is to download [release zip file](https://github.com/sdasda7777/ScheduleBlock/releases)
+- Another way is to download [release xpi file](https://github.com/sdasda7777/ScheduleBlock/releases)
 - Lastly, you can clone this repo and point Firefox toward it (use firefox branch)
 
 #### Other browsers
