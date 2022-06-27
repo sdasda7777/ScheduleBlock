@@ -1,34 +1,44 @@
-// This file describes behaviour of interactive elements of extension's options page
-// Callback pattern is used when storage has to be modified with an external value
+/**
+ * @file Describes behaviour of interactive elements of extension's options page.
+ * @author sdasda7777
+ */
 
-// These two functions handle import of previously exported settings
+
+/**
+ * Imports previously exported settings, reloads table.
+ * @param {string} jsonstring - JSON representation of settings to be loaded
+ */
 function importSettings(jsonstring){
-	chrome.storage.sync.get(['websites'], importSettingsCallback(jsonstring));
-}
-
-function importSettingsCallback(jsonstring){
-	return (result) => {
+	let callback = (result) => {
 		if(jsonstring){
 			chrome.storage.sync.set({websites:jsonstring});
 			constructView();
 		}		
 	};
+	
+	chrome.storage.sync.get(['websites'], callback);
 }
 
-// This function handles export of current settings
+/**
+ * Exports settings for later import.
+ */
 function exportSettings(){
-	chrome.storage.sync.get(['websites'], function(result) {
-		var a = document.createElement("a");
-		var file = new Blob([result.websites], {type: 'application/json'});
+	let callback = (result) => {
+		let a = document.createElement("a");
+		let file = new Blob([result.websites], {type: 'application/json'});
 		a.href = URL.createObjectURL(file);
 		a.download = "ScheduleBlockBackup" + new Date().toISOString().slice(0, 10);
 		a.click();
-	});
+	};
+	
+	chrome.storage.sync.get(['websites'], callback);
 }
 
-// This function adds new record into the storage
+/**
+ * Adds new record into the storage, taking pattern from #newsite element.
+ */
 function addSite(){
-	chrome.storage.sync.get(['websites'], function(result) {
+	let callback = (result) => {
 		let arr = result.websites;
 		if(!arr){
 			arr = [];
@@ -43,12 +53,16 @@ function addSite(){
 			nse.value = "";
 			constructView();
 		}
-	});
+	};
+	
+	chrome.storage.sync.get(['websites'], callback);
 }
 
-// This function constructs table from storage content
+/**
+ * Constructs table from storage content.
+ */
 function constructView(){
-	chrome.storage.sync.get(['websites'], function(result) {
+	let callback = (result) => {
 		if(result.websites){
 			let arr = JSON.parse(result.websites);
 			
@@ -79,16 +93,16 @@ function constructView(){
 			for(let i = 0; i < arr.length; i++){
 				let row = document.createElement("tr");
 				
-				let recordNo = document.createElement("td");
-				let recordNoInput = document.createElement("input");
-				recordNoInput.id = "mvt"+i;
-				recordNoInput.type = "number";
-				recordNoInput.value = (i+1);
-				recordNoInput.min = "1";
-				recordNoInput.max = (arr.length);
-				recordNoInput.addEventListener("keyup", recordNoEventHandler);
-				recordNo.appendChild(recordNoInput);
-				row.appendChild(recordNo);
+				let recordNumberCell = document.createElement("td");
+				let recordNumberBox = document.createElement("input");
+				recordNumberBox.id = "mvt"+i;
+				recordNumberBox.type = "number";
+				recordNumberBox.value = (i+1);
+				recordNumberBox.min = "1";
+				recordNumberBox.max = (arr.length);
+				recordNumberBox.addEventListener("keyup", recordNumberBoxKeyEventHandler);
+				recordNumberCell.appendChild(recordNumberBox);
+				row.appendChild(recordNumberCell);
 				
 				let pattern = document.createElement("td");
 				pattern.innerText = arr[i].regex;
@@ -126,6 +140,7 @@ function constructView(){
 				changeSoftHoursButton.value = "Soft hours";
 				changeSoftHoursButton.addEventListener("click", changeSoftHours);
 				changesCell.appendChild(changeSoftHoursButton);
+				
 				let changeHardHoursButton = document.createElement("input");
 				changeHardHoursButton.id = "chh"+i;
 				changeHardHoursButton.type = "button";
@@ -153,16 +168,17 @@ function constructView(){
 			
 			document.getElementById("display").appendChild(t);
 		}
-	});
+	};
+	
+	chrome.storage.sync.get(['websites'], callback);
 }
 
-// These two functions handle record pattern modification
+/**
+ * Handles record pattern modification.
+ */
 function changePattern(){
-	chrome.storage.sync.get(['websites'], changePatternCallback(parseInt(this.id.substr(3))));
-}
-
-function changePatternCallback(recnum){
-	return (result) => {
+	let recnum = parseInt(this.id.substr(3));
+	let callback = (result) => {
 		let arr = result.websites;
 		if(arr){
 			arr = JSON.parse(arr);
@@ -181,15 +197,17 @@ function changePatternCallback(recnum){
 			}
 		}		
 	};
+	
+	
+	chrome.storage.sync.get(['websites'], changePatternCallback());
 }
 
-// These two functions handle record soft locked hours modification
+/**
+ * Handles record soft locked hours modification.
+ */
 function changeSoftHours(){
-	chrome.storage.sync.get(['websites'], changeSoftHoursCallback(parseInt(this.id.substr(3))));
-}
-
-function changeSoftHoursCallback(recnum){
-	return (result) => {
+	let recnum = parseInt(this.id.substr(3));
+	let callback = (result) => {
 		let arr = result.websites;
 		if(arr){
 			arr = JSON.parse(arr);
@@ -219,15 +237,16 @@ function changeSoftHoursCallback(recnum){
 			}
 		}		
 	};
+	
+	chrome.storage.sync.get(['websites'], callback);
 }
 
-// These two functions handle record hard locked hours modification
+/**
+ * Handles record hard locked hours modification.
+ */
 function changeHardHours(){
-	chrome.storage.sync.get(['websites'], changeHardHoursCallback(parseInt(this.id.substr(3))));
-}
-
-function changeHardHoursCallback(recnum){
-	return (result) => {
+	let recnum = parseInt(this.id.substr(3));
+	let callback = (result) => {
 		let arr = result.websites;
 		if(arr){
 			arr = JSON.parse(arr);
@@ -257,15 +276,16 @@ function changeHardHoursCallback(recnum){
 			}
 		}		
 	};
+	
+	chrome.storage.sync.get(['websites'], callback);
 }
 
-// These two functions handle record redirection destination modification
+/**
+ * Handles record redirection destination modification.
+ */
 function changeDestination(){
-	chrome.storage.sync.get(['websites'], changeDestinationCallback(parseInt(this.id.substr(3))));
-}
-
-function changeDestinationCallback(recnum){
-	return (result) => {
+	let recnum = parseInt(this.id.substr(3));
+	let callback = (result) => {
 		let arr = result.websites;
 		if(arr){
 			arr = JSON.parse(arr);
@@ -287,15 +307,16 @@ function changeDestinationCallback(recnum){
 			}
 		}		
 	};
+	
+	chrome.storage.sync.get(['websites'], callback);
 }
 
-// These two functions handle record removal
+/**
+ * Handles record removal.
+ */
 function removeRecord(){
-	chrome.storage.sync.get(['websites'], removeRecordCallback(parseInt(this.id.substr(3))));
-}
-
-function removeRecordCallback(recnum){
-	return (result) => {
+	let recnum = parseInt(this.id.substr(3));
+	let callback = (result) => {
 		let arr = result.websites;
 		if(arr){
 			arr = JSON.parse(arr);
@@ -316,38 +337,44 @@ function removeRecordCallback(recnum){
 			}
 		}		
 	};
+	
+	chrome.storage.sync.get(['websites'], callback);
 }
 
-// These two functions handle record number modification (i.e. reordering)
-function recordNoEventHandler(e){
+/**
+ * Handles record number modification (i.e. reordering) using keyboard.
+ * @param {KeyboardEvent} e - keyup event to be handled
+ */
+function recordNumberBoxKeyEventHandler(e){
 	if (e.keyCode === 13) {
 		e.preventDefault();
 			
-		chrome.storage.sync.get(['websites'], 
-			recordNoEventHandlerCallback(parseInt(this.id.substr(3)), this.valueAsNumber - 1));		
+		let recnum = parseInt(this.id.substr(3));
+		let destnum = this.valueAsNumber - 1;
+		let callback = (result) => {
+			let arr = result.websites;
+			if(arr){
+				arr = JSON.parse(arr);
+				
+				if(recnum < arr.length){
+					if(destnum >= 0){
+						let tmp = arr.splice(recnum, 1);
+						arr.splice(destnum, 0, tmp[0]);
+					}
+					
+					chrome.storage.sync.set({websites:JSON.stringify(arr)});
+					constructView();
+				}
+			}
+		};
+		
+		chrome.storage.sync.get(['websites'], callback);		
 	}
 }
 
-function recordNoEventHandlerCallback(recnum, destnum){
-	return (result) => {
-		let arr = result.websites;
-		if(arr){
-			arr = JSON.parse(arr);
-			
-			if(recnum < arr.length){
-				if(destnum >= 0){
-					let tmp = arr.splice(recnum, 1);
-					arr.splice(destnum, 0, tmp[0]);
-				}
-				
-				chrome.storage.sync.set({websites:JSON.stringify(arr)});
-				constructView();
-			}
-		}
-	};
-}
-
-// This function handles behaviour of the pattern tester widget
+/**
+ * Handles behaviour of the pattern tester "widget".
+ */
 function testRegex(){
 	let re = document.getElementById("testerinput1").value, str = document.getElementById("testerinput2").value;
 	
@@ -361,7 +388,8 @@ function testRegex(){
 	
 }
 
-// This code sets up event handlers for static elements and then constructs table
+
+// This code sets up event handlers for static elements and then constructs the current table
 document.getElementById("newsite").addEventListener("keyup", e => {
 	if (e.keyCode === 13) {
 		e.preventDefault();

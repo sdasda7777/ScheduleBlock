@@ -1,6 +1,13 @@
-// This file describes what happens every time any page is loaded
+/**
+ * @file Describes what happens every time any page is loaded.
+ * @author sdasda7777
+ */
 
-// This function checks current location against storage, redirects if match is found
+
+/**
+ * This function checks current location against storage, redirects if match is found.
+ * @param {bool} soft - If true, function will check soft hours, if false it will check hard hours
+ */
 function checkHours(soft){
 	chrome.storage.sync.get(['websites'], function(result){
 		if(result.websites){
