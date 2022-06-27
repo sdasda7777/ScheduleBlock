@@ -27,6 +27,9 @@
 
 ### Changelog
 
+#### 1.1.0
+- Added JSDoc signatures, improved code structure
+
 #### 1.0.9
 - Moved from using global variables to using callback functions
 - Fixed a minor bug where importing the same settings file for the second time without reloading the page wouldn't work
