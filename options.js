@@ -1,18 +1,19 @@
-var recnum = -1;
-var destnum = -1;
-var jsonstring = "";
+// This file describes interactive elements of extensions options page
+// Callback pattern is used heavily
 
-function Import(jsonstr){
-	jsonstring = jsonstr;
+function Import(jsonstring){
+	chrome.storage.sync.get(['websites'], ImportCallback(jsonstring));
 	
-	chrome.storage.sync.get(['websites'], function(result){
+	document.getElementById("import2").files[0] = null;
+}
+
+function ImportCallback(jsonstring){
+	return (result) => {
 		if(jsonstring){
 			chrome.storage.sync.set({websites:jsonstring});
 			ConstructView();
 		}		
-	});
-	
-	document.getElementById("import2").files[0] = null;
+	};
 }
 
 function Export(){
@@ -154,9 +155,11 @@ function ConstructView(){
 }
 
 function ChangePattern(){
-	recnum = parseInt(this.id.substr(3));
-	
-	chrome.storage.sync.get(['websites'], function(result){
+	chrome.storage.sync.get(['websites'], ChangePatternCallback(parseInt(this.id.substr(3))));
+}
+
+function ChangePatternCallback(recnum){
+	return (result) => {
 		let arr = result.websites;
 		if(arr){
 			arr = JSON.parse(arr);
@@ -167,20 +170,22 @@ function ChangePattern(){
 				"\nFor example '.*\\.reddit\\.com.*' will disable any address with '.reddit.com' in it.", 
 				arr[recnum].regex);
 				
-				if(r!=null){						
+				if(r != null){						
 					arr[recnum].regex = r;
 					chrome.storage.sync.set({websites:JSON.stringify(arr)});
 					ConstructView();
 				}
 			}
 		}		
-	});
+	};
 }
 
 function ChangeSoftHours(){
-	recnum = parseInt(this.id.substr(3));
-	
-	chrome.storage.sync.get(['websites'], function(result){
+	chrome.storage.sync.get(['websites'], ChangeSoftHoursCallback(parseInt(this.id.substr(3))));
+}
+
+function ChangeSoftHoursCallback(recnum){
+	return (result) => {
 		let arr = result.websites;
 		if(arr){
 			arr = JSON.parse(arr);
@@ -201,7 +206,7 @@ function ChangeSoftHours(){
 				"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
 				base);
 				
-				if(r!=null){
+				if(r != null){
 					arr[recnum].softhours = r;
 				}
 				
@@ -209,13 +214,15 @@ function ChangeSoftHours(){
 				ConstructView();
 			}
 		}		
-	});
+	};
 }
 
 function ChangeHardHours(){
-	recnum = parseInt(this.id.substr(3));
-	
-	chrome.storage.sync.get(['websites'], function(result){
+	chrome.storage.sync.get(['websites'], ChangeHardHoursCallback(parseInt(this.id.substr(3))));
+}
+
+function ChangeHardHoursCallback(recnum){
+	return (result) => {
 		let arr = result.websites;
 		if(arr){
 			arr = JSON.parse(arr);
@@ -236,7 +243,7 @@ function ChangeHardHours(){
 				"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
 				base);
 				
-				if(r!=null){
+				if(r != null){
 					arr[recnum].hardhours = r;
 				}
 				
@@ -244,13 +251,15 @@ function ChangeHardHours(){
 				ConstructView();
 			}
 		}		
-	});
+	};
 }
 
 function ChangeDestination(){
-	recnum = parseInt(this.id.substr(3));
-	
-	chrome.storage.sync.get(['websites'], function(result){
+	chrome.storage.sync.get(['websites'], ChangeDestinationCallback(parseInt(this.id.substr(3))));
+}
+
+function ChangeDestinationCallback(recnum){
+	return (result) => {
 		let arr = result.websites;
 		if(arr){
 			arr = JSON.parse(arr);
@@ -262,12 +271,12 @@ function ChangeDestination(){
 					"It is advised to use an address that does not match the pattern, as failing to do "+
 					"so will lead to an endless loop."
 					, arr[recnum].destination);
-					if(r!=null){
+					if(r != null){
 						arr[recnum].destination = r;
 					}
 				}else{
 					let r = window.prompt("Enter new destination", "");
-					if(r!=null){
+					if(r != null){
 						arr[recnum].destination = r;
 					}
 				}
@@ -276,13 +285,15 @@ function ChangeDestination(){
 				ConstructView();
 			}
 		}		
-	});
+	};
 }
 
 function RemoveRecord(){
-	recnum = parseInt(this.id.substr(3));
-	
-	chrome.storage.sync.get(['websites'], function(result){
+	chrome.storage.sync.get(['websites'], RemoveRecordCallback(parseInt(this.id.substr(3))));
+}
+
+function RemoveRecordCallback(recnum){
+	return (result) => {
 		let arr = result.websites;
 		if(arr){
 			arr = JSON.parse(arr);
@@ -300,33 +311,35 @@ function RemoveRecord(){
 				}
 			}
 		}		
-	});
+	};
 }
 
 function RecordNoEventHandler(e){
 	if (e.keyCode === 13) {
 		e.preventDefault();
-		
-		recnum = parseInt(this.id.substr(3));
-		destnum = this.valueAsNumber - 1;
 			
-		chrome.storage.sync.get(['websites'], function(result){
-			let arr = result.websites;
-			if(arr){
-				arr = JSON.parse(arr);
-				
-				if(recnum < arr.length){
-					if(destnum >= 0){
-						let tmp = arr.splice(recnum, 1);
-						arr.splice(destnum, 0, tmp[0]);
-					}
-					
-					chrome.storage.sync.set({websites:JSON.stringify(arr)});
-					ConstructView();
-				}
-			}
-		});		
+		chrome.storage.sync.get(['websites'], 
+			RecordNoEventHandlerCallback(parseInt(this.id.substr(3)), this.valueAsNumber - 1));		
 	}
+}
+
+function RecordNoEventHandlerCallback(recnum, destnum){
+	return (result) => {
+		let arr = result.websites;
+		if(arr){
+			arr = JSON.parse(arr);
+			
+			if(recnum < arr.length){
+				if(destnum >= 0){
+					let tmp = arr.splice(recnum, 1);
+					arr.splice(destnum, 0, tmp[0]);
+				}
+				
+				chrome.storage.sync.set({websites:JSON.stringify(arr)});
+				ConstructView();
+			}
+		}
+	};
 }
 
 function TestRegex(){
