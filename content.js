@@ -1,7 +1,7 @@
 // This file describes what happens every time any page is loaded
 
 // This function checks current location against storage, redirects if match is found
-function CheckHours(soft){
+function checkHours(soft){
 	chrome.storage.sync.get(['websites'], function(result){
 		if(result.websites){
 			let arr = JSON.parse(result.websites);
@@ -52,7 +52,7 @@ function CheckHours(soft){
 }
 
 // Initial soft lock check
-CheckHours(true);
+checkHours(true);
 
 // This sets up continuous hard lock checks, check frequency is 15 seconds
 let checker = setInterval(function(){
@@ -61,5 +61,5 @@ let checker = setInterval(function(){
 		clearInterval(checker);
 		return;
 	}
-	CheckHours(false);
+	checkHours(false);
 }, 15000);

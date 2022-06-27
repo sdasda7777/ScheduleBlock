@@ -2,21 +2,21 @@
 // Callback pattern is used when storage has to be modified with an external value
 
 // These two functions handle import of previously exported settings
-function Import(jsonstring){
-	chrome.storage.sync.get(['websites'], ImportCallback(jsonstring));
+function importSettings(jsonstring){
+	chrome.storage.sync.get(['websites'], importSettingsCallback(jsonstring));
 }
 
-function ImportCallback(jsonstring){
+function importSettingsCallback(jsonstring){
 	return (result) => {
 		if(jsonstring){
 			chrome.storage.sync.set({websites:jsonstring});
-			ConstructView();
+			constructView();
 		}		
 	};
 }
 
 // This function handles export of current settings
-function Export(){
+function exportSettings(){
 	chrome.storage.sync.get(['websites'], function(result) {
 		var a = document.createElement("a");
 		var file = new Blob([result.websites], {type: 'application/json'});
@@ -27,7 +27,7 @@ function Export(){
 }
 
 // This function adds new record into the storage
-function AddSite(){
+function addSite(){
 	chrome.storage.sync.get(['websites'], function(result) {
 		let arr = result.websites;
 		if(!arr){
@@ -41,13 +41,13 @@ function AddSite(){
 											"destination": "about:blank"});
 			chrome.storage.sync.set({websites:JSON.stringify(arr)});
 			nse.value = "";
-			ConstructView();
+			constructView();
 		}
 	});
 }
 
 // This function constructs table from storage content
-function ConstructView(){
+function constructView(){
 	chrome.storage.sync.get(['websites'], function(result) {
 		if(result.websites){
 			let arr = JSON.parse(result.websites);
@@ -86,7 +86,7 @@ function ConstructView(){
 				recordNoInput.value = (i+1);
 				recordNoInput.min = "1";
 				recordNoInput.max = (arr.length);
-				recordNoInput.addEventListener("keyup", RecordNoEventHandler);
+				recordNoInput.addEventListener("keyup", recordNoEventHandler);
 				recordNo.appendChild(recordNoInput);
 				row.appendChild(recordNo);
 				
@@ -112,41 +112,41 @@ function ConstructView(){
 				}
 				row.appendChild(des);
 				
-				let changes = document.createElement("td");
-				let changepattern = document.createElement("input");
-				changepattern.id = "chp"+i;
-				changepattern.type = "button";
-				changepattern.value = "Pattern";
-				changepattern.addEventListener("click", ChangePattern);
-				changes.appendChild(changepattern);
+				let changesCell = document.createElement("td");
+				let changePatternButton = document.createElement("input");
+				changePatternButton.id = "chp"+i;
+				changePatternButton.type = "button";
+				changePatternButton.value = "Pattern";
+				changePatternButton.addEventListener("click", changePattern);
+				changesCell.appendChild(changePatternButton);
 				
-				let changesofthours = document.createElement("input");
-				changesofthours.id = "chs"+i;
-				changesofthours.type = "button";
-				changesofthours.value = "Soft hours";
-				changesofthours.addEventListener("click", ChangeSoftHours);
-				changes.appendChild(changesofthours);
-				let changehardhours = document.createElement("input");
-				changehardhours.id = "chh"+i;
-				changehardhours.type = "button";
-				changehardhours.value = "Hard hours";
-				changehardhours.addEventListener("click", ChangeHardHours);
-				changes.appendChild(changehardhours);
+				let changeSoftHoursButton = document.createElement("input");
+				changeSoftHoursButton.id = "chs"+i;
+				changeSoftHoursButton.type = "button";
+				changeSoftHoursButton.value = "Soft hours";
+				changeSoftHoursButton.addEventListener("click", changeSoftHours);
+				changesCell.appendChild(changeSoftHoursButton);
+				let changeHardHoursButton = document.createElement("input");
+				changeHardHoursButton.id = "chh"+i;
+				changeHardHoursButton.type = "button";
+				changeHardHoursButton.value = "Hard hours";
+				changeHardHoursButton.addEventListener("click", changeHardHours);
+				changesCell.appendChild(changeHardHoursButton);
 				
-				let changedestination = document.createElement("input");
-				changedestination.id = "chd"+i;
-				changedestination.type = "button";
-				changedestination.value = "Destination";
-				changedestination.addEventListener("click", ChangeDestination);
-				changes.appendChild(changedestination);
+				let changeDestinationButton = document.createElement("input");
+				changeDestinationButton.id = "chd"+i;
+				changeDestinationButton.type = "button";
+				changeDestinationButton.value = "Destination";
+				changeDestinationButton.addEventListener("click", changeDestination);
+				changesCell.appendChild(changeDestinationButton);
 				
-				let removerec = document.createElement("input");
-				removerec.id = "rmr"+i;
-				removerec.type = "button";
-				removerec.value = "Remove";
-				removerec.addEventListener("click", RemoveRecord);
-				changes.appendChild(removerec);
-				row.appendChild(changes);
+				let removeRecordButton = document.createElement("input");
+				removeRecordButton.id = "rmr"+i;
+				removeRecordButton.type = "button";
+				removeRecordButton.value = "Remove";
+				removeRecordButton.addEventListener("click", removeRecord);
+				changesCell.appendChild(removeRecordButton);
+				row.appendChild(changesCell);
 				
 				t.appendChild(row);
 			}
@@ -157,11 +157,11 @@ function ConstructView(){
 }
 
 // These two functions handle record pattern modification
-function ChangePattern(){
-	chrome.storage.sync.get(['websites'], ChangePatternCallback(parseInt(this.id.substr(3))));
+function changePattern(){
+	chrome.storage.sync.get(['websites'], changePatternCallback(parseInt(this.id.substr(3))));
 }
 
-function ChangePatternCallback(recnum){
+function changePatternCallback(recnum){
 	return (result) => {
 		let arr = result.websites;
 		if(arr){
@@ -169,14 +169,14 @@ function ChangePatternCallback(recnum){
 			
 			if(recnum < arr.length){
 				let r = window.prompt(
-				"Enter new regular expression describing the subset of sites you want to forbid. "+
-				"\nFor example '.*\\.reddit\\.com.*' will disable any address with '.reddit.com' in it.", 
-				arr[recnum].regex);
+					"Enter new regular expression describing the subset of sites you want to forbid. "+
+					"\nFor example '.*\\.reddit\\.com.*' will disable any address with '.reddit.com' in it.", 
+					arr[recnum].regex);
 				
 				if(r != null){						
 					arr[recnum].regex = r;
 					chrome.storage.sync.set({websites:JSON.stringify(arr)});
-					ConstructView();
+					constructView();
 				}
 			}
 		}		
@@ -184,11 +184,11 @@ function ChangePatternCallback(recnum){
 }
 
 // These two functions handle record soft locked hours modification
-function ChangeSoftHours(){
-	chrome.storage.sync.get(['websites'], ChangeSoftHoursCallback(parseInt(this.id.substr(3))));
+function changeSoftHours(){
+	chrome.storage.sync.get(['websites'], changeSoftHoursCallback(parseInt(this.id.substr(3))));
 }
 
-function ChangeSoftHoursCallback(recnum){
+function changeSoftHoursCallback(recnum){
 	return (result) => {
 		let arr = result.websites;
 		if(arr){
@@ -202,31 +202,31 @@ function ChangeSoftHoursCallback(recnum){
 				}
 				
 				let r = window.prompt(
-				"Enter new time intervals in 24 hour format, separated by commas. "+
-				"You can also enter times for individual days by separating days with |. "+
-				"If amount of days is not 7, modulo is used. "+
-				"\nFor example, '12:00-14:15,15:30-16:45|9:00-19:00' will make it impossible to visit "+
-				"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
-				"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
-				base);
+					"Enter new time intervals in 24 hour format, separated by commas. "+
+					"You can also enter times for individual days by separating days with |. "+
+					"If amount of days is not 7, modulo is used. "+
+					"\nFor example, '12:00-14:15,15:30-16:45|9:00-19:00' will make it impossible to visit "+
+					"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
+					"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
+					base);
 				
 				if(r != null){
 					arr[recnum].softhours = r;
 				}
 				
 				chrome.storage.sync.set({websites:JSON.stringify(arr)});
-				ConstructView();
+				constructView();
 			}
 		}		
 	};
 }
 
 // These two functions handle record hard locked hours modification
-function ChangeHardHours(){
-	chrome.storage.sync.get(['websites'], ChangeHardHoursCallback(parseInt(this.id.substr(3))));
+function changeHardHours(){
+	chrome.storage.sync.get(['websites'], changeHardHoursCallback(parseInt(this.id.substr(3))));
 }
 
-function ChangeHardHoursCallback(recnum){
+function changeHardHoursCallback(recnum){
 	return (result) => {
 		let arr = result.websites;
 		if(arr){
@@ -240,31 +240,31 @@ function ChangeHardHoursCallback(recnum){
 				}
 				
 				let r = window.prompt(
-				"Enter new time intervals in 24 hour format, separated by commas. "+
-				"You can also enter times for individual days by separating days with |. "+
-				"If amount of days is not 7, modulo is used. "+
-				"\nFor example, '12:00-14:15,15:30-16:45|9:00-19:00' will redirect from "+
-				"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
-				"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
-				base);
+					"Enter new time intervals in 24 hour format, separated by commas. "+
+					"You can also enter times for individual days by separating days with |. "+
+					"If amount of days is not 7, modulo is used. "+
+					"\nFor example, '12:00-14:15,15:30-16:45|9:00-19:00' will redirect from "+
+					"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
+					"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
+					base);
 				
 				if(r != null){
 					arr[recnum].hardhours = r;
 				}
 				
 				chrome.storage.sync.set({websites:JSON.stringify(arr)});
-				ConstructView();
+				constructView();
 			}
 		}		
 	};
 }
 
 // These two functions handle record redirection destination modification
-function ChangeDestination(){
-	chrome.storage.sync.get(['websites'], ChangeDestinationCallback(parseInt(this.id.substr(3))));
+function changeDestination(){
+	chrome.storage.sync.get(['websites'], changeDestinationCallback(parseInt(this.id.substr(3))));
 }
 
-function ChangeDestinationCallback(recnum){
+function changeDestinationCallback(recnum){
 	return (result) => {
 		let arr = result.websites;
 		if(arr){
@@ -273,10 +273,10 @@ function ChangeDestinationCallback(recnum){
 			if(recnum < arr.length){
 				if(arr[recnum].destination){
 					let r = window.prompt(
-					"Enter new destination. The address must include protocol (http:// or https://). "+
-					"It is advised to use an address that does not match the pattern, as failing to do "+
-					"so will lead to an endless loop."
-					, arr[recnum].destination);
+						"Enter new destination. The address must include protocol (http:// or https://). "+
+						"It is advised to use an address that does not match the pattern, as failing to do "+
+						"so will lead to an endless loop.",
+						arr[recnum].destination);
 					if(r != null){
 						arr[recnum].destination = r;
 					}
@@ -288,18 +288,18 @@ function ChangeDestinationCallback(recnum){
 				}
 				
 				chrome.storage.sync.set({websites:JSON.stringify(arr)});
-				ConstructView();
+				constructView();
 			}
 		}		
 	};
 }
 
 // These two functions handle record removal
-function RemoveRecord(){
-	chrome.storage.sync.get(['websites'], RemoveRecordCallback(parseInt(this.id.substr(3))));
+function removeRecord(){
+	chrome.storage.sync.get(['websites'], removeRecordCallback(parseInt(this.id.substr(3))));
 }
 
-function RemoveRecordCallback(recnum){
+function removeRecordCallback(recnum){
 	return (result) => {
 		let arr = result.websites;
 		if(arr){
@@ -307,14 +307,14 @@ function RemoveRecordCallback(recnum){
 			
 			if(recnum < arr.length){
 				let affirmative = confirm(
-				"There is no way to retrieve deleted pattern, other than creating it again. "+
-				"Are you absolutely sure you want to delete the pattern '"+arr[recnum].regex+"' from the list?");
+					"There is no way to retrieve deleted pattern, other than creating it again. "+
+					"Are you absolutely sure you want to delete the pattern '"+arr[recnum].regex+"' from the list?");
 				
 				if(affirmative){
 					arr.splice(recnum, 1);
 					
 					chrome.storage.sync.set({websites:JSON.stringify(arr)});
-					ConstructView();
+					constructView();
 				}
 			}
 		}		
@@ -322,16 +322,16 @@ function RemoveRecordCallback(recnum){
 }
 
 // These two functions handle record number modification (i.e. reordering)
-function RecordNoEventHandler(e){
+function recordNoEventHandler(e){
 	if (e.keyCode === 13) {
 		e.preventDefault();
 			
 		chrome.storage.sync.get(['websites'], 
-			RecordNoEventHandlerCallback(parseInt(this.id.substr(3)), this.valueAsNumber - 1));		
+			recordNoEventHandlerCallback(parseInt(this.id.substr(3)), this.valueAsNumber - 1));		
 	}
 }
 
-function RecordNoEventHandlerCallback(recnum, destnum){
+function recordNoEventHandlerCallback(recnum, destnum){
 	return (result) => {
 		let arr = result.websites;
 		if(arr){
@@ -344,14 +344,14 @@ function RecordNoEventHandlerCallback(recnum, destnum){
 				}
 				
 				chrome.storage.sync.set({websites:JSON.stringify(arr)});
-				ConstructView();
+				constructView();
 			}
 		}
 	};
 }
 
 // This function handles behaviour of the pattern tester widget
-function TestRegex(){
+function testRegex(){
 	let re = document.getElementById("testerinput1").value, str = document.getElementById("testerinput2").value;
 	
 	if(str.match(new RegExp(re))){
@@ -368,22 +368,22 @@ function TestRegex(){
 document.getElementById("newsite").addEventListener("keyup", e => {
 	if (e.keyCode === 13) {
 		e.preventDefault();
-		AddSite();
+		addSite();
 	}
 });
-document.getElementById("newsiteadd").addEventListener("click", AddSite);
-document.getElementById("testerresult").addEventListener("click", TestRegex);
+document.getElementById("newsiteadd").addEventListener("click", addSite);
+document.getElementById("testerresult").addEventListener("click", testRegex);
 document.getElementById("import").addEventListener("click", () => {
 	document.getElementById("import2").click();
 });
 document.getElementById("import2").addEventListener("change", () => {
 	if(document.getElementById("import2").files){
-		document.getElementById("import2").files[0].text().then(t => Import(t))
+		document.getElementById("import2").files[0].text().then(t => importSettings(t));
 		
 		// This line clears FileList, so that this event will get called properly next time as well
 		document.getElementById("import2").value = "";
 	}
 });
-document.getElementById("export").addEventListener("click", Export);
+document.getElementById("export").addEventListener("click", exportSettings);
 
-ConstructView();
+constructView();
