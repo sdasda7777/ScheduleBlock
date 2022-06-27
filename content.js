@@ -1,3 +1,6 @@
+// This file describes what happens every time any page is loaded
+
+// This function checks current location against storage, redirects if match is found
 function CheckHours(soft){
 	chrome.storage.sync.get(['websites'], function(result){
 		if(result.websites){
@@ -48,8 +51,10 @@ function CheckHours(soft){
 	});
 }
 
+// Initial soft lock check
 CheckHours(true);
 
+// This sets up continuous hard lock checks, check frequency is 15 seconds
 let checker = setInterval(function(){
 	//Prevents "Uncaught error: Extension context invalidated"
 	if(chrome.runtime.id == undefined) {
