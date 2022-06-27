@@ -1,7 +1,7 @@
 {
   "name": "ScheduleBlock",
   "description": "Block websites on a schedule",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "manifest_version": 2,
   "permissions": ["storage"],
   "content_scripts" : [{
