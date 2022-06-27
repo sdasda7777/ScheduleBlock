@@ -5,7 +5,7 @@
 - Allows you to set up independent different times for each day of the week.
 - Uses gray color scheme to save your eyes in the night.
 - Reliable, without spying, ads or microtransactions.
-- Fully open source, therefore open to great new ideas.
+- Fully open source, therefore open to both code inspections and great new ideas.
 - Perfect for improving your concentration when you need it.
 
 ### How to install
@@ -28,14 +28,16 @@
 ### Changelog
 
 #### 1.0.9
-- Major code style improvements
+- Moved from using global variables to using callback functions
 - Fixed a minor bug where importing the same settings file for the second time without reloading the page wouldn't work
+- Renamed button.css to styles.css
+- Added more comments, general code style improvements
 
 #### 1.0.8
 - Reimplemented reordering to use number input box instead of buttons
 
 #### 1.0.7
-- Changed label of buttons to keep page as brief as possible
+- Changed labels of buttons to keep page as brief as possible
 - Added option to reorder records using buttons
 
 #### 1.0.6
