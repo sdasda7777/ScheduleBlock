@@ -169,8 +169,8 @@ function changePatternCallback(recnum){
 			
 			if(recnum < arr.length){
 				let r = window.prompt(
-					"Enter new regular expression describing the subset of sites you want to forbid. "+
-					"\nFor example '.*\\.reddit\\.com.*' will disable any address with '.reddit.com' in it.", 
+					"Enter new regular expression describing the set of sites you want to forbid. \n"+
+					"For example pattern '.*\\.reddit\\.com.*' will disable any address containing string '.reddit.com'.", 
 					arr[recnum].regex);
 				
 				if(r != null){						
@@ -204,8 +204,8 @@ function changeSoftHoursCallback(recnum){
 				let r = window.prompt(
 					"Enter new time intervals in 24 hour format, separated by commas. "+
 					"You can also enter times for individual days by separating days with |. "+
-					"If amount of days is not 7, modulo is used. "+
-					"\nFor example, '12:00-14:15,15:30-16:45|9:00-19:00' will make it impossible to visit "+
+					"If amount of days is not 7, modulo is used. \n"+
+					"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will make it impossible to visit "+
 					"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
 					"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
 					base);
@@ -242,8 +242,8 @@ function changeHardHoursCallback(recnum){
 				let r = window.prompt(
 					"Enter new time intervals in 24 hour format, separated by commas. "+
 					"You can also enter times for individual days by separating days with |. "+
-					"If amount of days is not 7, modulo is used. "+
-					"\nFor example, '12:00-14:15,15:30-16:45|9:00-19:00' will redirect from "+
+					"If amount of days is not 7, modulo is used.\n"+
+					"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will redirect from "+
 					"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
 					"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
 					base);
@@ -271,20 +271,15 @@ function changeDestinationCallback(recnum){
 			arr = JSON.parse(arr);
 			
 			if(recnum < arr.length){
-				if(arr[recnum].destination){
-					let r = window.prompt(
-						"Enter new destination. The address must include protocol (http:// or https://). "+
-						"It is advised to use an address that does not match the pattern, as failing to do "+
-						"so will lead to an endless loop.",
-						arr[recnum].destination);
-					if(r != null){
-						arr[recnum].destination = r;
-					}
-				}else{
-					let r = window.prompt("Enter new destination", "");
-					if(r != null){
-						arr[recnum].destination = r;
-					}
+				let r = window.prompt(
+					"Enter new destination. The address should include protocol (http:// or https://), " +
+					"otherwise undesired behaviour may occur.\n" +
+					"It is advised to use an address that does not match the pattern, as failing to do "+
+					"so will lead to an endless loop.",
+					(arr[recnum].destination ? arr[recnum].destination : ""));
+				
+				if(r != null){
+					arr[recnum].destination = r;
 				}
 				
 				chrome.storage.sync.set({websites:JSON.stringify(arr)});
@@ -307,8 +302,10 @@ function removeRecordCallback(recnum){
 			
 			if(recnum < arr.length){
 				let affirmative = confirm(
-					"There is no way to retrieve deleted pattern, other than creating it again. "+
-					"Are you absolutely sure you want to delete the pattern '"+arr[recnum].regex+"' from the list?");
+					"There is no way to retrieve deleted pattern, other than creating it again. " +
+					"Are you absolutely sure you want to delete the record \n" + 
+					"('" + arr[recnum].regex + "' => '" + arr[recnum].destination + "')\n" +
+					"from the list?");
 				
 				if(affirmative){
 					arr.splice(recnum, 1);
