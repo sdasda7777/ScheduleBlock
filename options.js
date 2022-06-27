@@ -1,10 +1,9 @@
-// This file describes interactive elements of extensions options page
-// Callback pattern is used heavily
+// This file describes behaviour of interactive elements of extension's options page
+// Callback pattern is used when storage has to be modified with an external value
 
+// These two functions handle import of previously exported settings
 function Import(jsonstring){
 	chrome.storage.sync.get(['websites'], ImportCallback(jsonstring));
-	
-	document.getElementById("import2").files[0] = null;
 }
 
 function ImportCallback(jsonstring){
@@ -16,6 +15,7 @@ function ImportCallback(jsonstring){
 	};
 }
 
+// This function handles export of current settings
 function Export(){
 	chrome.storage.sync.get(['websites'], function(result) {
 		var a = document.createElement("a");
@@ -26,6 +26,7 @@ function Export(){
 	});
 }
 
+// This function adds new record into the storage
 function AddSite(){
 	chrome.storage.sync.get(['websites'], function(result) {
 		let arr = result.websites;
@@ -45,6 +46,7 @@ function AddSite(){
 	});
 }
 
+// This function constructs table from storage content
 function ConstructView(){
 	chrome.storage.sync.get(['websites'], function(result) {
 		if(result.websites){
@@ -154,6 +156,7 @@ function ConstructView(){
 	});
 }
 
+// These two functions handle record pattern modification
 function ChangePattern(){
 	chrome.storage.sync.get(['websites'], ChangePatternCallback(parseInt(this.id.substr(3))));
 }
@@ -180,6 +183,7 @@ function ChangePatternCallback(recnum){
 	};
 }
 
+// These two functions handle record soft locked hours modification
 function ChangeSoftHours(){
 	chrome.storage.sync.get(['websites'], ChangeSoftHoursCallback(parseInt(this.id.substr(3))));
 }
@@ -217,6 +221,7 @@ function ChangeSoftHoursCallback(recnum){
 	};
 }
 
+// These two functions handle record hard locked hours modification
 function ChangeHardHours(){
 	chrome.storage.sync.get(['websites'], ChangeHardHoursCallback(parseInt(this.id.substr(3))));
 }
@@ -254,6 +259,7 @@ function ChangeHardHoursCallback(recnum){
 	};
 }
 
+// These two functions handle record redirection destination modification
 function ChangeDestination(){
 	chrome.storage.sync.get(['websites'], ChangeDestinationCallback(parseInt(this.id.substr(3))));
 }
@@ -288,6 +294,7 @@ function ChangeDestinationCallback(recnum){
 	};
 }
 
+// These two functions handle record removal
 function RemoveRecord(){
 	chrome.storage.sync.get(['websites'], RemoveRecordCallback(parseInt(this.id.substr(3))));
 }
@@ -314,6 +321,7 @@ function RemoveRecordCallback(recnum){
 	};
 }
 
+// These two functions handle record number modification (i.e. reordering)
 function RecordNoEventHandler(e){
 	if (e.keyCode === 13) {
 		e.preventDefault();
@@ -342,6 +350,7 @@ function RecordNoEventHandlerCallback(recnum, destnum){
 	};
 }
 
+// This function handles behaviour of the pattern tester widget
 function TestRegex(){
 	let re = document.getElementById("testerinput1").value, str = document.getElementById("testerinput2").value;
 	
@@ -355,6 +364,7 @@ function TestRegex(){
 	
 }
 
+// This code sets up event handlers for static elements and then constructs table
 document.getElementById("newsite").addEventListener("keyup", e => {
 	if (e.keyCode === 13) {
 		e.preventDefault();
@@ -363,12 +373,17 @@ document.getElementById("newsite").addEventListener("keyup", e => {
 });
 document.getElementById("newsiteadd").addEventListener("click", AddSite);
 document.getElementById("testerresult").addEventListener("click", TestRegex);
-document.getElementById("import").addEventListener("click", () => {document.getElementById("import2").click();});
+document.getElementById("import").addEventListener("click", () => {
+	document.getElementById("import2").click();
+});
 document.getElementById("import2").addEventListener("change", () => {
 	if(document.getElementById("import2").files){
 		document.getElementById("import2").files[0].text().then(t => Import(t))
-		}
-	});
+		
+		// This line clears FileList, so that this event will get called properly next time as well
+		document.getElementById("import2").value = "";
+	}
+});
 document.getElementById("export").addEventListener("click", Export);
 
 ConstructView();
