@@ -1,0 +1,28 @@
+{
+  "name": "ScheduleBlock",
+  "description": "Block websites on a schedule",
+  "version": "1.0.8",
+  "manifest_version": 2,
+  "permissions": ["storage"],
+  "content_scripts" : [{
+        "matches" : [ "<all_urls>"],
+        "js" : ["content.js"],
+		"run_at": "document_start"
+    }],
+  "icons": {
+	"48": "images/ScheduleBlock128.png",
+	"96": "images/ScheduleBlock128.png",
+    "128": "images/ScheduleBlock128.png"
+  },
+  "options_ui": {
+	"page": "options.html",
+	"browser_style": false,
+	"open_in_tab": true
+  },
+  
+  "browser_specific_settings": {
+    "gecko": {
+	  "id": "toxicgamerd777@gmail.com"
+	}
+  }
+}

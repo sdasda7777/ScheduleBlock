@@ -17,7 +17,9 @@
 #### Firefox
 - Simplest way is to install it from [Firefox Browser Add-Ons](https://addons.mozilla.org/en-US/firefox/addon/scheduleblock/)
 - Another way is to download [release xpi file](https://github.com/sdasda7777/ScheduleBlock/releases)
-- Lastly, you can clone this repo and point Firefox toward the manifest file (use firefox branch, but beware that installing unsigned extensions on Firefox is kinda painful)
+- Lastly, you can clone this repo and point Firefox toward the manifest file
+	- You will have to rename the manifestff.json to manifest.json
+	- Beware that installing unsigned extensions on Firefox is kinda painful
 
 #### Other browsers
 - If you use browser that isn't based on Chrome or Firefox, your best bet is to download the source code and try installing it (some technical knowledge and manual code adjustments will likely be necessary)
