@@ -25,6 +25,36 @@
 #### Other browsers
 - If you use browser that isn't based on Chrome or Firefox, your best bet is to download the source code and try installing it (some technical knowledge and manual code adjustments will likely be necessary)
 
+### Usage
+
+#### Finding options page
+
+First thing you will probably want to do after install is finding ScheduleBlock's options page to set up your schedule.
+
+The way you get to it depends on your browser, but in general, you will have to find the Extensions page of your browser, click on ScheduleBlock or a button near it to see more details, and then locate link to ScheduleBlock's custom options page (on Chrome it is near bottom of the details page, on Firefox it is in a hidden menu shown after clicking on a cog on the right).
+
+#### Setting up your schedules
+
+When you're on the options page, there is a lot of text that should guide you toward setting up your schedule.
+
+To add a record, just enter its pattern into the corresponding text field near the bottom of the options page and click 'Add to the list' button, or press enter. Afterwards you can adjust times and destination.
+
+In general, every record consists of:
+- Pattern
+    - Pattern is a [regular expression](https://en.wikipedia.org/wiki/Regular_expression) describing a set of webpage URLs. In simple terms, if a page URL matches pattern of a record, logic below applies to it. You can test whether page URL matches your pattern in the tester on the bottom of the options page.
+    - Regular expressions are incredibly comprehensive notation, but for blocking a whole domain you only need something like '.\*\\.domainname\\.com.*'.
+        - '.*' matches any number of any characters (to include any subdomains, like www.domainname.com, en.domainname.com, etc.)
+        - '\\.domainname\\.com' matches '.domainname.com' (to specify which domain should be blocked)
+        - '.*' matches any number of any characters (to include all pages on given domain, like www.domainname.com/index.html, www.domainname.com/gallery.html, etc.)
+- Soft locked hours string (optional)
+    - If not present, soft lock (redirect when page is visited) is not applied to pages matching pattern.
+    - Consists of rules for days separated by '|' (pipe), each of which consists of time intervals separated by ',' (comma), each of which consists of two times in 24h format separated by '-' (minus). Each interval represents when pages matching pattern cannot be accessed. When there is less than 7 sets of day rules, modulo is applied. That means '12:00-14:15,15:30-16:45|9:00-19:00' will make it impossible to visit given sites from 12:00 to 14:15 and from 15:30 to 16:45 on odd days (counting Sunday as the first day) and from 9:00-19:00 on even days.
+- Hard locked hours string (optional)
+    - If not present, hard lock (redirect of already open page) is not applied to pages matching pattern.
+    - Same format as Soft locked hours string.
+- Redirect destination
+    - URL of the redirect destination. The address should include the protocol (most likely http:// or https://), otherwise undesired behaviour may occur.
+
 ### Changelog
 
 #### 1.1.0
