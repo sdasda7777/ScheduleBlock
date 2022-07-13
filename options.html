@@ -10,6 +10,10 @@
 	<input type="button" id="export" value="Export settings">
 	<input type="button" id="import" value="Import settings">
 	<input type="file" id="import2" name="import2" style="display: none;" />
+	<div id="colorPickerParent">
+		<label for="colorPicker" id="colorPickerLabel">Background color:</label>
+		<input type="color" id="colorPicker" value="#808080">
+	</div>
 	
 	<p>Enter websites, times when you want them blocked, and where you want them to redirect you:</p>
 	<div id="display"></div>
@@ -38,5 +42,11 @@
 		</div>
 	</div>
   </body>
+  <style type="text/css" id="rebuildPersistantStylesheet">
+	* {
+		background-color: #808080;
+	}
+  </style>
   <script src="options.js"></script>
+  
 </html>

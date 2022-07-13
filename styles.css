@@ -1,5 +1,5 @@
 *{
-	background-color: gray;
+	b-ackground-color: #808080;
 }
 
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
@@ -28,13 +28,25 @@ td, th{
 	padding: 3px 5px;
 }
 
-h1, #import, #export{
+h1, #colorPickerParent, #colorPicker, #import, #export{
 	display: inline;
 }
 
-#import, #export{
+#colorPickerParent {
+	border: 2px solid black;
+	padding: 2px;
+}
+
+#colorPickerLabel {
+	font-size: 12px;
+}
+
+#colorPickerParent, #import, #export{
+	margin-left: 5px;
+	height: 35px;
 	float: right;
 }
+
 
 #widgetsParent {
 	margin-top: 50px;

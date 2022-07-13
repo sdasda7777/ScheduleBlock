@@ -392,4 +392,34 @@ document.getElementById("import2").addEventListener("change", () => {
 });
 document.getElementById("export").addEventListener("click", exportSettings);
 
+// Load background color, set up change listener
+{
+	let callback = (result) => {
+		let newColor = "#808080";
+		if(result.ScheduleBlockOptionsBackground)
+			newColor = result.ScheduleBlockOptionsBackground;
+		
+		let stylesheet = document.querySelector("#rebuildPersistantStylesheet");
+		stylesheet.innerText = "* { background-color: " + newColor + "; }";
+		
+		let colorPicker = document.querySelector("#colorPicker");
+		colorPicker.value = newColor;
+	};
+	
+	chrome.storage.sync.get(['ScheduleBlockOptionsBackground'], callback);
+}
+
+document.getElementById("colorPicker").addEventListener("change", (e) => {
+	let newColor = e.srcElement.value;
+	
+	let stylesheet = document.querySelector("#rebuildPersistantStylesheet");
+	stylesheet.innerText = "* { background-color: " + newColor + "; }";
+	
+	let callback = (result) => {
+		chrome.storage.sync.set({ScheduleBlockOptionsBackground:newColor});
+	};
+	
+	chrome.storage.sync.get(['ScheduleBlockOptionsBackground'], callback);
+});
+
 constructView();
