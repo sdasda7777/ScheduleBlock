@@ -36,9 +36,34 @@ h1, #import, #export{
 	float: right;
 }
 
+#widgetsParent {
+	margin-top: 50px;
+	width: 99%;
+}
+
+#tester {
+	margin: 5px;
+	padding: 5px;
+	max-width: 400px;
+	border: 2px solid black;
+}
 #testerinput1, #testerinput2{
-	width: 250px;
+	margin-bottom: 5px;
+	width: 96.8%;
 }
 #testerresult{
-	width: 200px;
+	width: 99%;
+}
+
+#personalMessage {
+	margin: 5px;
+	padding: 5px;
+	
+	border: 2px solid black;
+	width: 400px;
+}
+
+#personalMessage > p {
+	font-size: 15px;
+	text-indent: 2em;
 }
