@@ -3,7 +3,7 @@
 - Allows you to block any set of websites on a schedule.
 - Allows you to block independently both opening new tabs and using old tabs.
 - Allows you to set up independent different times for each day of the week.
-- Uses gray color scheme to save your eyes in the night.
+- Be default uses gray color scheme to save your eyes in the night.
 - Reliable, without spying, ads or microtransactions.
 - Fully open source, therefore open to both code inspections and great new ideas.
 - Perfect for improving your concentration when you need it.
