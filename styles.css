@@ -1,17 +1,13 @@
-*{
-	b-ackground-color: #808080;
-}
-
 ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
   color: black;
   opacity: 1; /* Firefox */
 }
 
-input[type=number]{
+input[type=number] {
     width: 40px;
 }
 
-#newsite{
+#newsite {
 	width: 75%;
 }
 
@@ -20,31 +16,52 @@ table, th, td {
   border-collapse: collapse;
 }
 
-.display >> table{
+.display >> table {
 	width: 75%;
 }
 
-td, th{
+td, th {
 	padding: 3px 5px;
 }
 
-h1, #colorPickerParent, #colorPicker, #import, #export{
+#topBar {
+	margin: 0px;
+}
+
+h1 {
+	margin: 10px;
+	font-size: 35px;
+}
+
+h1, #colorPickerParent, #colorPicker, #import, #export {
 	display: inline;
 }
 
+#colorPickerParent, #import, #export {
+	margin-right: 5px;
+	float: right;
+	font-size: 15px;
+}
+
 #colorPickerParent {
+	height: 35px;
 	border: 2px solid black;
 	padding: 2px;
 }
-
+#colorPickerParent2 {
+	display: table-cell;
+    vertical-align: middle;
+}
 #colorPickerLabel {
-	font-size: 12px;
+	padding-bottom: 1px;
+	margin-right: 2px;
+}
+#colorPicker {
+	margin-top: 4px;
 }
 
-#colorPickerParent, #import, #export{
-	margin-left: 5px;
-	height: 35px;
-	float: right;
+#import, #export {
+	height: 43px;
 }
 
 
@@ -53,28 +70,27 @@ h1, #colorPickerParent, #colorPicker, #import, #export{
 	width: 99%;
 }
 
-#tester {
-	margin: 5px;
-	padding: 5px;
-	max-width: 400px;
-	border: 2px solid black;
-}
-#testerinput1, #testerinput2{
-	margin-bottom: 5px;
-	width: 96.8%;
-}
-#testerresult{
-	width: 99%;
-}
-
-#personalMessage {
+.widget {
 	margin: 5px;
 	padding: 5px;
 	
 	border: 2px solid black;
-	width: 400px;
 }
 
+#tester {
+	max-width: 400px;
+}
+#testerinput1, #testerinput2 {
+	margin-bottom: 5px;
+	width: 96.8%;
+}
+#testerresult {
+	width: 99%;
+}
+
+#personalMessage {
+	width: 400px;
+}
 #personalMessage > p {
 	font-size: 15px;
 	text-indent: 2em;

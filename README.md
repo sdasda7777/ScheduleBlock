@@ -57,9 +57,10 @@ In general, every record consists of:
 
 ### Changelog
 
-#### 1.1.0 (Upcoming)
+#### 1.1.0
 - Added JSDoc signatures, improved code structure
 - Options page background color can now be changed with a color picker
+- Small design improvements (unified box sizes and margins)
 
 #### 1.0.9
 - Moved from using global variables to using callback functions

@@ -6,35 +6,37 @@
 	<meta charset="UTF-8">
   </head>
   <body>
-    <h1>ScheduleBlock</h1>
-	<input type="button" id="export" value="Export settings">
-	<input type="button" id="import" value="Import settings">
-	<input type="file" id="import2" name="import2" style="display: none;" />
-	<div id="colorPickerParent">
-		<label for="colorPicker" id="colorPickerLabel">Background color:</label>
-		<input type="color" id="colorPicker" value="#808080">
+    <div id="topBar">
+		<h1>ScheduleBlock</h1>
+		<input type="button" id="export" value="Export settings">
+		<input type="button" id="import" value="Import settings">
+		<input type="file" id="import2" name="import2" style="display: none;" />
+		<div id="colorPickerParent">
+			<label for="colorPicker" id="colorPickerLabel">Background color:</label>
+			<input type="color" id="colorPicker" value="#808080">
+		</div>
 	</div>
-	
-	<p>Enter websites, times when you want them blocked, and where you want them to redirect you:</p>
-	<div id="display"></div>
-	<br>
-	<div id="input">
-		<input type="text" id="newsite" name="newsite" placeholder="Regex that matches the site you want to be blocked">
-		<input type="button" id="newsiteadd" value="Add to the list">
-	</div>
-	
-	<br>
-	
 	
 	<div id="widgetParent">
-		<div id="tester">
+		<div class="widget">
+			<p>Enter websites, times when you want them blocked, and where you want them to redirect you:</p>
+			<div id="display"></div>
+			<br>
+			<div id="input">
+				<input type="text" id="newsite" name="newsite" placeholder="Regex that matches the site you want to be blocked">
+				<input type="button" id="newsiteadd" value="Add to the list">
+			</div>
+		</div>
+	
+	
+		<div class="widget" id="tester">
 			<h2>Pattern Tester</h2>
 			<input type="text" id="testerinput1" name="testerinput1" placeholder="Regex pattern to test">
 			<input type="text" id="testerinput2" name="testerinput2" placeholder="String to test against">
 			<input type="button" id="testerresult" value="Check (Not matching)">
 		</div>
 	
-		<div id="personalMessage">
+		<div class="widget" id="personalMessage">
 			<h2>Personal Message</h2>
 			<p>Hey, this is the least intrusive way I could think of contacting you.</p>
 			<p>I want you to know that I deeply care about your experience with this extension of mine. If there is any way I could improve it to make your life easier, let me know, either in a review or by creating an issue on project's GitHub page. Same goes for any bugs you might find.</p>
