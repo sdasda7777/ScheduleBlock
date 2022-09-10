@@ -61,7 +61,7 @@ function exportSettings(){
 		let a = document.createElement("a");
 		let file = new Blob([result.websites], {type: 'application/json'});
 		a.href = URL.createObjectURL(file);
-		a.download = "ScheduleBlockBackup" + new Date().toISOString().slice(0, 10);
+		a.download = "ScheduleBlockBackup_" + new Date().toISOString().slice(0, 10);
 		a.click();
 	};
 	
