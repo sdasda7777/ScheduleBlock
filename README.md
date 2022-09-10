@@ -60,6 +60,7 @@ In general, every record consists of:
 #### 1.1.1 (Upcoming)
 - Shortened code for generating table by using more loops
 - Added validation when changing times
+- Added validation when importing settings
 
 #### 1.1.0
 - Added JSDoc signatures, improved code structure
