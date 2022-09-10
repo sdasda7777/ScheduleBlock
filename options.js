@@ -67,98 +67,78 @@ function constructView(){
 		document.getElementById("display").innerHTML = "";
 		
 		let t = document.createElement("table");
-		let tr0 = document.createElement("tr");
-		let th0 = document.createElement("th");
-		th0.innerText = "#";
-		tr0.appendChild(th0);
-		let th1 = document.createElement("th");
-		th1.innerText = "Pattern";
-		tr0.appendChild(th1);
-		let th2 = document.createElement("th");
-		th2.innerText = "Soft locked hours/days";
-		tr0.appendChild(th2);
-		let th3 = document.createElement("th");
-		th3.innerText = "Hard locked hours/days";
-		tr0.appendChild(th3);
-		let th4 = document.createElement("th");
-		th4.innerText = "Destination";
-		tr0.appendChild(th4);
-		let th5 = document.createElement("th");
-		th5.innerText = "Change record";
-		tr0.appendChild(th5);
-		t.appendChild(tr0);
 		
-		for(let i = 0; i < arr.length; i++){
+		// Generate table header row
+		let headerRow = document.createElement("tr");
+		const headerInnerTexts = ["#", "Pattern", "Soft locked hours/days",
+										"Hard locked hours/days", "Destination", "Change record"];
+		for(let ii = 0; ii < headerInnerTexts.length; ++ii){
+			let tempHeader = document.createElement("th");
+			tempHeader.innerText = headerInnerTexts[ii];
+			headerRow.appendChild(tempHeader);
+		}
+		t.appendChild(headerRow);
+		
+		
+		const changeButtonsIds = ["chp", "chs", "chh",
+											"chd", "rmr"];
+		const changeButtonsTexts = ["Pattern", "Soft hours", "Hard hours",
+											"Destination", "Remove"];
+		const changeButtonsFunctions = [changePattern, changeSoftHours, changeHardHours, 
+												changeDestination, removeRecord];
+		
+		// Generate other table rows
+		for(let ii = 0; ii < arr.length; ++ii){
 			let row = document.createElement("tr");
 			
+			// Create order number control
 			let recordNumberCell = document.createElement("td");
 			let recordNumberBox = document.createElement("input");
-			recordNumberBox.id = "mvt"+i;
+			recordNumberBox.id = "mvt"+ii;
 			recordNumberBox.type = "number";
-			recordNumberBox.value = (i+1);
+			recordNumberBox.value = (ii+1);
 			recordNumberBox.min = "1";
 			recordNumberBox.max = (arr.length);
 			recordNumberBox.addEventListener("keyup", recordNumberBoxKeyEventHandler);
 			recordNumberCell.appendChild(recordNumberBox);
 			row.appendChild(recordNumberCell);
 			
-			let pattern = document.createElement("td");
-			pattern.innerText = arr[i].regex;
-			row.appendChild(pattern);
-			
-			let softhours = document.createElement("td");
-			if(arr[i].softhours){
-				softhours.innerHTML = arr[i].softhours.replace(/\|/g, "|<br>");
+			// Create cells displaying information about records
+			{
+				let pattern = document.createElement("td");
+				pattern.innerText = arr[ii].regex;
+				row.appendChild(pattern);
+				
+				let softhours = document.createElement("td");
+				if(arr[ii].softhours){
+					softhours.innerHTML = arr[ii].softhours.replace(/\|/g, "|<br>");
+				}
+				row.appendChild(softhours);
+				
+				let hardhours = document.createElement("td");
+				if(arr[ii].hardhours){
+					hardhours.innerHTML = arr[ii].hardhours.replace(/\|/g, "|<br>");
+				}
+				row.appendChild(hardhours);
+				
+				let des = document.createElement("td");
+				if(arr[ii].destination){
+					des.innerText = arr[ii].destination;
+				}
+				row.appendChild(des);
 			}
-			row.appendChild(softhours);
 			
-			let hardhours = document.createElement("td");
-			if(arr[i].hardhours){
-				hardhours.innerHTML = arr[i].hardhours.replace(/\|/g, "|<br>");
-			}
-			row.appendChild(hardhours);
-			
-			let des = document.createElement("td");
-			if(arr[i].destination){
-				des.innerText = arr[i].destination;
-			}
-			row.appendChild(des);
-			
+			// Create changes buttons
 			let changesCell = document.createElement("td");
-			let changePatternButton = document.createElement("input");
-			changePatternButton.id = "chp"+i;
-			changePatternButton.type = "button";
-			changePatternButton.value = "Pattern";
-			changePatternButton.addEventListener("click", changePattern);
-			changesCell.appendChild(changePatternButton);
+			for(let jj = 0; jj < changeButtonsIds.length; ++jj){
+				let tmpButton = document.createElement("input");
+				tmpButton.id = changeButtonsIds[jj] + ii;
+				tmpButton.type = "button";
+				tmpButton.value = changeButtonsTexts[jj];
+				tmpButton.addEventListener("click", changeButtonsFunctions[jj]);
+				changesCell.appendChild(tmpButton);
+			}
 			
-			let changeSoftHoursButton = document.createElement("input");
-			changeSoftHoursButton.id = "chs"+i;
-			changeSoftHoursButton.type = "button";
-			changeSoftHoursButton.value = "Soft hours";
-			changeSoftHoursButton.addEventListener("click", changeSoftHours);
-			changesCell.appendChild(changeSoftHoursButton);
-			
-			let changeHardHoursButton = document.createElement("input");
-			changeHardHoursButton.id = "chh"+i;
-			changeHardHoursButton.type = "button";
-			changeHardHoursButton.value = "Hard hours";
-			changeHardHoursButton.addEventListener("click", changeHardHours);
-			changesCell.appendChild(changeHardHoursButton);
-			
-			let changeDestinationButton = document.createElement("input");
-			changeDestinationButton.id = "chd"+i;
-			changeDestinationButton.type = "button";
-			changeDestinationButton.value = "Destination";
-			changeDestinationButton.addEventListener("click", changeDestination);
-			changesCell.appendChild(changeDestinationButton);
-			
-			let removeRecordButton = document.createElement("input");
-			removeRecordButton.id = "rmr"+i;
-			removeRecordButton.type = "button";
-			removeRecordButton.value = "Remove";
-			removeRecordButton.addEventListener("click", removeRecord);
-			changesCell.appendChild(removeRecordButton);
 			row.appendChild(changesCell);
 			
 			t.appendChild(row);
@@ -279,9 +259,9 @@ function changeDestination(){
 		if(recnum >= arr.length) return;
 		
 		let r = window.prompt(
-			"Enter new destination. The address should include protocol (http:// or https://), " +
+			"Enter new destination. The address should include protocol (most likely http:// or https://), " +
 			"otherwise undesired behaviour may occur.\n" +
-			"It is advised to use an address that does not match the pattern, as failing to do "+
+			"It is advised to use an address that does not match the pattern of the record, as failing to do "+
 			"so will lead to an endless loop.",
 			(arr[recnum].destination ? arr[recnum].destination : ""));
 		
@@ -311,7 +291,8 @@ function removeRecord(){
 		let affirmative = confirm(
 			"There is no way to retrieve deleted pattern, other than creating it again. " +
 			"Are you absolutely sure you want to delete the record \n" + 
-			"('" + arr[recnum].regex + "' => '" + arr[recnum].destination + "')\n" +
+			"('" + arr[recnum].regex + "' => '" + arr[recnum].destination + "' @ (s'" +
+			arr[recnum].softhours +"' | h'" + arr[recnum].hardhours + "'))\n" +
 			"from the list?");
 		
 		if(affirmative){
