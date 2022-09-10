@@ -33,28 +33,31 @@ h1 {
 	font-size: 35px;
 }
 
-h1, #colorPickerParent, #colorPicker, #import, #export {
+h1, 
+#langPickerParent, #langPicker,
+#colorPickerParent, #colorPicker,
+#import, #export {
 	display: inline;
 }
 
-#colorPickerParent, #import, #export {
+#langPickerParent, #colorPickerParent,
+#import, #export {
 	margin-right: 5px;
 	float: right;
 	font-size: 15px;
 }
 
-#colorPickerParent {
+#langPickerParent, #colorPickerParent {
 	height: 35px;
 	border: 2px solid black;
 	padding: 2px;
 }
-#colorPickerParent2 {
-	display: table-cell;
-    vertical-align: middle;
-}
-#colorPickerLabel {
+#langPickerLabel, #colorPickerLabel {
 	padding-bottom: 1px;
 	margin-right: 2px;
+}
+#langPicker {
+	margin-top: 10px;
 }
 #colorPicker {
 	margin-top: 4px;
@@ -85,6 +88,9 @@ h1, #colorPickerParent, #colorPicker, #import, #export {
 	width: 96.8%;
 }
 #testerresult {
+	font-weight: bold;
+}
+#testerbutton {
 	width: 99%;
 }
 

@@ -61,6 +61,7 @@ In general, every record consists of:
 - Shortened code for generating table by using more loops
 - Added validation when changing times
 - Added validation when importing settings
+- Added simple framework for translating the extension, czech translation
 
 #### 1.1.0
 - Added JSDoc signatures, improved code structure

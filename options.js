@@ -3,9 +3,187 @@
  * @author sdasda7777
  */
 
+// This is object containing all text of the user interface, to allow for translations.
+// Translating the user interface into new language should not require changing anything else.
+const interfaceStrings = {
+	
+	// The key 0 contains name of the language, for use in the language combobox.
+	// The order must be: english first (since it is the language this project is developed in, 
+	//   and if translations are missing, they will default to english), 
+	//   and then all other languages ordered by Unicode values of the characters.
+	// At all following keys, the translations must be at the same index as the name of the language.
+	0: ["english",
+		 "čeština"],
+	
+	
+	// These keys belong to the controls at the top of the page
+	101: ["Language:",
+		    "Jazyk:"],
+	102: ["Background color:",
+			"Barva pozadí:"],
+	103: ["Import settings",
+	        "Importovat nastavení"],
+	104: ["Export settings",
+			"Exportovat nastavení"],
+	
+	
+	// These keys belong to the main table and controls around and in it
+		201: ["Enter websites, times when you want them blocked, and where you want them to redirect you (the term soft lock refers to a state when only new tabs cannot be opened, the term hard lock refers to state when even already open tabs will be redirected):",
+		
+				"Zadejte stránky, časy, ve které je chcete mít zablokované a kam chcete být přesměrováni (pojem nenavštívitelnost odkazuje na stav, kdy pouze nepůjde otevřít nové karty, pojem znepřístupnění odkazuje na stav, kdy i již otevřené karty budou přesměrovány):"],
+	
+		210: ["#",
+				"#"],
+		211: ["Regular expression",
+				"Regulární výraz"],
+		212: ["Soft locked hours/days",
+				"Časy nenavštívitelnosti"],
+		213: ["Hard locked hours/days",
+				"Časy znepřístupnění"],
+		214: ["Destination",
+				"Destinace"],
+		215: ["Change record",
+				"Upravit záznam"],
+		
+		251: ["Expression",
+				"Výraz"],
+		252: ["Soft hours",
+				"Nenavštívitelnost"],
+		253: ["Hard hours",
+				"Znepřístupnění"],
+		254: ["Destination",
+				"Destinace"],
+		255: ["Remove",
+				"Odstranit"],
+	
+		301: ["Enter new regular expression describing the set of sites you want to forbid. \n" +
+				"For example expression '.*\\.reddit\\.com.*' will apply the rule to any address containing string '.reddit.com'.",
+				
+				"Zadejte nový regulární výraz popisující sadu stránek které chcete zakázat." +
+				"Například výraz '.*\\.reddit\\.com.*' bude aplikovat pravidlo na jakoukoli adresu obsahující řetězec '.reddit.com'."],
+		302: ["Enter new time intervals in 24 hour format, separated by commas. "+
+				"You can also enter intervals for individual days by separating days with |. "+
+				"If amount of days is not 7, modulo is used. \n"+
+				"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will make it impossible to visit "+
+				"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
+				"(counting Sunday as the first day) and from 9:00 to 19:00 on even days.",
+				
+				"Zadejte nové časové intervaly v 24-hodinovém formátu, oddělené čárkami. "+
+				"Můžete také zadat intervaly na jednotlivé dny, oddělením dnů symbolem |. "+
+				"Pokud počet dnů není 7, je použito modulo. \n"+
+				"Například, '12:00-14:15,15:30-16:45|9:00-19:00' zakáže navštívení dané stránky "+
+				"od 12:00 do 14:15 a od 15:30 do 16:45 v liché dny "+
+				"(počítaje neděli jako první den) a od 9:00 do 19:00 v sudé dny."],
+		303: ["Enter new time intervals in 24 hour format, separated by commas. "+
+			    "You can also enter intervals for individual days by separating days with |. "+
+				"If amount of days is not 7, modulo is used.\n"+
+				"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will redirect from "+
+				"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
+				"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
+				
+				"Zadejte nové časové intervaly v 24-hodinovém formátu, oddělené čárkami. "+
+				"Můžete také zadat intervaly na jednotlivé dny, oddělením dnů symbolem |. "+
+				"Pokud počet dnů není 7, je použito modulo. \n"+
+				"Například, '12:00-14:15,15:30-16:45|9:00-19:00' znepřístupní danou stránku "+
+				"od 12:00 do 14:15 a od 15:30 do 16:45 v liché dny "+
+				"(počítaje neděli jako první den) a od 9:00 do 19:00 v sudé dny."],
+		304: ["Enter new destination. The address should include protocol (most likely http:// or https://), " +
+				"otherwise undesired behaviour may occur.\n" +
+				"It is advised to use an address that does not match the pattern of the record, " +
+				"as failing to do so will lead to an endless loop.",
+				
+				"Zadejte novou destinaci. Adresa by měla obsahovat protokol (nejpravděpodobněji http:// nebo https://), " +
+				"jinak může dojít k neočekávanému chování.\n" +
+				"Doporučujeme použít adresu která neodpovídá regulárnímu výrazu pravidla, " +
+				"protože v takovém případě by došlo k nekonečné smyčce."],
+		305: ["There is no way to retrieve deleted record, other than importing exported settings or creating it again. " +
+				"Are you absolutely sure you want to delete the record \n" + 
+				"('{0}' => '{1}' @ (s'{2}' | h'{3}'))\n" +
+				"from the list?",
+				
+				"Neexistuje žádný způsob jak obnovit jednou smazaný záznam, kromě obnovení z exportované zálohy nebo nového vytvoření. " +
+				"Jste si naprosto jisti, že chcete vymazat záznam \n" +
+				"('{0}' => '{1}' @ (s'{2}' | h'{3}'))\n" +
+				"ze seznamu pravidel?"],
+		
+		350: ["Regular expression that matches the site you want to be blocked",
+				"Regulární výraz objímající stránky, které chcete zablokovat"],
+		351: ["Add to the list",
+				"Přidat na seznam"],
+	
+	
+	// These keys belong to the pattern tester
+	401: ["Regular expression tester",
+			"Tester regulárních výrazů"],
+	402: ["Regular expression to test",
+			"Regulární výraz k otestování"],
+	403: ["Website to test against",
+			"Webová stránka k otestování"],
+	404: ["Result:",
+			"Výsledek:"],
+	405: ["Not matching",
+			"Nevyhovuje"],
+	406: ["Matching",
+			"Vyhovuje"],
+	407: ["Check",
+			"Otestovat"],
+	
+	// This is the personal message
+	451: ["Personal Message",
+			"Osobní zpráva"],
+	// It feels weird to use "we", but using "I" would mean changing it the second anyone else does anything, so...
+	452: ["Hey, this is the least intrusive way we could think of contacting you.<br/><br/>" +
+			"We want you to know that we deeply care about your experience with this little extension. If there is any way we could improve it to make your life easier, let us know, either in a review or by creating an issue on <a href=\"https://github.com/sdasda7777/ScheduleBlock\">project's GitHub page</a>. Same goes for any bugs you might find.<br/><br/>" + 
+			"Last but not least, we believe in you, and you've got this.",
+			
+			"Dobrý den, toto je nejméně rušivý způsob, jakým nás napadlo Vás kontaktovat.<br/><br/>" +
+			"Chceme, abyste věděli, že nám záleží na zážitku z používání tohoto malého rozšíření. Pokud by Vás napadl jakýkoli způsob, kterým bychom ho mohli vylepšit, abychom Vám usnadnili život, neváhejte nás kontaktovat, ať už v recenzi, nebo vytvořením Issue na <a href=\"https://github.com/sdasda7777/ScheduleBlock\">stránce projektu na GitHubu</a>. To samé platí o jakýchkoli chybách, které můžete najít.<br/><br/>" + 
+			"V poslední řadě chceme, abyste věděli, že ve Vás věříme."]
+};
 
-// Adds format functionality to strings
-// Taken from https://sebhastian.com/javascript-format-string/
+let languageIndex = 0;
+
+function getTranslatedString(messageCode){
+	if(!(messageCode in interfaceStrings))
+		return false;
+	if(languageIndex < interfaceStrings[messageCode].length && interfaceStrings[messageCode][languageIndex] != "")
+		return interfaceStrings[messageCode][languageIndex];
+	return interfaceStrings[messageCode][0];
+}
+
+function translateInterface(){
+	document.querySelector("#langPickerLabel").innerText = getTranslatedString(101);
+	document.querySelector("#colorPickerLabel").innerText = getTranslatedString(102);
+	document.querySelector("#import").value = getTranslatedString(103);
+	document.querySelector("#export").value = getTranslatedString(104);
+	
+	document.querySelector("#tableHint").innerText = getTranslatedString(201);
+	document.querySelector("#newsite").placeholder = getTranslatedString(350);
+	document.querySelector("#newsiteadd").value = getTranslatedString(351);
+	
+	document.querySelector("#testertitle").innerText = getTranslatedString(401);
+	document.querySelector("#testerinput1").placeholder = getTranslatedString(402);
+	document.querySelector("#testerinput2").placeholder = getTranslatedString(403);
+	document.querySelector("#testerresultlabel").innerText = getTranslatedString(404);
+	let testerresult = document.querySelector("#testerresult");
+	if(testerresult.getAttribute("result") == "matching"){
+		testerresult.innerText = getTranslatedString(406);
+	}else{
+		testerresult.innerText = getTranslatedString(405);
+	}
+	document.querySelector("#testerbutton").value = getTranslatedString(407);
+	
+	document.querySelector("#personalmessagetitle").innerText = getTranslatedString(451);
+	document.querySelector("#personalmessagecontent").innerHTML = getTranslatedString(452);
+	
+	constructView();
+}
+
+
+/** 
+ * Adds format functionality to strings
+ * Taken from https://sebhastian.com/javascript-format-string/
+ */
 if (!String.prototype.format) {
   String.prototype.format = function () {
     var args = arguments;
@@ -170,8 +348,9 @@ function constructView(){
 		
 		// Generate table header row
 		let headerRow = document.createElement("tr");
-		const headerInnerTexts = ["#", "Pattern", "Soft locked hours/days",
-										"Hard locked hours/days", "Destination", "Change record"];
+		const headerInnerTexts = [getTranslatedString(210), getTranslatedString(211),
+										getTranslatedString(212), getTranslatedString(213),
+										getTranslatedString(214), getTranslatedString(215)];
 		for(let ii = 0; ii < headerInnerTexts.length; ++ii){
 			let tempHeader = document.createElement("th");
 			tempHeader.innerText = headerInnerTexts[ii];
@@ -182,8 +361,9 @@ function constructView(){
 		
 		const changeButtonsIds = ["chp", "chs", "chh",
 											"chd", "rmr"];
-		const changeButtonsTexts = ["Pattern", "Soft hours", "Hard hours",
-											"Destination", "Remove"];
+		const changeButtonsTexts = [getTranslatedString(251), getTranslatedString(252),
+											getTranslatedString(253), getTranslatedString(254),
+											getTranslatedString(255), getTranslatedString(256)];
 		const changeButtonsFunctions = [changePattern, changeSoftHours, changeHardHours, 
 												changeDestination, removeRecord];
 		
@@ -262,10 +442,7 @@ function changePattern(){
 					
 		if(recnum >= arr.length) return;
 		
-		let r = window.prompt(
-			"Enter new regular expression describing the set of sites you want to forbid. \n"+
-			"For example pattern '.*\\.reddit\\.com.*' will disable any address containing string '.reddit.com'.", 
-			arr[recnum].regex);
+		let r = window.prompt(getTranslatedString(301), arr[recnum].regex);
 		
 		if(r != null){
 			arr[recnum].regex = r;
@@ -296,14 +473,7 @@ function changeSoftHours(){
 		let r = base;
 		
 		do{
-			r = window.prompt(
-				"Enter new time intervals in 24 hour format, separated by commas. "+
-				"You can also enter times for individual days by separating days with |. "+
-				"If amount of days is not 7, modulo is used. \n"+
-				"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will make it impossible to visit "+
-				"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
-				"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
-				r);
+			r = window.prompt(getTranslatedString(302), r);
 		}while(r != null && !validateTimeString(r))
 		
 		if(r != null){
@@ -334,14 +504,7 @@ function changeHardHours(){
 		let r = base;
 
 		do{
-			r = window.prompt(
-			"Enter new time intervals in 24 hour format, separated by commas. "+
-			"You can also enter times for individual days by separating days with |. "+
-			"If amount of days is not 7, modulo is used.\n"+
-			"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will redirect from "+
-			"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
-			"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
-			r);
+			r = window.prompt(getTranslatedString(303),	r);
 		}while(r != null && !validateTimeString(r))
 		
 		if(r != null){
@@ -367,12 +530,8 @@ function changeDestination(){
 			
 		if(recnum >= arr.length) return;
 		
-		let r = window.prompt(
-			"Enter new destination. The address should include protocol (most likely http:// or https://), " +
-			"otherwise undesired behaviour may occur.\n" +
-			"It is advised to use an address that does not match the pattern of the record, as failing to do "+
-			"so will lead to an endless loop.",
-			(arr[recnum].destination ? arr[recnum].destination : ""));
+		let r = window.prompt(getTranslatedString(304),
+									(arr[recnum].destination ? arr[recnum].destination : ""));
 		
 		if(r != null){
 			arr[recnum].destination = r;
@@ -397,12 +556,10 @@ function removeRecord(){
 			
 		if(recnum >= arr.length) return;
 		
-		let affirmative = confirm(
-			"There is no way to retrieve deleted pattern, other than creating it again. " +
-			"Are you absolutely sure you want to delete the record \n" + 
-			"('" + arr[recnum].regex + "' => '" + arr[recnum].destination + "' @ (s'" +
-			arr[recnum].softhours +"' | h'" + arr[recnum].hardhours + "'))\n" +
-			"from the list?");
+		let affirmative = confirm(getTranslatedString(305).format(arr[recnum].regex,
+																			arr[recnum].destination,
+																			arr[recnum].softhours,
+																			arr[recnum].hardhours));
 		
 		if(affirmative){
 			arr.splice(recnum, 1);
@@ -450,12 +607,16 @@ function recordNumberBoxKeyEventHandler(e){
 function testRegex(){
 	let re = document.getElementById("testerinput1").value, str = document.getElementById("testerinput2").value;
 	
+	let testerresult = document.querySelector("#testerresult");
+	
 	if(str.match(new RegExp(re))){
 		console.log("Tester: '" + re + "' matches '" + str + "'");
-		document.getElementById("testerresult").value = "Check (Matching)";
+		testerresult.setAttribute("result", "matching");
+		testerresult.innerText = getTranslatedString(406);
 	}else{
 		console.log("Tester: '" + re + "' does not match '" + str + "'");
-		document.getElementById("testerresult").value = "Check (Not matching)";
+		testerresult.setAttribute("result", "not_matching");
+		testerresult.innerText = getTranslatedString(405);
 	}
 }
 
@@ -468,7 +629,7 @@ document.getElementById("newsite").addEventListener("keyup", e => {
 	}
 });
 document.getElementById("newsiteadd").addEventListener("click", addSite);
-document.getElementById("testerresult").addEventListener("click", testRegex);
+document.getElementById("testerbutton").addEventListener("click", testRegex);
 document.getElementById("import").addEventListener("click", () => {
 	document.getElementById("import2").click();
 });
@@ -481,6 +642,55 @@ document.getElementById("import2").addEventListener("change", () => {
 	}
 });
 document.getElementById("export").addEventListener("click", exportSettings);
+
+
+// Set up language picker
+{
+	let picker = document.querySelector("#langPicker");
+	
+	for (let lang in picker){
+		picker.remove(lang);
+	}
+		
+	for (let lang in interfaceStrings[0]){
+		let option = document.createElement('option');
+		option.value = lang;
+		option.innerHTML = interfaceStrings[0][lang];
+		picker.appendChild(option);
+	}
+	
+	picker.addEventListener("change", (e) => {
+		let newLanguageName = interfaceStrings[0][e.target.selectedIndex];
+		
+		let callback = (result) => {
+			chrome.storage.sync.set({ScheduleBlockOptionsLanguage: newLanguageName});
+		};
+		
+		chrome.storage.sync.get(['ScheduleBlockOptionsLanguage'], callback);
+		
+		languageIndex = e.target.selectedIndex;
+		translateInterface();
+	});
+}
+
+// Load preferred language
+{
+	let callback = (result) => {
+		let preferredLanguage = "english";
+		if(result.ScheduleBlockOptionsLanguage)
+			preferredLanguage = result.ScheduleBlockOptionsLanguage;
+		
+		let tmpLangIndex = interfaceStrings[0].indexOf(preferredLanguage);
+		if(tmpLangIndex != -1){
+			document.querySelector("#langPicker").selectedIndex = tmpLangIndex;
+			languageIndex = tmpLangIndex;
+			translateInterface();
+		}
+	};
+	
+	chrome.storage.sync.get(['ScheduleBlockOptionsLanguage'], callback);
+}
+
 
 // Load background color, set up change listener
 {
@@ -512,4 +722,6 @@ document.getElementById("colorPicker").addEventListener("change", (e) => {
 	chrome.storage.sync.get(['ScheduleBlockOptionsBackground'], callback);
 });
 
+
+// Construct table
 constructView();
