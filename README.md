@@ -57,6 +57,10 @@ In general, every record consists of:
 
 ### Changelog
 
+#### 1.1.1 (Upcoming)
+- Shortened code for generating table by using more loops
+- Added validation when changing times
+
 #### 1.1.0
 - Added JSDoc signatures, improved code structure
 - Options page background color can now be changed with a color picker

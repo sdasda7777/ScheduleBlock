@@ -5,6 +5,40 @@
 
 
 /**
+ * Validates time string
+ * @param {string} timeString
+ */
+function validateTimeString(timeString){
+	// I tried writing this function as one regular expression,
+	//  but in the end it seemed like a hard to maintain mess to me
+	//  so I wrote it like this, and it seems much more manageable
+	
+	// This regex is slightly edited version of https://stackoverflow.com/a/7536768 by Peter O.
+	const timeRegex = new RegExp('^\\s*(?:[0-1]?[0-9]|2[0-3])\\s*:\\s*[0-5][0-9]\\s*$');
+	
+	let days = timeString.split("|");
+	
+	for(let ii = 0; ii < days.length; ++ii){
+		let intervals = days[ii].split(",");
+		
+		for(let jj = 0; jj < intervals.length; ++jj){
+			let times = intervals[jj].split("-");
+			
+			if(times.length != 2) return false;
+			
+			for(let kk = 0; kk < times.length; ++kk){
+				let res = timeRegex.exec(times[kk]);
+				
+				if(!res || res.length != 1) return false;
+			}
+		}
+	}
+	
+	return true;
+}
+
+
+/**
  * Imports previously exported settings, reloads table.
  * @param {string} jsonstring - JSON representation of settings to be loaded
  */
@@ -192,20 +226,25 @@ function changeSoftHours(){
 		
 		let base = (arr[recnum].softhours ? arr[recnum].softhours : "");
 		
-		let r = window.prompt(
-			"Enter new time intervals in 24 hour format, separated by commas. "+
-			"You can also enter times for individual days by separating days with |. "+
-			"If amount of days is not 7, modulo is used. \n"+
-			"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will make it impossible to visit "+
-			"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
-			"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
-			base);
+		
+		let r = base;
+		
+		do{
+			r = window.prompt(
+				"Enter new time intervals in 24 hour format, separated by commas. "+
+				"You can also enter times for individual days by separating days with |. "+
+				"If amount of days is not 7, modulo is used. \n"+
+				"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will make it impossible to visit "+
+				"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
+				"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
+				r);
+		}while(r != null && !validateTimeString(r))
 		
 		if(r != null){
 			arr[recnum].softhours = r;
+			chrome.storage.sync.set({websites:JSON.stringify(arr)});
 		}
 		
-		chrome.storage.sync.set({websites:JSON.stringify(arr)});
 		constructView();
 	};
 	
@@ -226,20 +265,24 @@ function changeHardHours(){
 		
 		let base = (arr[recnum].hardhours ? arr[recnum].hardhours : "");
 								
-		let r = window.prompt(
+		let r = base;
+
+		do{
+			r = window.prompt(
 			"Enter new time intervals in 24 hour format, separated by commas. "+
 			"You can also enter times for individual days by separating days with |. "+
 			"If amount of days is not 7, modulo is used.\n"+
 			"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will redirect from "+
 			"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
 			"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
-			base);
+			r);
+		}while(r != null && !validateTimeString(r))
 		
 		if(r != null){
 			arr[recnum].hardhours = r;
+			chrome.storage.sync.set({websites:JSON.stringify(arr)});
 		}
 		
-		chrome.storage.sync.set({websites:JSON.stringify(arr)});
 		constructView();
 	};
 	
