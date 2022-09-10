@@ -4,6 +4,18 @@
  */
 
 
+// Adds format functionality to strings
+// Taken from https://sebhastian.com/javascript-format-string/
+if (!String.prototype.format) {
+  String.prototype.format = function () {
+    var args = arguments;
+    return this.replace(/{(\d+)}/g, function (match, number) {
+      return typeof args[number] != "undefined" ? args[number] : match;
+    });
+  };
+}
+
+
 /**
  * Validates time string
  * @param {string} timeString
@@ -12,6 +24,8 @@ function validateTimeString(timeString){
 	// I tried writing this function as one regular expression,
 	//  but in the end it seemed like a hard to maintain mess to me
 	//  so I wrote it like this, and it seems much more manageable
+	
+	if(timeString == "") return true;
 	
 	// This regex is slightly edited version of https://stackoverflow.com/a/7536768 by Peter O.
 	const timeRegex = new RegExp('^\\s*(?:[0-1]?[0-9]|2[0-3])\\s*:\\s*[0-5][0-9]\\s*$');
@@ -37,6 +51,56 @@ function validateTimeString(timeString){
 	return true;
 }
 
+/**
+ * Validates settings JSON
+ * @param {string} jsonString
+ */
+function validateExportedJSON(jsonString){
+	if(!jsonString){
+		console.log("Settings empty or generally invalid");
+		return false;
+	}
+	
+	let arr = null;
+	
+	try{
+		arr = JSON.parse(jsonString);
+	}catch{
+		console.log("Settings could not be parsed by JSON parser");
+		return false;
+	}
+	
+	//console.log(arr);
+	
+	if(!(arr instanceof Array)){
+		console.log("Settings do not parse into array");
+		return false;
+	}
+	
+	for(let ii = 0; ii < arr.length; ++ii){
+		if(arr[ii].regex == undefined || typeof arr[ii].regex != "string"){
+			console.log("Settings invalid at record {0}, regular expression is invalid".format(ii+1));
+			return false;
+		}
+		if(arr[ii].softhours == undefined || typeof arr[ii].softhours != "string" ||
+				!validateTimeString(arr[ii].softhours)){
+			console.log("Settings invalid at record {0}, soft locked time is invalid".format(ii+1));
+			return false;
+		}
+		if(arr[ii].hardhours == undefined || typeof arr[ii].hardhours != "string"  ||
+				!validateTimeString(arr[ii].hardhours)){
+			console.log("Settings invalid at record {0}, hard locked time is invalid".format(ii+1));
+			return false;
+		}
+		if(arr[ii].destination == undefined || typeof arr[ii].destination != "string"){
+			console.log("Settings invalid at record {0}, destination url is invalid".format(ii+1));
+			return false;
+		}
+	}
+	
+	return true;
+}
+
 
 /**
  * Imports previously exported settings, reloads table.
@@ -49,6 +113,8 @@ function importSettings(jsonstring){
 			constructView();
 		}		
 	};
+	
+	if(!validateExportedJSON(jsonstring)) return false;
 	
 	chrome.storage.sync.get(['websites'], callback);
 }
