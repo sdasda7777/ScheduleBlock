@@ -55,6 +55,11 @@ In general, every record consists of:
 - Redirect destination
     - URL of the redirect destination. The address should include the protocol (most likely http:// or https://), otherwise undesired behaviour may occur.
 
+### How to help?
+- You can help by translating this extension into new languages (look at the very beginning of [options.js](options.js))
+- Or by implementing new features or fixing bugs (fork this repo and after making changes make a pull request)
+- Or by reporting bugs or other issues (just create an issue)
+
 ### Changelog
 
 #### 1.1.1
