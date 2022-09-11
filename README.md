@@ -57,7 +57,7 @@ In general, every record consists of:
 
 ### Changelog
 
-#### 1.1.1 (Upcoming)
+#### 1.1.1
 - Shortened code for generating table by using more loops
 - Added validation when changing times
 - Added validation when importing settings
