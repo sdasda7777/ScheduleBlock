@@ -10,6 +10,9 @@ input[type=number] {
 #newsite {
 	width: 75%;
 }
+#newsiteadd {
+	cursor: pointer;
+}
 
 table, th, td {
   border: 1px solid black;
@@ -38,9 +41,16 @@ h1, #settingsButton {
 }
 
 #settingsButton {
+	height: 43px;
+	margin-top: 5px;
 	margin-right: 5px;
 	float: right;
-	font-size: 15px;
+	
+	font-size: 20px;	
+	background: url('images/cog.png') left center no-repeat;
+	background-size: 30px;
+	padding-left: 35px;	
+	cursor: pointer;
 }
 
 
@@ -68,6 +78,8 @@ h1, #settingsButton {
 }
 #testerbutton {
 	width: 99%;
+	margin-top: 5px;
+	cursor: pointer;
 }
 
 #personalMessage {
@@ -93,7 +105,7 @@ h1, #settingsButton {
 	background-color: rgba(0,0,0,0.5); /* Black background with opacity */
 	z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
 	cursor: pointer; /* Add a pointer on hover */
-	
+		
 	justify-content: center;
 }
 
@@ -116,6 +128,7 @@ h1, #settingsButton {
 #langPicker {
 	margin-top: 10px;
 	width: 100px;
+	cursor: pointer;
 }
 #freqPicker {
 	margin-top: 10px;
@@ -124,12 +137,23 @@ h1, #settingsButton {
 #colorPicker {
 	margin-top: 4px;
 	width: 100px;
+	cursor: pointer;
 }
 
-#import, #export, #settingsButton {
-	height: 43px;
-	
+#import, #export,
+#settingsMenuOK, #settingsMenuCancel {
+	height: 43px;	
 	font-size: 20px;
+	cursor: pointer;
+	
+	margin-top: 5px;
+	width: 49%;
+	min-width: 80px;
+}
+
+#export,
+#settingsMenuCancel {
+	float: right;
 }
 
 #settingsMenu {
@@ -137,9 +161,105 @@ h1, #settingsButton {
 	width: 100%;
 	min-width: 220px;
 	max-width: 440px;
-	max-height: 320px;
+	
+	max-height: 350px;
 	padding: 5px;
 	
 	cursor: default;
 }
 
+
+
+
+.editCell {
+	padding: 0px;
+}
+
+.editButton {
+	margin: 10%;
+	width: 30px;
+	height: 30px;
+	background: url('images/pencil.png') left center no-repeat;
+	background-size: 25px;
+	
+	border-width: 0;
+	cursor: pointer;
+}
+
+#recordChangeMenu {
+	margin-top: 5px;
+	width: 100%;
+	min-width: 220px;
+	max-width: 440px;
+	
+	max-height: 625px;
+	padding: 1%;
+	
+	cursor: default;
+}
+
+#patternInputParent,
+#softLockHoursInputParent,
+#hardLockHoursInputParent,
+#timeoutsInputParent,
+#destinationInputParent {
+	h-eight: 35px;
+	border: 2px solid black;
+	padding: 1%;
+	margin-top: 5px;
+	
+	font-size: 20px;
+}
+
+#timeoutsInputParent {
+	padding-bottom: 45px;
+}
+
+#patternInput,
+#softLockHoursInput,
+#hardLockHoursInput,
+#destinationInput {
+	width: 98%;
+	multiline: true;
+}
+
+#timeoutsNATLabel,
+#timeoutsNTOLabel,
+#timeoutsSATLabel,
+#timeoutsSTOLabel {
+	font-size: 15px;
+	float: left;
+}
+
+#timeoutsNATInput,
+#timeoutsNTOInput,
+#timeoutsSATInput,
+#timeoutsSTOInput {
+	font-size: 15px;
+	float: right;
+	text-align: right;
+}
+
+#recordEditDelete {
+	margin-top: 5px;
+	width: 100%;
+	min-width: 150px;
+	
+	height: 43px;	
+	font-size: 20px;
+	cursor: pointer;
+}
+
+#recordEditOK, #recordEditCancel {
+	margin-top: 5px;
+	width: 49%;
+	min-width: 80px;
+	
+	height: 43px;	
+	font-size: 20px;
+	cursor: pointer;
+}
+
+#recordEditCancel {
+	float: right;
+}

@@ -64,14 +64,59 @@
 				</br>
 				<input type="color" id="colorPicker" value="#808080">
 			</div>
+			
+			<input type="button" id="settingsMenuOK" value="OK">
+			<input type="button" id="settingsMenuCancel" value="Cancel">
 		</div>
-	<div>
+	</div>
 	
 	<div id="recordEditOverlay">
-		<div id="recordChangeMenu">
-			<input type="text" value="asdf">
-		</div>
-	<div>
+		<div id="recordChangeMenu"><form action="javascript:void(0);">
+		
+			<div id="patternInputParent">
+				<label for="patternInput" id="patternInputLabel">Pattern:</label>
+				</br>
+				<input type="text" id="patternInput" value="pattern-here">
+			</div>
+			<div id="softLockHoursInputParent">
+				<label for="softLockHoursInput" id="softLockHoursLabel">Soft locked hours:</label>
+				</br>
+				<input type="text" id="softLockHoursInput" value="softhours-here">
+			</div>
+			<div id="hardLockHoursInputParent">
+				<label for="hardLockHoursInput" id="hardLockHoursLabel">Hard locked hours:</label>
+				</br>
+				<input type="text" id="hardLockHoursInput" value="hardhours-here">
+			</div>
+			
+			<div id="timeoutsInputParent">
+				<label id="timeoutsLabel">Timeouts:</label>
+				</br>
+				<label for="timeoutsInput" id="timeoutsNATLabel">Normal allowed time:</label>
+				<input type="text" id="timeoutsNATInput" value="timeouts-here">
+				</br>
+				<label for="timeoutsInput" id="timeoutsNTOLabel">Normal timeout:</label>
+				<input type="text" id="timeoutsNTOInput" value="timeouts-here">
+				</br>
+				<label for="timeoutsInput" id="timeoutsSATLabel">Soft-locked allowed time:</label>
+				<input type="text" id="timeoutsSATInput" value="timeouts-here">
+				</br>
+				<label for="timeoutsInput" id="timeoutsSTOLabel">Soft-locked timeout:</label>
+				<input type="text" id="timeoutsSTOInput" value="timeouts-here">
+			</div>
+			
+			<div id="destinationInputParent">
+				<label for="destinationInput" id="destinationLabel">Destination:</label>
+				</br>
+				<input type="text" id="destinationInput" value="destination-here">
+			</div>
+			
+			<input type="button" id="recordEditDelete" value="Delete">
+			<input type="button" id="recordEditOK" value="OK">
+			<input type="button" id="recordEditCancel" value="Cancel">
+			
+		</form></div>
+	</div>
   </body>
   <style type="text/css" id="rebuildPersistantStylesheet">
 	* {

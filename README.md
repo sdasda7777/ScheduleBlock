@@ -60,12 +60,19 @@ In general, every record consists of:
 - Or by implementing new features or fixing bugs (fork this repo and after making changes make a pull request)
 - Or by reporting bugs or other issues (just create an issue)
 
+### Sources
+- Cog icon used for Settings button by [Lorc](https://lorcblog.blogspot.com/) under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) via [Game-icons.net](https://game-icons.net/1x1/lorc/cog.html#download)
+- Pencil icon used for Edit button by [Delapouite](https://delapouite.com/) under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) via [Game-icons.net](https://game-icons.net/1x1/lorc/cog.html#download)
+
+
 ### Changelog
 
 #### 1.1.2 (upcoming)
+- Moved settings to popup, since the top bar was getting crowded
+- Moved editing records to popup, since the main table was getting really crowded
+- Added nice icons by Lorc (Cog) and Delapouite (Pencil), see above for more details.
 - Made ACL check frequency customizable on the options page
-- TODO: Add option for timeouts
-- TODO: Improve the way editing records work, since the main table is getting really crowded
+- Add option for entering timeouts (TODO: implement the actual logic)
 
 #### 1.1.1
 - Shortened code for generating table by using more loops

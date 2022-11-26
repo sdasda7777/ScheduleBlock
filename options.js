@@ -14,7 +14,10 @@ const interfaceStrings = {
 	// At all following keys, the translations must be at the same index as the name of the language.
 	0: ["english",
 		 "čeština"],
-	
+	1: ["OK",
+		"Budiž"],
+	2: ["Cancel",
+		"Zrušit"],
 	
 	// These keys belong to the controls at the top of the page
 	101: ["Language:",
@@ -25,8 +28,8 @@ const interfaceStrings = {
 	        "Importovat nastavení"],
 	104: ["Export settings",
 			"Exportovat nastavení"],
-	105: ["Check frequency (in seconds):",
-			"Frekvence kontrol (v sekundách):"],
+	105: ["Check period (in seconds):",
+			"Perioda kontrol (v sekundách):"],
 	
 	
 	// These keys belong to the main table and controls around and in it
@@ -42,65 +45,27 @@ const interfaceStrings = {
 				"Časy nenavštívitelnosti"],
 		213: ["Hard locked hours/days",
 				"Časy znepřístupnění"],
-		214: ["Destination",
-				"Destinace"],
-		215: ["Change record",
-				"Upravit záznam"],
-		216: ["Timeouts", "Časovače"],
-		
-		251: ["Expression",
-				"Výraz"],
-		252: ["Soft hours",
-				"Nenavštívitelnost"],
-		253: ["Hard hours",
-				"Znepřístupnění"],
-		254: ["Destination",
-				"Destinace"],
-		255: ["Remove",
-				"Odstranit"],
-		256: ["Timeouts",
+		214: ["Timeouts",
 				"Časovače"],
+		215: ["Destination",
+				"Destinace"],
+		216: ["Edit",
+				"Upravit"],
+		217: ["Delete",
+				"Odstranit"],
+
 	
-		301: ["Enter new regular expression describing the set of sites you want to forbid. \n" +
-				"For example expression '.*\\.reddit\\.com.*' will apply the rule to any address containing string '.reddit.com'.",
+		301: ["Must be time intervals in 24 hour format separated by commas. "+
+				"Groups of intervals for individual days may be separated with |. ",
 				
-				"Zadejte nový regulární výraz popisující sadu stránek které chcete zakázat." +
-				"Například výraz '.*\\.reddit\\.com.*' bude aplikovat pravidlo na jakoukoli adresu obsahující řetězec '.reddit.com'."],
-		302: ["Enter new time intervals in 24 hour format, separated by commas. "+
-				"You can also enter intervals for individual days by separating days with |. "+
-				"If amount of days is not 7, modulo is used. \n"+
-				"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will make it impossible to visit "+
-				"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
-				"(counting Sunday as the first day) and from 9:00 to 19:00 on even days.",
+				"Musí být časové intervaly v 24-hodinovém formátu oddělené čárkami. "+
+				"Skupiny intervalů na jednotlivé dny mohou být oddělené symbolem |. "],
+		
+		302: ["Must be a time duration in format ((H+:)?(MM?:)?SS?), " +
+				"preserving unit constraints 00-59 if larger unit is present.",
 				
-				"Zadejte nové časové intervaly v 24-hodinovém formátu, oddělené čárkami. "+
-				"Můžete také zadat intervaly na jednotlivé dny, oddělením dnů symbolem |. "+
-				"Pokud počet dnů není 7, je použito modulo. \n"+
-				"Například, '12:00-14:15,15:30-16:45|9:00-19:00' zakáže navštívení dané stránky "+
-				"od 12:00 do 14:15 a od 15:30 do 16:45 v liché dny "+
-				"(počítaje neděli jako první den) a od 9:00 do 19:00 v sudé dny."],
-		303: ["Enter new time intervals in 24 hour format, separated by commas. "+
-			    "You can also enter intervals for individual days by separating days with |. "+
-				"If amount of days is not 7, modulo is used.\n"+
-				"For example, '12:00-14:15,15:30-16:45|9:00-19:00' will redirect from "+
-				"the given site from 12:00 to 14:15 and from 15:30 to 16:45 on odd days "+
-				"(counting Sunday as the first day) and from 9:00-19:00 on even days.",
-				
-				"Zadejte nové časové intervaly v 24-hodinovém formátu, oddělené čárkami. "+
-				"Můžete také zadat intervaly na jednotlivé dny, oddělením dnů symbolem |. "+
-				"Pokud počet dnů není 7, je použito modulo. \n"+
-				"Například, '12:00-14:15,15:30-16:45|9:00-19:00' znepřístupní danou stránku "+
-				"od 12:00 do 14:15 a od 15:30 do 16:45 v liché dny "+
-				"(počítaje neděli jako první den) a od 9:00 do 19:00 v sudé dny."],
-		304: ["Enter new destination. The address should include protocol (most likely http:// or https://), " +
-				"otherwise undesired behaviour may occur.\n" +
-				"It is advised to use an address that does not match the pattern of the record, " +
-				"as failing to do so will lead to an endless loop.",
-				
-				"Zadejte novou destinaci. Adresa by měla obsahovat protokol (nejpravděpodobněji http:// nebo https://), " +
-				"jinak může dojít k neočekávanému chování.\n" +
-				"Doporučujeme použít adresu která neodpovídá regulárnímu výrazu pravidla, " +
-				"protože v takovém případě by došlo k nekonečné smyčce."],
+				"Musí být časová doba ve formátu ((H+:)?(MM?:)?SS?), " + 
+				"která zachovává omezení jednotek na 00-59 pokud je přítomna větší jednotka."],
 		305: ["There is no way to retrieve deleted record, other than importing exported settings or creating it again. " +
 				"Are you absolutely sure you want to delete the record \n" + 
 				"('{0}' => '{1}' @ (s'{2}' | h'{3}'))\n" +
@@ -162,6 +127,26 @@ function translateGUI(){
 	document.querySelector("#colorPickerLabel").innerText = getTranslatedString(102);
 	document.querySelector("#import").value = getTranslatedString(103);
 	document.querySelector("#export").value = getTranslatedString(104);
+	
+	document.querySelector("#settingsMenuOK").value = getTranslatedString(1);
+	document.querySelector("#settingsMenuCancel").value = getTranslatedString(2);
+	
+	document.querySelector("#patternInputLabel").innerText = getTranslatedString(211) + ":";
+	document.querySelector("#softLockHoursLabel").innerText = getTranslatedString(212) + ":";
+	document.querySelector("#hardLockHoursLabel").innerText = getTranslatedString(213) + ":";
+	document.querySelector("#timeoutsLabel").value = getTranslatedString(216) + ":";
+	document.querySelector("#destinationLabel").value = getTranslatedString(215) + ":";
+	document.querySelector("#recordEditDelete").value = getTranslatedString(217);
+	
+	document.querySelector("#recordEditOK").value = getTranslatedString(1);
+	document.querySelector("#recordEditCancel").value = getTranslatedString(2);
+	
+	/*
+	getTranslatedString(210), getTranslatedString(211),
+										getTranslatedString(212), getTranslatedString(213),
+										getTranslatedString(216), getTranslatedString(214), 
+										getTranslatedString(215)
+	*/
 	
 	document.querySelector("#tableHint").innerText = getTranslatedString(201);
 	document.querySelector("#newsite").placeholder = getTranslatedString(350);
@@ -225,7 +210,7 @@ function validateTimeString(timeString){
 			if(times.length != 2) return false;
 			
 			for(let kk = 0; kk < times.length; ++kk){
-				let res = timeRegex.exec(times[kk]);
+				let res = timeRegex.exec(times[kk].trim());
 				
 				if(!res || res.length != 1) return false;
 			}
@@ -326,23 +311,23 @@ function addSite(){
 		let arr = result.websites;
 		arr = (arr ? JSON.parse(arr) : []);
 		
-		let nse = document.getElementById("newsite");
-		if(nse.value === "") return;
+		let newsiteelement = document.getElementById("newsite");
+		if(newsiteelement.value === "") return;
 		
-		arr.push({"regex": nse.value, "softhours":"00:00-23:59", "hardhours":"00:00-23:59", 
+		arr.push({"regex": newsiteelement.value, "softhours":"00:00-23:59", "hardhours":"00:00-23:59", 
 										//TODO timeouts
 										"timeouts": {
-											"normal-break": 0,
-											"normal-timeout": 0,
+											"normal-break": 1,
+											"normal-timeout": 61,
 											"softlock-break": 0,
-											"softlock-timeout": 0,
+											"softlock-timeout": 359999,
 											"current-streak": 0,
 											"last-check": new Date()
 										},
 										
 										"destination": "about:blank"});
 		chrome.storage.sync.set({websites:JSON.stringify(arr)});
-		nse.value = "";
+		newsiteelement.value = "";
 		constructView();
 	};
 	
@@ -366,8 +351,8 @@ function constructView(){
 		let headerRow = document.createElement("tr");
 		const headerInnerTexts = [getTranslatedString(210), getTranslatedString(211),
 										getTranslatedString(212), getTranslatedString(213),
-										getTranslatedString(216), getTranslatedString(214), 
-										getTranslatedString(215)];
+										getTranslatedString(214), getTranslatedString(215), 
+										getTranslatedString(216)];
 		for(let ii = 0; ii < headerInnerTexts.length; ++ii){
 			let tempHeader = document.createElement("th");
 			tempHeader.innerText = headerInnerTexts[ii];
@@ -375,7 +360,7 @@ function constructView(){
 		}
 		t.appendChild(headerRow);
 		
-		
+		/*
 		const changeButtonsIds = ["chp", "chs", "chh", "cht",
 											"chd", "rmr"];
 		const changeButtonsTexts = [getTranslatedString(251), getTranslatedString(252),
@@ -383,7 +368,8 @@ function constructView(){
 											getTranslatedString(254),
 											getTranslatedString(255)];
 		const changeButtonsFunctions = [changePattern, changeSoftHours, changeHardHours, 
-												changeTimeouts, changeDestination, removeRecord];
+												changeTimeouts, changeDestination];
+		*/
 		
 		// Generate other table rows
 		for(let ii = 0; ii < arr.length; ++ii){
@@ -432,18 +418,17 @@ function constructView(){
 				row.appendChild(des);
 			}
 			
-			// Create changes buttons
-			let changesCell = document.createElement("td");
-			for(let jj = 0; jj < changeButtonsIds.length; ++jj){
-				let tmpButton = document.createElement("input");
-				tmpButton.id = changeButtonsIds[jj] + ii;
-				tmpButton.type = "button";
-				tmpButton.value = changeButtonsTexts[jj];
-				tmpButton.addEventListener("click", changeButtonsFunctions[jj]);
-				changesCell.appendChild(tmpButton);
-			}
-			
-			row.appendChild(changesCell);
+			// Create edit button
+			let editCell = document.createElement("td");
+			editCell.className = "editCell";
+			let editButton = document.createElement("input");
+			editButton.id = "edit" + ii;
+			editButton.type = "button";
+			editButton.className = "editButton"
+			editButton.value = "";
+			editButton.addEventListener("click", openRecordEditMenu);
+			editCell.appendChild(editButton);
+			row.appendChild(editCell);
 			
 			t.appendChild(row);
 		}
@@ -454,27 +439,51 @@ function constructView(){
 	chrome.storage.sync.get(['websites'], callback);
 }
 
-/**
- * Handles record pattern modification.
- */
-function changePattern(){
-	let recnum = parseInt(this.id.substr(3));
+let recnum = 0;
+
+function openRecordEditMenu(e){
+	function intToTime(timeAsInt){
+		let seconds = timeAsInt % 60;
+		let minutes = (timeAsInt - seconds) % 3600 / 60;
+		let hours = (timeAsInt - 60 * minutes - seconds) / 3600;
+				
+		return hours + ":" + 
+				("00" + minutes).slice(-2) + ":" + 
+				("00" + seconds).slice(-2);
+	}
+	
+	recnum = parseInt(this.id.substr(4));
 	let callback = (result) => {
 		if(!result.websites) return;
-		
 		let arr = JSON.parse(result.websites);
-					
 		if(recnum >= arr.length) return;
 		
-		let r = window.prompt(getTranslatedString(301), arr[recnum].regex);
 		
-		if(r != null){
-			arr[recnum].regex = r;
-		}
+		document.getElementById("patternInput").value = (arr[recnum].regex ?
+															arr[recnum].regex : "");
+		document.getElementById("softLockHoursInput").value = (arr[recnum].softhours ?
+															arr[recnum].softhours : "");
+		document.getElementById("hardLockHoursInput").value = (arr[recnum].hardhours ?
+															arr[recnum].hardhours : "");
+				
+		document.getElementById("timeoutsNATInput").value =
+					(arr[recnum].timeouts && arr[recnum].timeouts["normal-break"] ?
+						intToTime(arr[recnum].timeouts["normal-break"]) : "0");
+		document.getElementById("timeoutsNTOInput").value =
+					(arr[recnum].timeouts && arr[recnum].timeouts["normal-timeout"] ?
+						intToTime(arr[recnum].timeouts["normal-timeout"]) : "0");
+		document.getElementById("timeoutsSATInput").value =
+					(arr[recnum].timeouts && arr[recnum].timeouts["softlock-break"] ?
+						intToTime(arr[recnum].timeouts["softlock-break"]) : "0");
+		document.getElementById("timeoutsSTOInput").value =
+					(arr[recnum].timeouts && arr[recnum].timeouts["softlock-timeout"] ?
+						intToTime(arr[recnum].timeouts["softlock-timeout"]) : "0");
 		
-		chrome.storage.sync.set({websites:JSON.stringify(arr)});
-		constructView();
-	};
+		document.getElementById("destinationInput").value = (arr[recnum].destination ?
+															arr[recnum].destination : "");		
+		
+		document.getElementById("recordEditOverlay").style.display = "flex";
+	}
 	
 	chrome.storage.sync.get(['websites'], callback);
 }
@@ -501,7 +510,7 @@ function changeSoftHours(){
 		}while(r != null && !validateTimeString(r))
 		
 		if(r != null){
-			arr[recnum].softhours = r;
+			
 			chrome.storage.sync.set({websites:JSON.stringify(arr)});
 		}
 		
@@ -543,11 +552,6 @@ function changeHardHours(){
 }
 
 /**
- * Handles record timeouts modification.
- */
-function changeTimeouts(){}
-
-/**
  * Handles record redirection destination modification.
  */
 function changeDestination(){
@@ -564,34 +568,6 @@ function changeDestination(){
 		
 		if(r != null){
 			arr[recnum].destination = r;
-		}
-		
-		chrome.storage.sync.set({websites:JSON.stringify(arr)});
-		constructView();
-	};
-	
-	chrome.storage.sync.get(['websites'], callback);
-}
-
-/**
- * Handles record removal.
- */
-function removeRecord(){
-	let recnum = parseInt(this.id.substr(3));
-	let callback = (result) => {
-		if(!result.websites) return;
-		
-		let arr = JSON.parse(result.websites);
-			
-		if(recnum >= arr.length) return;
-		
-		let affirmative = confirm(getTranslatedString(305).format(arr[recnum].regex,
-																			arr[recnum].destination,
-																			arr[recnum].softhours,
-																			arr[recnum].hardhours));
-		
-		if(affirmative){
-			arr.splice(recnum, 1);
 		}
 		
 		chrome.storage.sync.set({websites:JSON.stringify(arr)});
@@ -781,12 +757,166 @@ document.getElementById("export").addEventListener("click", exportSettings);
 	
 		document.getElementById("settingsChangeOverlay").style.display = "flex";
 	});
-	
+		
 	document.getElementById("settingsChangeOverlay").addEventListener("click", (e) => {
 		if(document.getElementById("settingsChangeOverlay") !== event.target) return;
 			
 		document.getElementById("settingsChangeOverlay").style.display = "none";
 	});
+	
+	document.getElementById("settingsMenuCancel").addEventListener("click", (e) => {
+		document.getElementById("settingsChangeOverlay").style.display = "none";
+	});
+}
+
+// Set up edit menu listeners
+{
+	document.getElementById("recordEditOverlay").addEventListener("click", (e) => {
+		if(document.getElementById("recordEditOverlay") !== event.target) return;
+			
+		document.getElementById("recordEditOverlay").style.display = "none";
+	});
+	
+	document.getElementById("recordEditCancel").addEventListener("click", (e) => {
+		document.getElementById("recordEditOverlay").style.display = "none";
+	});
+	
+	
+	document.getElementById("recordEditDelete").addEventListener("click", (e) => {
+		let callback = (result) => {
+			if(!result.websites) return;
+			let arr = JSON.parse(result.websites);
+			if(recnum >= arr.length) return;
+			
+			affirmative = confirm(getTranslatedString(305)
+											.format(arr[recnum].regex,
+													arr[recnum].destination,
+													arr[recnum].softhours,
+													arr[recnum].hardhours));
+			
+			if(affirmative){
+				arr.splice(recnum, 1);
+				document.getElementById("recordEditOverlay").style.display = "none";
+			}
+			
+			chrome.storage.sync.set({websites:JSON.stringify(arr)});
+			constructView();
+		};
+		
+		chrome.storage.sync.get(['websites'], callback);
+	});
+	
+	
+	
+	// On change validators
+	let validateTimeStringInput = (e) => {
+		if(!validateTimeString(e.target.value)){
+			e.target.setCustomValidity(getTranslatedString(301));
+			e.target.reportValidity();
+			return false;
+		}else{
+			e.target.setCustomValidity("");
+			return true;
+		}
+	};
+	document.getElementById("softLockHoursInput")
+		.addEventListener("change", validateTimeStringInput);
+	document.getElementById("hardLockHoursInput")
+		.addEventListener("change", validateTimeStringInput);
+	
+	function validateTimeoutString(timeoutString){
+		let arr = timeoutString.split(":").reverse().map((i)=>(parseInt(i)));
+		if(arr.length > 3 || arr.length == 0) return false;
+		for(let ii = 0; ii < arr.length; ++ii){
+			if(!/^\d+$/.test(arr[ii]))
+				return false;
+		}
+		if(parseInt(arr[0]) < 0 || (parseInt(arr[0]) > 59 && arr.length > 1)) return false;
+		if(parseInt(arr[1]) < 0 || (parseInt(arr[1]) > 59 && arr.length > 2)) return false;
+		if(parseInt(arr[2]) < 0) return false;
+		
+		return true;
+	}
+	
+	let validateTimeoutStringInput = (e) => {
+		if(!validateTimeoutString(e.target.value)){
+			e.target.setCustomValidity(getTranslatedString(302));
+			e.target.reportValidity();
+			return false;
+		}else{
+			e.target.setCustomValidity("");
+			return true;
+		}
+	}
+	document.getElementById("timeoutsNATInput")
+		.addEventListener("change", validateTimeoutStringInput);
+	document.getElementById("timeoutsNTOInput")
+		.addEventListener("change", validateTimeoutStringInput);
+	document.getElementById("timeoutsSATInput")
+		.addEventListener("change", validateTimeoutStringInput);
+	document.getElementById("timeoutsSTOInput")
+		.addEventListener("change", validateTimeoutStringInput);
+	
+	function timeToInt(timeoutString){
+		let sum = 0;
+		let arr = timeoutString.split(":").reverse().map((i)=>(parseInt(i)));
+		for(let ii = 0; ii < arr.length; ++ii){
+			sum += arr[ii] * Math.pow(60, ii);
+		}
+		return sum;
+	}
+	
+	document.getElementById("recordEditOK").addEventListener("click", (e) => {
+		let callback = (result) => {
+			if(!result.websites) return;
+			let arr = JSON.parse(result.websites);
+			if(recnum >= arr.length) return;
+			
+				
+			let softhoursInput = document.getElementById("softLockHoursInput");
+			let hardhoursInput = document.getElementById("hardLockHoursInput");
+			let timeoutsNATInput = document.getElementById("timeoutsNATInput");
+			let timeoutsNTOInput = document.getElementById("timeoutsNTOInput");
+			let timeoutsSATInput = document.getElementById("timeoutsSATInput");
+			let timeoutsSTOInput = document.getElementById("timeoutsSTOInput");
+			
+			if(!validateTimeStringInput({target:softhoursInput}) || 
+				!validateTimeStringInput({target:hardhoursInput}) ||
+				!validateTimeoutStringInput({target:timeoutsNATInput}) ||
+				!validateTimeoutStringInput({target:timeoutsNTOInput}) ||
+				!validateTimeoutStringInput({target:timeoutsSATInput}) ||
+				!validateTimeoutStringInput({target:timeoutsSTOInput})){
+				return;
+			}
+			
+			
+			arr[recnum].regex = document.getElementById("patternInput").value;
+			arr[recnum].softhours = softhoursInput.value;
+			arr[recnum].hardhours = hardhoursInput.value;
+			arr[recnum].timeouts = (arr[recnum].timeouts ? arr[recnum].timeouts : {
+											"normal-break": 0,
+											"normal-timeout": 0,
+											"softlock-break": 0,
+											"softlock-timeout": 0,
+											"current-streak": 0,
+											"last-check": new Date()
+										});
+			
+			arr[recnum].timeouts["normal-break"] = timeToInt(timeoutsNATInput.value);
+			arr[recnum].timeouts["normal-timeout"] = timeToInt(timeoutsNTOInput.value);
+			arr[recnum].timeouts["softlock-break"] = timeToInt(timeoutsSATInput.value);
+			arr[recnum].timeouts["softlock-timeout"] = timeToInt(timeoutsSTOInput.value);
+			
+			document.getElementById("recordEditOverlay").style.display = "none";
+			
+			chrome.storage.sync.set({websites:JSON.stringify(arr)});
+			constructView();
+		};
+		
+		chrome.storage.sync.get(['websites'], callback);
+	});
+	
+	
 }
 
 
