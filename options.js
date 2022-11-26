@@ -134,20 +134,13 @@ function translateGUI(){
 	document.querySelector("#patternInputLabel").innerText = getTranslatedString(211) + ":";
 	document.querySelector("#softLockHoursLabel").innerText = getTranslatedString(212) + ":";
 	document.querySelector("#hardLockHoursLabel").innerText = getTranslatedString(213) + ":";
-	document.querySelector("#timeoutsLabel").value = getTranslatedString(216) + ":";
-	document.querySelector("#destinationLabel").value = getTranslatedString(215) + ":";
+	document.querySelector("#timeoutsLabel").innerText = getTranslatedString(215) + ":";
+	document.querySelector("#destinationLabel").innerText = getTranslatedString(214) + ":";
 	document.querySelector("#recordEditDelete").value = getTranslatedString(217);
 	
 	document.querySelector("#recordEditOK").value = getTranslatedString(1);
 	document.querySelector("#recordEditCancel").value = getTranslatedString(2);
-	
-	/*
-	getTranslatedString(210), getTranslatedString(211),
-										getTranslatedString(212), getTranslatedString(213),
-										getTranslatedString(216), getTranslatedString(214), 
-										getTranslatedString(215)
-	*/
-	
+		
 	document.querySelector("#tableHint").innerText = getTranslatedString(201);
 	document.querySelector("#newsite").placeholder = getTranslatedString(350);
 	document.querySelector("#newsiteadd").value = getTranslatedString(351);
