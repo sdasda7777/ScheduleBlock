@@ -61,8 +61,8 @@ In general, every record consists of:
 - Or by reporting bugs or other issues (just create an issue)
 
 ### Sources
-- Cog icon used for Settings button by [Lorc](https://lorcblog.blogspot.com/) under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) via [Game-icons.net](https://game-icons.net/1x1/lorc/cog.html#download)
-- Pencil icon used for Edit button by [Delapouite](https://delapouite.com/) under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) via [Game-icons.net](https://game-icons.net/1x1/lorc/cog.html#download)
+- Cog icon used for Settings button by [Lorc](https://lorcblog.blogspot.com/) under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) via [Game-icons.net](https://game-icons.net/1x1/lorc/cog.html)
+- Pencil icon used for Edit button by [Delapouite](https://delapouite.com/) under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) via [Game-icons.net](https://game-icons.net/1x1/delapouite/pencil.html)
 
 
 ### Changelog
@@ -70,9 +70,9 @@ In general, every record consists of:
 #### 1.1.2 (upcoming)
 - Moved settings to popup, since the top bar was getting crowded
 - Moved editing records to popup, since the main table was getting really crowded
-- Added nice icons by Lorc (Cog) and Delapouite (Pencil), see above for more details.
-- Made ACL check frequency customizable on the options page
-- Add option for entering timeouts (TODO: implement the actual logic)
+- Added nice icons by Lorc (Cog) and Delapouite (Pencil), see section above for more details.
+- Made ACL check frequency customizable in the options menu
+- Added option for entering timeouts (TODO: implement the actual logic)
 
 #### 1.1.1
 - Shortened code for generating table by using more loops
