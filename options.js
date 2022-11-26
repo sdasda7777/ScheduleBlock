@@ -315,12 +315,11 @@ function addSite(){
 		if(newsiteelement.value === "") return;
 		
 		arr.push({"regex": newsiteelement.value, "softhours":"00:00-23:59", "hardhours":"00:00-23:59", 
-										//TODO timeouts
 										"timeouts": {
-											"normal-break": 1,
-											"normal-timeout": 61,
+											"normal-break": 0,
+											"normal-timeout": 0,
 											"softlock-break": 0,
-											"softlock-timeout": 359999,
+											"softlock-timeout": 0,
 											"current-streak": 0,
 											"last-check": new Date()
 										},
@@ -489,95 +488,6 @@ function openRecordEditMenu(e){
 }
 
 /**
- * Handles record soft locked hours modification.
- */
-function changeSoftHours(){
-	let recnum = parseInt(this.id.substr(3));
-	let callback = (result) => {
-		if(!result.websites) return;
-		
-		let arr = JSON.parse(result.websites);
-			
-		if(recnum >= arr.length) return;
-		
-		let base = (arr[recnum].softhours ? arr[recnum].softhours : "");
-		
-		
-		let r = base;
-		
-		do{
-			r = window.prompt(getTranslatedString(302), r);
-		}while(r != null && !validateTimeString(r))
-		
-		if(r != null){
-			
-			chrome.storage.sync.set({websites:JSON.stringify(arr)});
-		}
-		
-		constructView();
-	};
-	
-	chrome.storage.sync.get(['websites'], callback);
-}
-
-/**
- * Handles record hard locked hours modification.
- */
-function changeHardHours(){
-	let recnum = parseInt(this.id.substr(3));
-	let callback = (result) => {
-		if(!result.websites) return;
-		
-		let arr = JSON.parse(result.websites);
-			
-		if(recnum >= arr.length) return;
-		
-		let base = (arr[recnum].hardhours ? arr[recnum].hardhours : "");
-								
-		let r = base;
-
-		do{
-			r = window.prompt(getTranslatedString(303),	r);
-		}while(r != null && !validateTimeString(r))
-		
-		if(r != null){
-			arr[recnum].hardhours = r;
-			chrome.storage.sync.set({websites:JSON.stringify(arr)});
-		}
-		
-		constructView();
-	};
-	
-	chrome.storage.sync.get(['websites'], callback);
-}
-
-/**
- * Handles record redirection destination modification.
- */
-function changeDestination(){
-	let recnum = parseInt(this.id.substr(3));
-	let callback = (result) => {
-		if(!result.websites) return;
-		
-		let arr = JSON.parse(result.websites);
-			
-		if(recnum >= arr.length) return;
-		
-		let r = window.prompt(getTranslatedString(304),
-									(arr[recnum].destination ? arr[recnum].destination : ""));
-		
-		if(r != null){
-			arr[recnum].destination = r;
-		}
-		
-		chrome.storage.sync.set({websites:JSON.stringify(arr)});
-		constructView();
-	};
-	
-	chrome.storage.sync.get(['websites'], callback);
-}
-
-/**
  * Handles record number modification (i.e. reordering) using keyboard.
  * @param {KeyboardEvent} e - keyup event to be handled
  */
@@ -696,7 +606,7 @@ document.getElementById("export").addEventListener("click", exportSettings);
 	chrome.storage.sync.get(['ScheduleBlockOptionsLanguage'], callback);
 }
 
-// Load preferred check frequency, set up change listener
+// Load preferred check frequency
 {
 	let callback = (result) => {
 		let preferredFrequency = (result.ScheduleBlockOptionsCheckFrequency ?
@@ -706,16 +616,6 @@ document.getElementById("export").addEventListener("click", exportSettings);
 	};
 	
 	chrome.storage.sync.get(['ScheduleBlockOptionsCheckFrequency'], callback);
-	
-	document.getElementById("freqPicker").addEventListener("change", (e) => {
-		let newFreq = e.srcElement.value;
-				
-		let callback = (result) => {
-			chrome.storage.sync.set({ScheduleBlockOptionsCheckFrequency:newFreq});
-		};
-		
-		chrome.storage.sync.get(['ScheduleBlockOptionsCheckFrequency'], callback);
-	});
 }
 
 
@@ -740,33 +640,82 @@ document.getElementById("export").addEventListener("click", exportSettings);
 		
 		let stylesheet = document.querySelector("#rebuildPersistantStylesheet");
 		stylesheet.innerText = "* { background-color: " + newColor + "; }";
-		
-		let callback = (result) => {
-			chrome.storage.sync.set({ScheduleBlockOptionsBackground:newColor});
-		};
-		
-		chrome.storage.sync.get(['ScheduleBlockOptionsBackground'], callback);
 	});
 }
 
 
 // Set up settings button and settings overlay listeners
 {
+	let languageBackup = "english";
+	let intervalBackup = 15;
+	let colorBackup = "#808080";
 	document.getElementById("settingsButton").addEventListener("click", (e) => {
 		if(document.getElementById("settingsButton") !== event.target) return;
-	
+		
+		languageBackup = interfaceStrings[0][document.getElementById("langPicker")
+																.selectedIndex];
+		intervalBackup = parseInt(document.getElementById("freqPicker").value);
+		colorBackup = document.getElementById("colorPicker").value;
+		
 		document.getElementById("settingsChangeOverlay").style.display = "flex";
 	});
-		
+	
+	function resetSettingsBackups(){
+		document.getElementById("langPicker").value = interfaceStrings[0]
+															.indexOf(languageBackup);
+		document.getElementById("langPicker").dispatchEvent(new UIEvent('change', {
+																'view': window,
+																'bubbles': true,
+																'cancelable': true}));
+		document.getElementById("freqPicker").value = intervalBackup;
+		document.getElementById("freqPicker").dispatchEvent(new UIEvent('change', {
+																'view': window,
+																'bubbles': true,
+																'cancelable': true}));
+		document.getElementById("colorPicker").value = colorBackup;
+		document.getElementById("colorPicker").dispatchEvent(new UIEvent('change', {
+																'view': window,
+																'bubbles': true,
+																'cancelable': true}));
+	}
+	
 	document.getElementById("settingsChangeOverlay").addEventListener("click", (e) => {
 		if(document.getElementById("settingsChangeOverlay") !== event.target) return;
-			
+		
+		resetSettingsBackups();
 		document.getElementById("settingsChangeOverlay").style.display = "none";
 	});
 	
 	document.getElementById("settingsMenuCancel").addEventListener("click", (e) => {
+		resetSettingsBackups();
 		document.getElementById("settingsChangeOverlay").style.display = "none";
 	});
+	
+	
+	document.getElementById("settingsMenuOK").addEventListener("click", (e) => {
+		let newLangIndex = document.getElementById("langPicker").selectedIndex;
+		let newLangName = interfaceStrings[0][newLangIndex];
+		let callback1 = (result) => {
+			chrome.storage.sync.set({ScheduleBlockOptionsLanguage: newLangName});
+		};
+		chrome.storage.sync.get(['ScheduleBlockOptionsLanguage'], callback1);
+			
+		let callback2 = (result) => {
+			chrome.storage.sync.set({ScheduleBlockOptionsCheckFrequency:
+							parseInt(document.getElementById("freqPicker").value)});
+		};
+		chrome.storage.sync.get(['ScheduleBlockOptionsCheckFrequency'], callback2);
+		
+		let callback3 = (result) => {
+			chrome.storage.sync.set({ScheduleBlockOptionsBackground:
+									document.getElementById("colorPicker").value});
+		};
+		chrome.storage.sync.get(['ScheduleBlockOptionsBackground'], callback3);
+		
+		document.getElementById("settingsChangeOverlay").style.display = "none";
+	});
+			
+	
 }
 
 // Set up edit menu listeners
