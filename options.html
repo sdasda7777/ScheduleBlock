@@ -8,19 +8,7 @@
   <body>
     <div id="topBar">
 		<h1>ScheduleBlock</h1>
-		<input type="button" id="export" value="Export settings">
-		<input type="button" id="import" value="Import settings">
-		<input type="file" id="import2" name="import2" style="display: none;" />
-		<div id="colorPickerParent">
-			<label for="colorPicker" id="colorPickerLabel">Background color:</label>
-			<input type="color" id="colorPicker" value="#808080">
-		</div>
-		<div id="langPickerParent">
-			<label for="langPicker" id="langPickerLabel">Language:</label>
-			<select id="langPicker">
-			  <option value="lang">language</option>
-			</select>
-		</div>
+		<input type="button" id="settingsButton" value="Settings">
 	</div>
 	
 	<div id="widgetParent">
@@ -33,8 +21,8 @@
 				<input type="button" id="newsiteadd" value="Add to the list">
 			</div>
 		</div>
-	
-	
+		
+		
 		<div class="widget" id="tester">
 			<h2 id="testertitle">Pattern Tester</h2>
 			<input type="text" id="testerinput1" name="testerinput1" placeholder="Regex pattern to test">
@@ -43,7 +31,8 @@
 			<span id="testerresult" result="matching">Matching</span>
 			<input type="button" id="testerbutton" value="Check">
 		</div>
-	
+		
+		
 		<div class="widget" id="personalMessage">
 			<h2 id="personalmessagetitle">Personal Message</h2>
 			<p id="personalmessagecontent">Hey, this is the least intrusive way we could think of contacting you.<br/><br/>
@@ -51,6 +40,38 @@
 			Last but not least, we believe in you, and you've got this.</p>
 		</div>
 	</div>
+	
+	<div id="settingsChangeOverlay">
+		<div id="settingsMenu">
+			<input type="button" id="export" value="Export settings">
+			<input type="button" id="import" value="Import settings">
+			<input type="file" id="import2" name="import2" style="display: none;" />
+			
+			<div id="langPickerParent">
+				<label for="langPicker" id="langPickerLabel">Language:</label>
+				</br>
+				<select id="langPicker">
+				  <option value="lang">language</option>
+				</select>
+			</div>
+			<div id="freqPickerParent">
+				<label for="freqPicker" id="freqPickerLabel">Check frequency (s):</label>
+				</br>
+				<input type="number" id="freqPicker" min="0" value="15">
+			</div>
+			<div id="colorPickerParent">
+				<label for="colorPicker" id="colorPickerLabel">Background color:</label>
+				</br>
+				<input type="color" id="colorPicker" value="#808080">
+			</div>
+		</div>
+	<div>
+	
+	<div id="recordEditOverlay">
+		<div id="recordChangeMenu">
+			<input type="text" value="asdf">
+		</div>
+	<div>
   </body>
   <style type="text/css" id="rebuildPersistantStylesheet">
 	* {

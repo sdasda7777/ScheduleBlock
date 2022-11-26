@@ -33,38 +33,14 @@ h1 {
 	font-size: 35px;
 }
 
-h1, 
-#langPickerParent, #langPicker,
-#colorPickerParent, #colorPicker,
-#import, #export {
+h1, #settingsButton {
 	display: inline;
 }
 
-#langPickerParent, #colorPickerParent,
-#import, #export {
+#settingsButton {
 	margin-right: 5px;
 	float: right;
 	font-size: 15px;
-}
-
-#langPickerParent, #colorPickerParent {
-	height: 35px;
-	border: 2px solid black;
-	padding: 2px;
-}
-#langPickerLabel, #colorPickerLabel {
-	padding-bottom: 1px;
-	margin-right: 2px;
-}
-#langPicker {
-	margin-top: 10px;
-}
-#colorPicker {
-	margin-top: 4px;
-}
-
-#import, #export {
-	height: 43px;
 }
 
 
@@ -101,3 +77,69 @@ h1,
 	font-size: 15px;
 	text-indent: 2em;
 }
+
+
+/* Source: https://www.w3schools.com/howto/howto_css_overlay.asp */
+#settingsChangeOverlay,
+#recordEditOverlay {
+	position: fixed; /* Sit on top of the page content */
+	display: none; /* Hidden by default */
+	width: 100%; /* Full width (cover the whole page) */
+	height: 100%; /* Full height (cover the whole page) */
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+	z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+	cursor: pointer; /* Add a pointer on hover */
+	
+	justify-content: center;
+}
+
+#langPickerParent,
+#freqPickerParent,
+#colorPickerParent {
+	h-eight: 35px;
+	border: 2px solid black;
+	padding: 5px;
+	margin-top: 5px;
+	
+	font-size: 20px;
+}
+#langPickerLabel,
+#freqPickerLabel,
+#colorPickerLabel {
+	padding-bottom: 1px;
+	margin-right: 2px;
+}
+#langPicker {
+	margin-top: 10px;
+	width: 100px;
+}
+#freqPicker {
+	margin-top: 10px;
+	width: 100px;
+}
+#colorPicker {
+	margin-top: 4px;
+	width: 100px;
+}
+
+#import, #export, #settingsButton {
+	height: 43px;
+	
+	font-size: 20px;
+}
+
+#settingsMenu {
+	margin-top: 5px;
+	width: 100%;
+	min-width: 220px;
+	max-width: 440px;
+	max-height: 320px;
+	padding: 5px;
+	
+	cursor: default;
+}
+

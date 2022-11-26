@@ -25,6 +25,8 @@ const interfaceStrings = {
 	        "Importovat nastavení"],
 	104: ["Export settings",
 			"Exportovat nastavení"],
+	105: ["Check frequency (in seconds):",
+			"Frekvence kontrol (v sekundách):"],
 	
 	
 	// These keys belong to the main table and controls around and in it
@@ -44,6 +46,7 @@ const interfaceStrings = {
 				"Destinace"],
 		215: ["Change record",
 				"Upravit záznam"],
+		216: ["Timeouts", "Časovače"],
 		
 		251: ["Expression",
 				"Výraz"],
@@ -55,6 +58,8 @@ const interfaceStrings = {
 				"Destinace"],
 		255: ["Remove",
 				"Odstranit"],
+		256: ["Timeouts",
+				"Časovače"],
 	
 		301: ["Enter new regular expression describing the set of sites you want to forbid. \n" +
 				"For example expression '.*\\.reddit\\.com.*' will apply the rule to any address containing string '.reddit.com'.",
@@ -151,8 +156,9 @@ function getTranslatedString(messageCode){
 	return interfaceStrings[messageCode][0];
 }
 
-function translateInterface(){
+function translateGUI(){
 	document.querySelector("#langPickerLabel").innerText = getTranslatedString(101);
+	document.querySelector("#freqPickerLabel").innerText = getTranslatedString(105);
 	document.querySelector("#colorPickerLabel").innerText = getTranslatedString(102);
 	document.querySelector("#import").value = getTranslatedString(103);
 	document.querySelector("#export").value = getTranslatedString(104);
@@ -324,6 +330,16 @@ function addSite(){
 		if(nse.value === "") return;
 		
 		arr.push({"regex": nse.value, "softhours":"00:00-23:59", "hardhours":"00:00-23:59", 
+										//TODO timeouts
+										"timeouts": {
+											"normal-break": 0,
+											"normal-timeout": 0,
+											"softlock-break": 0,
+											"softlock-timeout": 0,
+											"current-streak": 0,
+											"last-check": new Date()
+										},
+										
 										"destination": "about:blank"});
 		chrome.storage.sync.set({websites:JSON.stringify(arr)});
 		nse.value = "";
@@ -350,7 +366,8 @@ function constructView(){
 		let headerRow = document.createElement("tr");
 		const headerInnerTexts = [getTranslatedString(210), getTranslatedString(211),
 										getTranslatedString(212), getTranslatedString(213),
-										getTranslatedString(214), getTranslatedString(215)];
+										getTranslatedString(216), getTranslatedString(214), 
+										getTranslatedString(215)];
 		for(let ii = 0; ii < headerInnerTexts.length; ++ii){
 			let tempHeader = document.createElement("th");
 			tempHeader.innerText = headerInnerTexts[ii];
@@ -359,13 +376,14 @@ function constructView(){
 		t.appendChild(headerRow);
 		
 		
-		const changeButtonsIds = ["chp", "chs", "chh",
+		const changeButtonsIds = ["chp", "chs", "chh", "cht",
 											"chd", "rmr"];
 		const changeButtonsTexts = [getTranslatedString(251), getTranslatedString(252),
-											getTranslatedString(253), getTranslatedString(254),
-											getTranslatedString(255), getTranslatedString(256)];
+											getTranslatedString(253), getTranslatedString(256),
+											getTranslatedString(254),
+											getTranslatedString(255)];
 		const changeButtonsFunctions = [changePattern, changeSoftHours, changeHardHours, 
-												changeDestination, removeRecord];
+												changeTimeouts, changeDestination, removeRecord];
 		
 		// Generate other table rows
 		for(let ii = 0; ii < arr.length; ++ii){
@@ -400,6 +418,12 @@ function constructView(){
 					hardhours.innerHTML = arr[ii].hardhours.replace(/\|/g, "|<br>");
 				}
 				row.appendChild(hardhours);
+				
+				let timeouts = document.createElement("td");
+				if(arr[ii].timeouts){
+					//timeouts.innerHTML = arr[ii].timeouts.replace(/\|/g, "|<br>");
+				}
+				row.appendChild(timeouts);
 				
 				let des = document.createElement("td");
 				if(arr[ii].destination){
@@ -517,6 +541,11 @@ function changeHardHours(){
 	
 	chrome.storage.sync.get(['websites'], callback);
 }
+
+/**
+ * Handles record timeouts modification.
+ */
+function changeTimeouts(){}
 
 /**
  * Handles record redirection destination modification.
@@ -669,7 +698,7 @@ document.getElementById("export").addEventListener("click", exportSettings);
 		chrome.storage.sync.get(['ScheduleBlockOptionsLanguage'], callback);
 		
 		languageIndex = e.target.selectedIndex;
-		translateInterface();
+		translateGUI();
 	});
 }
 
@@ -684,11 +713,33 @@ document.getElementById("export").addEventListener("click", exportSettings);
 		if(tmpLangIndex != -1){
 			document.querySelector("#langPicker").selectedIndex = tmpLangIndex;
 			languageIndex = tmpLangIndex;
-			translateInterface();
+			translateGUI();
 		}
 	};
 	
 	chrome.storage.sync.get(['ScheduleBlockOptionsLanguage'], callback);
+}
+
+// Load preferred check frequency, set up change listener
+{
+	let callback = (result) => {
+		let preferredFrequency = (result.ScheduleBlockOptionsCheckFrequency ?
+									result.ScheduleBlockOptionsCheckFrequency
+									: 15);
+		document.querySelector("#freqPicker").value = preferredFrequency;
+	};
+	
+	chrome.storage.sync.get(['ScheduleBlockOptionsCheckFrequency'], callback);
+	
+	document.getElementById("freqPicker").addEventListener("change", (e) => {
+		let newFreq = e.srcElement.value;
+				
+		let callback = (result) => {
+			chrome.storage.sync.set({ScheduleBlockOptionsCheckFrequency:newFreq});
+		};
+		
+		chrome.storage.sync.get(['ScheduleBlockOptionsCheckFrequency'], callback);
+	});
 }
 
 
@@ -707,20 +758,36 @@ document.getElementById("export").addEventListener("click", exportSettings);
 	};
 	
 	chrome.storage.sync.get(['ScheduleBlockOptionsBackground'], callback);
+	
+	document.getElementById("colorPicker").addEventListener("change", (e) => {
+		let newColor = e.srcElement.value;
+		
+		let stylesheet = document.querySelector("#rebuildPersistantStylesheet");
+		stylesheet.innerText = "* { background-color: " + newColor + "; }";
+		
+		let callback = (result) => {
+			chrome.storage.sync.set({ScheduleBlockOptionsBackground:newColor});
+		};
+		
+		chrome.storage.sync.get(['ScheduleBlockOptionsBackground'], callback);
+	});
 }
 
-document.getElementById("colorPicker").addEventListener("change", (e) => {
-	let newColor = e.srcElement.value;
+
+// Set up settings button and settings overlay listeners
+{
+	document.getElementById("settingsButton").addEventListener("click", (e) => {
+		if(document.getElementById("settingsButton") !== event.target) return;
 	
-	let stylesheet = document.querySelector("#rebuildPersistantStylesheet");
-	stylesheet.innerText = "* { background-color: " + newColor + "; }";
+		document.getElementById("settingsChangeOverlay").style.display = "flex";
+	});
 	
-	let callback = (result) => {
-		chrome.storage.sync.set({ScheduleBlockOptionsBackground:newColor});
-	};
-	
-	chrome.storage.sync.get(['ScheduleBlockOptionsBackground'], callback);
-});
+	document.getElementById("settingsChangeOverlay").addEventListener("click", (e) => {
+		if(document.getElementById("settingsChangeOverlay") !== event.target) return;
+			
+		document.getElementById("settingsChangeOverlay").style.display = "none";
+	});
+}
 
 
 // Construct table

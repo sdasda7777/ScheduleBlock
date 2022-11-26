@@ -62,6 +62,11 @@ In general, every record consists of:
 
 ### Changelog
 
+#### 1.1.2 (upcoming)
+- Made ACL check frequency customizable on the options page
+- TODO: Add option for timeouts
+- TODO: Improve the way editing records work, since the main table is getting really crowded
+
 #### 1.1.1
 - Shortened code for generating table by using more loops
 - Added validation when changing times

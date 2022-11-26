@@ -68,12 +68,22 @@ function checkHours(soft){
 // Initial soft lock check
 checkHours(true);
 
-// This sets up continuous hard lock checks, check frequency is 15 seconds
-let checker = setInterval(() => {
-	//Prevents "Uncaught error: Extension context invalidated"
-	if(chrome.runtime.id == undefined) {
-		clearInterval(checker);
-		return;
-	}
-	checkHours(false);
-}, 15000);
+// This sets up continuous hard lock checks, check frequency is by default 15 seconds, but can be changed by user on the options page
+let checker = null;
+let storageCallback = (result) => {
+	let interval = (result.ScheduleBlockOptionsCheckFrequency
+						? result.ScheduleBlockOptionsCheckFrequency * 1000
+						: 15000);
+		
+	checker = setInterval(() => {
+		// This condition prevents "Uncaught error: Extension context invalidated"
+		if(chrome.runtime.id == undefined) {
+			clearInterval(checker);
+			return;
+		}
+				
+		// Recurring hard lock check
+		checkHours(false);
+	}, interval);};
+
+chrome.storage.sync.get(['ScheduleBlockOptionsCheckFrequency'], storageCallback);
