@@ -32,8 +32,11 @@ function checkHours(soft){
 		//logJ(record.getRegex());
 		//logJ("Pre:");
 		//logJ(record.getCurrentDuration(), record.getNormalBreak() * 1000);
-				
-		if(record.getCurrentDuration() < record.getNormalBreak() * 1000 &&
+		
+		let sinceLastCheck = Math.min(nowDate.getTime() - record.getLastCheck().getTime(),
+											interval);
+		
+		if(record.getCurrentDuration() + sinceLastCheck < record.getNormalBreak() * 1000 &&
 			nowDate.getTime() > record.getLastCheck().getTime() &&
 			nowDate.getTime() < record.getLastCheck().getTime()
 									+ record.getNormalTimeout() * 1000){
@@ -41,16 +44,17 @@ function checkHours(soft){
 			//	and currentStreak is less than allowed time,
 			// 	increment current streak
 			updatedElements[ii] = record.withCurrentDuration(
-							record.getCurrentDuration()
-								+ Math.min(nowDate.getTime() - record.getLastCheck().getTime(),
-											interval))
-							  .withLastCheck(nowDate);
+											record.getCurrentDuration()	+ sinceLastCheck )
+										.withLastCheck(nowDate);
+										
 		}else if(nowDate.getTime()
 					>= record.getLastCheck().getTime() + record.getNormalTimeout() * 1000){
 			// If timeout did pass since last visit
 			//	reset current streak
 			updatedElements[ii] = record.withCurrentDuration(0).withLastCheck(nowDate);
-		}else if(record.getCurrentDuration() >= record.getNormalBreak() * 1000){
+			
+		}else if(record.getCurrentDuration() + sinceLastCheck
+					>= record.getNormalBreak() * 1000){
 			// Otherwise if current streak is more or equal to allowed time, deny entry
 			return true;
 		}
