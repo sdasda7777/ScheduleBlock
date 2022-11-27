@@ -134,8 +134,8 @@ function translateGUI(){
 	document.querySelector("#patternInputLabel").innerText = getTranslatedString(211) + ":";
 	document.querySelector("#softLockHoursLabel").innerText = getTranslatedString(212) + ":";
 	document.querySelector("#hardLockHoursLabel").innerText = getTranslatedString(213) + ":";
-	document.querySelector("#timeoutsLabel").innerText = getTranslatedString(215) + ":";
-	document.querySelector("#destinationLabel").innerText = getTranslatedString(214) + ":";
+	document.querySelector("#timeoutsLabel").innerText = getTranslatedString(214) + ":";
+	document.querySelector("#destinationLabel").innerText = getTranslatedString(215) + ":";
 	document.querySelector("#recordEditDelete").value = getTranslatedString(217);
 	
 	document.querySelector("#recordEditOK").value = getTranslatedString(1);
@@ -309,12 +309,10 @@ function addSite(){
 		
 		arr.push({"regex": newsiteelement.value, "softhours":"00:00-23:59", "hardhours":"00:00-23:59", 
 										"timeouts": {
-											"normal-break": 0,
-											"normal-timeout": 0,
-											"softlock-break": 0,
-											"softlock-timeout": 0,
-											"current-streak": 0,
-											"last-check": new Date()
+											"normalBreak": 0,
+											"normalTimeout": 0,
+											"currentStreak": 0,
+											"lastCheck": new Date()
 										},
 										
 										"destination": "about:blank"});
@@ -324,6 +322,31 @@ function addSite(){
 	};
 	
 	chrome.storage.sync.get(['websites'], callback);
+}
+
+/**
+ * Construct human readable time from int
+ */
+function intToTime(timeAsInt){
+	let seconds = timeAsInt % 60;
+	let minutes = (timeAsInt - seconds) % 3600 / 60;
+	let hours = (timeAsInt - 60 * minutes - seconds) / 3600;
+			
+	return hours + ":" + 
+			("00" + minutes).slice(-2) + ":" + 
+			("00" + seconds).slice(-2);
+}
+
+/**
+ * Convert human readable string to int
+ */
+function timeToInt(timeoutString){
+	let sum = 0;
+	let arr = timeoutString.split(":").reverse().map((i)=>(parseInt(i)));
+	for(let ii = 0; ii < arr.length; ++ii){
+		sum += arr[ii] * Math.pow(60, ii);
+	}
+	return sum;
 }
 
 /**
@@ -351,17 +374,6 @@ function constructView(){
 			headerRow.appendChild(tempHeader);
 		}
 		t.appendChild(headerRow);
-		
-		/*
-		const changeButtonsIds = ["chp", "chs", "chh", "cht",
-											"chd", "rmr"];
-		const changeButtonsTexts = [getTranslatedString(251), getTranslatedString(252),
-											getTranslatedString(253), getTranslatedString(256),
-											getTranslatedString(254),
-											getTranslatedString(255)];
-		const changeButtonsFunctions = [changePattern, changeSoftHours, changeHardHours, 
-												changeTimeouts, changeDestination];
-		*/
 		
 		// Generate other table rows
 		for(let ii = 0; ii < arr.length; ++ii){
@@ -399,7 +411,10 @@ function constructView(){
 				
 				let timeouts = document.createElement("td");
 				if(arr[ii].timeouts){
-					//timeouts.innerHTML = arr[ii].timeouts.replace(/\|/g, "|<br>");
+					timeouts.innerHTML = ""+(arr[ii].timeouts["normalBreak"] ?
+											intToTime(arr[ii].timeouts["normalBreak"]) : 0) +
+										  "/"+(arr[ii].timeouts["normalTimeout"] ?
+											intToTime(arr[ii].timeouts["normalTimeout"]) : 0);
 				}
 				row.appendChild(timeouts);
 				
@@ -433,17 +448,7 @@ function constructView(){
 
 let recnum = 0;
 
-function openRecordEditMenu(e){
-	function intToTime(timeAsInt){
-		let seconds = timeAsInt % 60;
-		let minutes = (timeAsInt - seconds) % 3600 / 60;
-		let hours = (timeAsInt - 60 * minutes - seconds) / 3600;
-				
-		return hours + ":" + 
-				("00" + minutes).slice(-2) + ":" + 
-				("00" + seconds).slice(-2);
-	}
-	
+function openRecordEditMenu(e){	
 	recnum = parseInt(this.id.substr(4));
 	let callback = (result) => {
 		if(!result.websites) return;
@@ -459,17 +464,11 @@ function openRecordEditMenu(e){
 															arr[recnum].hardhours : "");
 				
 		document.getElementById("timeoutsNATInput").value =
-					(arr[recnum].timeouts && arr[recnum].timeouts["normal-break"] ?
-						intToTime(arr[recnum].timeouts["normal-break"]) : "0");
+					(arr[recnum].timeouts && arr[recnum].timeouts["normalBreak"] ?
+						intToTime(arr[recnum].timeouts["normalBreak"]) : "0");
 		document.getElementById("timeoutsNTOInput").value =
-					(arr[recnum].timeouts && arr[recnum].timeouts["normal-timeout"] ?
-						intToTime(arr[recnum].timeouts["normal-timeout"]) : "0");
-		document.getElementById("timeoutsSATInput").value =
-					(arr[recnum].timeouts && arr[recnum].timeouts["softlock-break"] ?
-						intToTime(arr[recnum].timeouts["softlock-break"]) : "0");
-		document.getElementById("timeoutsSTOInput").value =
-					(arr[recnum].timeouts && arr[recnum].timeouts["softlock-timeout"] ?
-						intToTime(arr[recnum].timeouts["softlock-timeout"]) : "0");
+					(arr[recnum].timeouts && arr[recnum].timeouts["normalTimeout"] ?
+						intToTime(arr[recnum].timeouts["normalTimeout"]) : "0");
 		
 		document.getElementById("destinationInput").value = (arr[recnum].destination ?
 															arr[recnum].destination : "");		
@@ -794,19 +793,6 @@ document.getElementById("export").addEventListener("click", exportSettings);
 		.addEventListener("change", validateTimeoutStringInput);
 	document.getElementById("timeoutsNTOInput")
 		.addEventListener("change", validateTimeoutStringInput);
-	document.getElementById("timeoutsSATInput")
-		.addEventListener("change", validateTimeoutStringInput);
-	document.getElementById("timeoutsSTOInput")
-		.addEventListener("change", validateTimeoutStringInput);
-	
-	function timeToInt(timeoutString){
-		let sum = 0;
-		let arr = timeoutString.split(":").reverse().map((i)=>(parseInt(i)));
-		for(let ii = 0; ii < arr.length; ++ii){
-			sum += arr[ii] * Math.pow(60, ii);
-		}
-		return sum;
-	}
 	
 	document.getElementById("recordEditOK").addEventListener("click", (e) => {
 		let callback = (result) => {
@@ -819,15 +805,11 @@ document.getElementById("export").addEventListener("click", exportSettings);
 			let hardhoursInput = document.getElementById("hardLockHoursInput");
 			let timeoutsNATInput = document.getElementById("timeoutsNATInput");
 			let timeoutsNTOInput = document.getElementById("timeoutsNTOInput");
-			let timeoutsSATInput = document.getElementById("timeoutsSATInput");
-			let timeoutsSTOInput = document.getElementById("timeoutsSTOInput");
 			
 			if(!validateTimeStringInput({target:softhoursInput}) || 
 				!validateTimeStringInput({target:hardhoursInput}) ||
 				!validateTimeoutStringInput({target:timeoutsNATInput}) ||
-				!validateTimeoutStringInput({target:timeoutsNTOInput}) ||
-				!validateTimeoutStringInput({target:timeoutsSATInput}) ||
-				!validateTimeoutStringInput({target:timeoutsSTOInput})){
+				!validateTimeoutStringInput({target:timeoutsNTOInput})){
 				return;
 			}
 			
@@ -836,18 +818,15 @@ document.getElementById("export").addEventListener("click", exportSettings);
 			arr[recnum].softhours = softhoursInput.value;
 			arr[recnum].hardhours = hardhoursInput.value;
 			arr[recnum].timeouts = (arr[recnum].timeouts ? arr[recnum].timeouts : {
-											"normal-break": 0,
-											"normal-timeout": 0,
-											"softlock-break": 0,
-											"softlock-timeout": 0,
-											"current-streak": 0,
-											"last-check": new Date()
+											"normalBreak": 0,
+											"normalTimeout": 0,
+											"currentStreak": 0,
+											"lastCheck": new Date()
 										});
 			
-			arr[recnum].timeouts["normal-break"] = timeToInt(timeoutsNATInput.value);
-			arr[recnum].timeouts["normal-timeout"] = timeToInt(timeoutsNTOInput.value);
-			arr[recnum].timeouts["softlock-break"] = timeToInt(timeoutsSATInput.value);
-			arr[recnum].timeouts["softlock-timeout"] = timeToInt(timeoutsSTOInput.value);
+			arr[recnum].timeouts["normalBreak"] = timeToInt(timeoutsNATInput.value);
+			arr[recnum].timeouts["normalTimeout"] = timeToInt(timeoutsNTOInput.value);
+			arr[recnum].destination = document.getElementById("destinationInput").value;
 			
 			document.getElementById("recordEditOverlay").style.display = "none";
 			

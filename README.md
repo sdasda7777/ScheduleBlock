@@ -72,7 +72,7 @@ In general, every record consists of:
 - Moved editing records to popup, since the main table was getting really crowded
 - Added nice icons by Lorc (Cog) and Delapouite (Pencil), see section above for more details.
 - Made ACL check frequency customizable in the options menu
-- Added option for entering timeouts (TODO: implement the actual logic)
+- Added option for entering timeouts, implemented logic
 
 #### 1.1.1
 - Shortened code for generating table by using more loops
