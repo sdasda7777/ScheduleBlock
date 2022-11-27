@@ -67,7 +67,7 @@ In general, every record consists of:
 
 ### Changelog
 
-#### 1.1.2 (upcoming)
+#### 1.1.2
 - Moved settings to popup, since the top bar was getting crowded
 - Moved editing records to popup, since the main table was getting really crowded
 - Added nice icons by Lorc (Cog) and Delapouite (Pencil), see section above for more details.
