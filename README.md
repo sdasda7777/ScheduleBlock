@@ -73,6 +73,7 @@ In general, every record consists of:
 - Added nice icons by Lorc (Cog) and Delapouite (Pencil), see section above for more details.
 - Made ACL check frequency customizable in the options menu
 - Added option for entering timeouts, implemented logic
+- Restructured lot of the project into separate classes
 
 #### 1.1.1
 - Shortened code for generating table by using more loops

@@ -6,7 +6,9 @@
   "permissions": ["storage"],
   "content_scripts" : [{
         "matches" : [ "<all_urls>"],
-        "js" : ["content.js"],
+        "js" : ["Record.js",
+		"RecordStorage.js",
+		"content.js"],
 		"run_at": "document_start"
     }],
   "icons": {
