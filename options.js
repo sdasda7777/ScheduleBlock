@@ -388,10 +388,10 @@ document.getElementById("export").addEventListener("click", rs.exportSettings);
 				return rec;
 			
 			if(confirm(tp.getTranslatedString(305)
-										.format(rec.regex,
-												rec.destination,
-												rec.softhours,
-												rec.hardhours))){
+										.format(rec.getRegex(),
+												rec.getDestination(),
+												rec.getSoftHours(),
+												rec.getHardHours()))){
 				alreadyDeleted = true;
 				return false;
 			}

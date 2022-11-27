@@ -69,6 +69,10 @@ In general, every record consists of:
 
 ### Changelog
 
+#### 1.1.3
+- Fixed a critical bug that extension wouldn't work if specific key wasn't already present due to misplaced early return
+- Fixed a smaller bug that details wouldn't be shown on deletion confirmation prompt
+
 #### 1.1.2
 - Moved settings to popup, since the top bar was getting crowded
 - Moved editing records to popup, since the main table was getting really crowded

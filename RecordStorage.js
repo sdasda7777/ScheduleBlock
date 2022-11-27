@@ -89,13 +89,13 @@ class RecordStorage {
 	async forGeneralProperties(callback){
 		let __callback = (result) => {
 			if(!result || !result.ScheduleBlock_Properties){
-				return;
+				callback({});
+			}else{
+				callback(result.ScheduleBlock_Properties);
 			}
-			callback(result.ScheduleBlock_Properties);
 		}
 		
 		await chrome.storage.sync.get(['ScheduleBlock_Properties'], __callback);
-		return 0;
 	}
 	
 	async setGeneralProperties(newProperties, extraCallback = ()=>{}){
