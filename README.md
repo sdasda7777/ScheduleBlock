@@ -52,11 +52,13 @@ In general, every record consists of:
 - Hard locked hours string (optional)
     - If not present, hard lock (redirect of already open page) is not applied to pages matching pattern.
     - Same format as Soft locked hours string.
+- Normal allowed time is amount of time you are allowed to be on a given page.
+- Normal timeout is amount of time you must wait before being able to acces given page again.
 - Redirect destination
     - URL of the redirect destination. The address should include the protocol (most likely http:// or https://), otherwise undesired behaviour may occur.
 
 ### How to help?
-- You can help by translating this extension into new languages (look at the very beginning of [options.js](options.js))
+- You can help by translating this extension into new languages (look at the very beginning of [TranslationProvider.js](TranslationProvider.js))
 - Or by implementing new features or fixing bugs (fork this repo and after making changes make a pull request)
 - Or by reporting bugs or other issues (just create an issue)
 
