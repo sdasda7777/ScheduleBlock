@@ -20,9 +20,9 @@
 - Another way is to download [release xpi file](https://github.com/sdasda7777/ScheduleBlock/releases)
 - Lastly, you can clone this repo and point Firefox toward the manifest file
 	- You will have to rename the manifestff.json to manifest.json
-	- Beware that installing unsigned extensions on Firefox is kinda painful
 
 #### Other browsers
+- If you use browser that is based on Chrome or Firefox, but doesn't allow you to download from Chrome or Firefox extension stores (Edge does allow it), you should always be able to fall back on release archives
 - If you use browser that isn't based on Chrome or Firefox, your best bet is to download the source code and try installing it (some technical knowledge and manual code adjustments will likely be necessary)
 
 ### Usage
@@ -68,6 +68,17 @@ In general, every record consists of:
 
 
 ### Changelog
+
+#### 1.1.4 (upcoming)
+- Moved default settings values to RecordStorage
+- Completely rewored RecordStorage to hopefully make it thread safe
+- Fixed timeout function not increasing duration on the last cycle
+- TODO: Make timeouts more customizable (probably using similar format to time strings)
+- TODO: Make action when triggered more customizable (redirect or close or execute user code)
+- TODO: Add settings option to wipe all data (or at least to explore it in more detail)
+- TODO: Begin transition to new websites data location (load data from both "websites" and "ScheduleBlock_Websites", but save only to "ScheduleBlock_Websites")
+- TODO: Move source files into src directory
+- TODO: Create a page with basic tests
 
 #### 1.1.3
 - Fixed a critical bug that extension wouldn't work if specific key wasn't already present due to misplaced early return

@@ -1,4 +1,4 @@
-class Record{
+export class Record{
 	#regex;
 	#softHours;
 	#hardHours;
@@ -62,7 +62,9 @@ class Record{
 	
 	static toJSON(recordArray){
 		let ret = [];
+		
 		for(let ii = 0; ii < recordArray.length; ++ii){
+			
 			ret.push({ regex: 			 recordArray[ii].#regex,
 					   softHours:		 recordArray[ii].#softHours,
 					   hardHours:		 recordArray[ii].#hardHours,

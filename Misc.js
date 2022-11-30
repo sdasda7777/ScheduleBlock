@@ -1,22 +1,7 @@
-
-/** 
- * Adds format functionality to strings
- * Taken from https://sebhastian.com/javascript-format-string/
- */
-if (!String.prototype.format) {
-  String.prototype.format = function () {
-	var args = arguments;
-	return this.replace(/{(\d+)}/g, function (match, number) {
-	  return typeof args[number] != "undefined" ? args[number] : match;
-	});
-  };
-}	
-
-
 /**
  * Construct human readable time from int of seconds
  */
-function intToTime(timeAsInt){
+export function intToTime(timeAsInt){
 	let seconds = timeAsInt % 60;
 	let minutes = (timeAsInt - seconds) % 3600 / 60;
 	let hours = (timeAsInt - 60 * minutes - seconds) / 3600;
@@ -26,11 +11,10 @@ function intToTime(timeAsInt){
 			("00" + seconds).slice(-2);
 }
 
-
 /**
  * Convert human readable string to int of seconds
  */
-function timeToInt(timeoutString){
+export function timeToInt(timeoutString){
 	let sum = 0;
 	let arr = timeoutString.split(":").reverse().map((i)=>(parseInt(i)));
 	for(let ii = 0; ii < arr.length; ++ii){
@@ -40,13 +24,11 @@ function timeToInt(timeoutString){
 }
 
 
-let validator_tp;
-
 /**
  * Validates time string
  * @param {string} timeString
  */
-function validateTimeString(timeString){
+export function validateTimeString(timeString){
 	// I tried writing this function as one regular expression,
 	//  but in the end it seemed like a hard to maintain mess to me
 	//  so I wrote it like this, and it seems much more manageable
@@ -78,9 +60,9 @@ function validateTimeString(timeString){
 }
 
 
-function validateTimeStringInput(e){
+export function validateTimeStringInput(e, tp){
 	if(!validateTimeString(e.target.value)){
-		e.target.setCustomValidity(validator_tp.getTranslatedString(301));
+		e.target.setCustomValidity(tp.getTranslatedString(301));
 		e.target.reportValidity();
 		return false;
 	}else{
@@ -90,7 +72,7 @@ function validateTimeStringInput(e){
 };
 
 
-function validateTimeoutString(timeoutString){
+export function validateTimeoutString(timeoutString){
 	let arr = timeoutString.split(":").reverse().map((i)=>(parseInt(i)));
 	if(arr.length > 3 || arr.length == 0) return false;
 	for(let ii = 0; ii < arr.length; ++ii){
@@ -105,9 +87,9 @@ function validateTimeoutString(timeoutString){
 }
 
 
-function validateTimeoutStringInput(e){
+export function validateTimeoutStringInput(e, tp){
 	if(!validateTimeoutString(e.target.value)){
-		e.target.setCustomValidity(validator_tp.getTranslatedString(302));
+		e.target.setCustomValidity(tp.getTranslatedString(302));
 		e.target.reportValidity();
 		return false;
 	}else{

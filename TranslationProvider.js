@@ -1,6 +1,6 @@
 // This is object containing all text of the user interface, to allow for translations.
 // Translating the user interface into new language should not require changing anything else.
-class TranslationProvider {
+export class TranslationProvider {
 	construct(){
 		this.languageIndex = 0;
 	}
