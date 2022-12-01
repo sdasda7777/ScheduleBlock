@@ -71,11 +71,12 @@ In general, every record consists of:
 
 #### 1.1.4 (upcoming)
 - Moved default settings values to RecordStorage
-- Completely rewored RecordStorage to hopefully make it thread safe
+- Completely reworked RecordStorage to hopefully make it thread safe
 - Fixed timeout function not increasing duration on the last cycle
 - TODO: Make timeouts more customizable (probably using similar format to time strings)
 - TODO: Make action when triggered more customizable (redirect or close or execute user code)
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)
+- TODO: Create credits list in the settings, list image authors
 - TODO: Begin transition to new websites data location (load data from both "websites" and "ScheduleBlock_Websites", but save only to "ScheduleBlock_Websites")
 - TODO: Move source files into src directory
 - TODO: Create a page with basic tests

@@ -25,7 +25,8 @@ let sending = chrome.runtime.sendMessage(
 	},
 	(newDestination) => {
 		//logJ(newDestination);
-		window.location = newDestination;
+		if(newDestination !== undefined)
+			window.location = newDestination;
 	});
 
 	// This sets up continuous hard lock checks
@@ -49,7 +50,8 @@ let sending = chrome.runtime.sendMessage(
 		},
 		(newDestination) => {
 			//logJ(newDestination);
-			window.location = newDestination;
+			if(newDestination !== undefined)
+				window.location = newDestination;
 		});
 	}, result.CheckFrequency * 1000);
 });
