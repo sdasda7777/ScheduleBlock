@@ -100,9 +100,21 @@
 			</div>
 			
 			<div id="destinationInputParent">
-				<label for="destinationInput" id="destinationLabel">Destination:</label>
+				<label for="destinationInput" id="destinationLabel">Action:</label>
 				</br>
-				<input type="text" id="destinationInput" value="destination-here">
+				
+				<input type="radio" id="actionInputClose" name="actionInput" value="Close">
+					<label for="html">Close window</label><br>
+				
+				<input type="radio" id="actionInputRedirect" name="actionInput" value="Redirect">
+					<label for="css">Redirect to: </label>
+					<input type="text" id="destinationInput" value="destination-here"><br>
+				
+				<input type="radio" id="actionInputCustom" name="actionInput" value="Custom Code">
+					<label for="javascript">Custom code:</label>
+					<textarea id="actionInputCustomCodeArea">console.log("Hello world");</textarea>
+				
+				
 			</div>
 			
 			<input type="button" id="recordEditDelete" value="Delete">

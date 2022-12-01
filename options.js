@@ -160,7 +160,7 @@ function constructView(){
 				row.appendChild(timeouts);
 				
 				let des = document.createElement("td");
-				des.innerText = arr[ii].getDestination();
+				des.innerText = arr[ii].getAction();
 				row.appendChild(des);
 			}
 			
@@ -201,8 +201,24 @@ function openRecordEditMenu(e){
 				
 		document.getElementById("timeoutsNATInput").value = intToTime(rec.getNormalBreak());
 		document.getElementById("timeoutsNTOInput").value = intToTime(rec.getNormalTimeout());
-		
-		document.getElementById("destinationInput").value = rec.getDestination();		
+				
+		if(rec.getAction() == "window.close();"){
+			document.getElementById("actionInputClose").checked = true;
+			document.getElementById("destinationInput").value = "";
+			document.getElementById("actionInputCustomCodeArea").value = "";
+		}else if(rec.getAction().substring(0, rec.getAction().indexOf("'") + 1)
+						== "window.location = '" &&
+					rec.getAction().substring(rec.getAction().lastIndexOf("'")) == "';"){
+			document.getElementById("actionInputRedirect").checked = true;
+			document.getElementById("destinationInput").value
+					= rec.getAction().substring(rec.getAction().indexOf("'") + 1,
+												rec.getAction().length-2);
+			document.getElementById("actionInputCustomCodeArea").value = "";
+		}else{
+			document.getElementById("actionInputCustom").checked = true;
+			document.getElementById("destinationInput").value = "";
+			document.getElementById("actionInputCustomCodeArea").value = rec.getAction();
+		}
 		
 		document.getElementById("recordEditOverlay").style.display = "flex";
 	}
@@ -486,7 +502,13 @@ export function main(){
 				newValue: Record.toJSON([
 								new Record(document.getElementById("patternInput").value, 
 										softhoursInput.value, hardhoursInput.value,
-										document.getElementById("destinationInput").value,
+										
+				(document.getElementById("actionInputClose").checked ? 
+						"window.close();" :
+					document.getElementById("actionInputRedirect").checked ?
+						"window.location = '" + document.getElementById("destinationInput").value + "';" :
+						document.getElementById("actionInputCustomCodeArea").value)
+										,
 										timeToInt(timeoutsNATInput.value),
 										timeToInt(timeoutsNTOInput.value))])
 			},

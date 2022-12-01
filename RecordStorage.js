@@ -204,7 +204,7 @@ export class RecordStorage {
 		
 		function forbidLogic(id, record){
 			//logJ(record.getRegex());	
-			if(!(record.getRegex()) || !(record.getDestination())){
+			if(!(record.getRegex()) || !(record.getAction())){
 				// If record does not have property 'regex' or 'destination', skip it
 				return false;
 			}
@@ -213,7 +213,7 @@ export class RecordStorage {
 				return false; // If regex does not match, skip record
 
 			if(timeoutLogic(record, id)){
-				return record.getDestination();
+				return record.getAction();
 			}
 
 			if((!softCheck && !record.getHardHours()) || (softCheck && !record.getSoftHours())){
@@ -221,7 +221,7 @@ export class RecordStorage {
 			}
 							
 			let days = (softCheck ? record.getSoftHours() : record.getHardHours()).split("|");
-			let dayno = (d.getDay() % days.length);
+			let dayno = (nowDate.getDay() % days.length);
 			let intervals = days[dayno].split(",");
 			
 			for(let jj = 0; jj < intervals.length; ++jj){
@@ -249,7 +249,7 @@ export class RecordStorage {
 				}
 				
 				// Interval is valid and matches, therefore return destination
-				return record.getDestination();
+				return record.getAction();
 			}
 			
 			return false;
@@ -272,7 +272,6 @@ export class RecordStorage {
 		
 		return destination;
 	}
-		
-		
+	
 
 }

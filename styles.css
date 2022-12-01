@@ -240,6 +240,13 @@ h1, #settingsButton {
 	text-align: right;
 }
 
+#destinationInput{
+	width: 98%;
+}
+#actionInputCustomCodeArea{
+	width: 98%;
+}
+
 #recordEditDelete {
 	margin-top: 5px;
 	width: 100%;

@@ -23,10 +23,21 @@ let sending = chrome.runtime.sendMessage(
 		urlAddress: window.location.href,
 		softCheck: true
 	},
-	(newDestination) => {
+	(action) => {
 		//logJ(newDestination);
-		if(newDestination !== undefined)
-			window.location = newDestination;
+		if(action !== undefined){
+			/*
+			let scriptElement = document.createElement("script");
+			scriptElement.textContent = action;
+			document.head.appendChild(scriptElement);
+			scriptElement.remove()
+			*/
+			const scriptElement = document.createElement('div');
+			scriptElement.setAttribute('onclick', action);
+			document.documentElement.appendChild(scriptElement);
+			scriptElement.click();
+			scriptElement.remove();
+		}
 	});
 
 	// This sets up continuous hard lock checks
@@ -48,10 +59,15 @@ let sending = chrome.runtime.sendMessage(
 			urlAddress: window.location.href,
 			softCheck: false
 		},
-		(newDestination) => {
+		(action) => {
 			//logJ(newDestination);
-			if(newDestination !== undefined)
-				window.location = newDestination;
+			if(action !== undefined){
+				const scriptElement = document.createElement('div');
+				scriptElement.setAttribute('onclick', action);
+				document.documentElement.appendChild(scriptElement);
+				scriptElement.click();
+				scriptElement.remove();
+			}
 		});
 	}, result.CheckFrequency * 1000);
 });
