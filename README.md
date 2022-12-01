@@ -74,9 +74,9 @@ In general, every record consists of:
 - Completely reworked RecordStorage to hopefully make it thread safe
 - Fixed timeout function not increasing duration on the last cycle
 - Action when triggered is now more customizable (you can choose between redirection, closing of the window and execution of custom code)
+- Created credits in the settings, listed image authors and licenses
 - TODO: Make timeouts more customizable (probably using similar format to time strings)
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)
-- TODO: Create credits list in the settings, list image authors
 - TODO: Begin transition to new websites data location (load data from both "websites" and "ScheduleBlock_Websites", but save only to "ScheduleBlock_Websites")
 - TODO: Move source files into src directory
 - TODO: Create a page with basic tests
