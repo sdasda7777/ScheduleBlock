@@ -15,8 +15,6 @@ const ScheduleBlock_messages = [
 	"ScheduleBlock_RecordStorage_testWebsite"			// 10
 ];
 
-
-//let myHeartbeat = setInterval(()=>{console.log(new Date())}, 5000);
 let recordStorage = new RecordStorage();
 let currentLastPromise = Promise.resolve();
 
@@ -93,18 +91,17 @@ async function asyncHandler(message, sender, callback){
   }else if(message_type == 10){
 	//"ScheduleBlock_RecordStorage_testWebsite"
 	await recordStorage.testWebsite(message.urlAddress, message.softCheck).then(
-		(newDestination)=>{
-			if(newDestination !== false){
-				console.log("Redirecting from " + message.urlAddress 
-								+ " to " + newDestination);
-				callback(newDestination);
+		(userScript)=>{
+			if(userScript !== false){
+				console.log("Executing '" + userScript + "' at " + message.urlAddress);
+				callback(userScript);
 			}
 		});
   }
 }
 
 chrome.runtime.onMessage.addListener((message, sender, callback) => {
-  console.log("background worker got message ", message, " from ", sender);
+  //console.log("background worker got message ", message, " from ", sender);
   
   if(ScheduleBlock_messages.indexOf(message.type) != -1){
 	  currentLastPromise = currentLastPromise
@@ -115,4 +112,3 @@ chrome.runtime.onMessage.addListener((message, sender, callback) => {
 });
 
 console.log(Record.toJSON([new Record()]));
-// TODO: listen for something? idk really

@@ -65,11 +65,11 @@ export class TranslationProvider {
 					"Musí být časové intervaly v 24-hodinovém formátu oddělené čárkami. "+
 					"Skupiny intervalů na jednotlivé dny mohou být oddělené symbolem |. "],
 			
-			302: ["Must be a time duration in format ((H+:)?(MM?:)?SS?), " +
-					"preserving unit constraints 00-59 if larger unit is present.",
+			302: ["Must be pair of allowed time and timeout time separated by a '/' sign, such as  '1:00/1:00:00' (one minute allowed then one hour forbidden). " +
+					"Intervals when timeouts apply separated with ';' may follow after '@' sign, days may be separated with '|' sign.",
 					
-					"Musí být časová doba ve formátu ((H+:)?(MM?:)?SS?), " + 
-					"která zachovává omezení jednotek na 00-59 pokud je přítomna větší jednotka."],
+					"Musí být dvojice povolené a zakázané časové doby oddělené pomocí '/', například '1:00/1:00:00' (jedna povolená minuta poté jedna zakázaná hodina). " + 
+					"Po znaku '@' mohou následovat hodinové intervaly, kdy pravidlo platí oddělené ';'. Jednotlivá pravidla mohou být oddělena znakem ',', jednotlivé dny znakem '|'."],
 			305: ["There is no way to retrieve deleted record, other than importing exported settings or creating it again. " +
 					"Are you absolutely sure you want to delete the record \n" + 
 					"('{0}' => '{1}' @ (s'{2}' | h'{3}'))\n" +

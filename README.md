@@ -52,10 +52,10 @@ In general, every record consists of:
 - Hard locked hours string (optional)
     - If not present, hard lock (redirect of already open page) is not applied to pages matching pattern.
     - Same format as Soft locked hours string.
-- Normal allowed time is amount of time you are allowed to be on a given page.
-- Normal timeout is amount of time you must wait before being able to acces given page again.
-- Redirect destination
-    - URL of the redirect destination. The address should include the protocol (most likely http:// or https://), otherwise undesired behaviour may occur.
+- Timeouts is a string in format similar to the two strings above. At its core is pair of time durations separated by a '/', such as '1:00/2:00:00'. First value indicates allowed time, second one indicates forbidden time per allowed time. After this pair, separated by '@', you can specify time intervals (separated with ';') when the rule applies, such as '1:00/2:00:00@12:00-14:00;16:00-18:00'. You can specify multiple such patterns per day separated by ',', and optionally separate different days with '|'.
+- Action
+    - JavaScript code that will be executed URL of the redirect destination. However you don't need to know any JavaScript, as common actions such as closing the tab and redirecting to different website are prepared to be selected in the edit menu.
+	- When redirecting, the destination address should include the protocol (most likely http:// or https://), otherwise undesired behaviour will likely occur.
 
 ### How to help?
 - You can help by translating this extension into new languages (look at the very beginning of [TranslationProvider.js](TranslationProvider.js))
@@ -67,19 +67,25 @@ In general, every record consists of:
 - Pencil icon used for Edit button by [Delapouite](https://delapouite.com/) under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) via [Game-icons.net](https://game-icons.net/1x1/delapouite/pencil.html)
 
 
-### Changelog
+### Changelog/Roadmap
 
-#### 1.1.4 (upcoming)
+#### 1.1.5 (upcoming)
+- TODO: Improve effectivity by parsing records in RecordStorage only on load and on change
+- TODO: Clean up the translations
+- TODO: Begin transition to new websites data location (load data from both "websites" and "ScheduleBlock_Websites", but save only to "ScheduleBlock_Websites")
+- TODO: Export language, check frequency and background color along with records
+- TODO: Add settings option to wipe all data (or at least to explore it in more detail)
+- TODO: Move source files into src directory
+- TODO: Create a page with basic tests
+
+#### 1.1.4 (current)
 - Moved default settings values to RecordStorage
 - Completely reworked RecordStorage to hopefully make it thread safe
 - Fixed timeout function not increasing duration on the last cycle
 - Action when triggered is now more customizable (you can choose between redirection, closing of the window and execution of custom code)
 - Created credits in the settings, listed image authors and licenses
-- TODO: Make timeouts more customizable (probably using similar format to time strings)
-- TODO: Add settings option to wipe all data (or at least to explore it in more detail)
-- TODO: Begin transition to new websites data location (load data from both "websites" and "ScheduleBlock_Websites", but save only to "ScheduleBlock_Websites")
-- TODO: Move source files into src directory
-- TODO: Create a page with basic tests
+- Made timeouts very customizable using similar format to time strings
+- TODO: Rework whole project so that it works on Firefox (.sendMessage())
 
 #### 1.1.3
 - Fixed a critical bug that extension wouldn't work if specific key wasn't already present due to misplaced early return

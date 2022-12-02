@@ -153,10 +153,7 @@ function constructView(){
 				row.appendChild(hardhours);
 				
 				let timeouts = document.createElement("td");
-				timeouts.innerHTML = ""+(arr[ii].getNormalBreak() ?
-											intToTime(arr[ii].getNormalBreak()) : 0) +
-										  "/"+(arr[ii].getNormalTimeout() ?
-											intToTime(arr[ii].getNormalTimeout()) : 0);
+				timeouts.innerHTML = arr[ii].getTimeout();
 				row.appendChild(timeouts);
 				
 				let des = document.createElement("td");
@@ -198,9 +195,7 @@ function openRecordEditMenu(e){
 		document.getElementById("patternInput").value = rec.getRegex();
 		document.getElementById("softLockHoursInput").value = rec.getSoftHours();
 		document.getElementById("hardLockHoursInput").value = rec.getHardHours();
-				
-		document.getElementById("timeoutsNATInput").value = intToTime(rec.getNormalBreak());
-		document.getElementById("timeoutsNTOInput").value = intToTime(rec.getNormalTimeout());
+		document.getElementById("timeoutStringInput").value = rec.getTimeout();
 				
 		if(rec.getAction() == "window.close();"){
 			document.getElementById("actionInputClose").checked = true;
@@ -474,24 +469,20 @@ export function main(){
 		
 		// On change validators
 		document.getElementById("softLockHoursInput")
-			.addEventListener("change", validateTimeStringInput);
+			.addEventListener("change", (e)=> validateTimeStringInput(e, tp));
 		document.getElementById("hardLockHoursInput")
-			.addEventListener("change", validateTimeStringInput);
-		document.getElementById("timeoutsNATInput")
-			.addEventListener("change", validateTimeoutStringInput);
-		document.getElementById("timeoutsNTOInput")
-			.addEventListener("change", validateTimeoutStringInput);
+			.addEventListener("change", (e)=> validateTimeStringInput(e, tp));
+		document.getElementById("timeoutStringInput")
+			.addEventListener("change", (e)=> validateTimeoutStringInput(e, tp));
 		
 		document.getElementById("recordEditOK").addEventListener("click", (e) => {
 			let softhoursInput = document.getElementById("softLockHoursInput");
 			let hardhoursInput = document.getElementById("hardLockHoursInput");
-			let timeoutsNATInput = document.getElementById("timeoutsNATInput");
-			let timeoutsNTOInput = document.getElementById("timeoutsNTOInput");
+			let timeoutStringInput = document.getElementById("timeoutStringInput");
 			
-			if(!validateTimeStringInput({target:softhoursInput}) || 
-				!validateTimeStringInput({target:hardhoursInput}) ||
-				!validateTimeoutStringInput({target:timeoutsNATInput}) ||
-				!validateTimeoutStringInput({target:timeoutsNTOInput})){
+			if(!validateTimeStringInput({target:softhoursInput}, tp) || 
+				!validateTimeStringInput({target:hardhoursInput}, tp) ||
+				!validateTimeoutStringInput({target:timeoutStringInput}, tp)){
 				return;
 			}
 			
@@ -502,15 +493,12 @@ export function main(){
 				newValue: Record.toJSON([
 								new Record(document.getElementById("patternInput").value, 
 										softhoursInput.value, hardhoursInput.value,
-										
+										timeoutStringInput.value,
 				(document.getElementById("actionInputClose").checked ? 
 						"window.close();" :
 					document.getElementById("actionInputRedirect").checked ?
 						"window.location = '" + document.getElementById("destinationInput").value + "';" :
-						document.getElementById("actionInputCustomCodeArea").value)
-										,
-										timeToInt(timeoutsNATInput.value),
-										timeToInt(timeoutsNTOInput.value))])
+						document.getElementById("actionInputCustomCodeArea").value))])
 			},
 			()=>{
 				document.getElementById("recordEditOverlay").style.display = "none";

@@ -1,6 +1,6 @@
 function logX(){console.log.apply(this, Array.prototype.slice.call(arguments, 0));};
 
-import { validateTimeString } from './Misc.js';
+import { timeToInt, validateTimeString } from './Misc.js';
 import { Record } from './Record.js';
 
 export class RecordStorage {
@@ -163,42 +163,108 @@ export class RecordStorage {
 		let updatedElements = {};
 		let interval = this.#properties.CheckFrequency * 1000;
 		let nowDate = new Date();
-			
-		function timeoutLogic(record, ii){
+		
+		
+		function timeoutIncrementCheck(id, record, normalBreak, normalTimeout){
 			
 			let sinceLastCheck = Math.min(nowDate.getTime()
 												- record.getLastCheck().getTime(),
 										  interval);
 			
-			if(record.getCurrentDuration() + sinceLastCheck < record.getNormalBreak() * 1000 &&
+			if(record.getCurrentDuration() + sinceLastCheck < normalBreak * 1000 &&
 				nowDate.getTime() > record.getLastCheck().getTime() &&
 				nowDate.getTime() < record.getLastCheck().getTime()
-										+ record.getNormalTimeout() * 1000){
+										+ normalTimeout * 1000){
 				// If timeout didn't pass since last visit
 				//	and currentStreak is less than allowed time,
 				// 	increment current streak
-				updatedElements[ii] = record.withCurrentDuration(
+				updatedElements[id] = record.withCurrentDuration(
 												record.getCurrentDuration()	+ sinceLastCheck )
 											.withLastCheck(nowDate);
 											
 			}else if(nowDate.getTime()
-						>= record.getLastCheck().getTime() + record.getNormalTimeout() * 1000){
+						>= record.getLastCheck().getTime() + normalTimeout * 1000){
 				// If timeout did pass since last visit
 				//	reset current streak
-				updatedElements[ii] = record.withCurrentDuration(0).withLastCheck(nowDate);
+				updatedElements[id] = record.withCurrentDuration(0).withLastCheck(nowDate);
 				
-			}else if(record.getCurrentDuration() + sinceLastCheck
-						>= record.getNormalBreak() * 1000){
-				if(record.getCurrentDuration() < record.getNormalBreak() * 1000){
-					updatedElements[ii] = record.withCurrentDuration(
+			}else if(record.getCurrentDuration() + sinceLastCheck >= normalBreak * 1000){
+				if(record.getCurrentDuration() < normalBreak * 1000){
+					updatedElements[id] = record.withCurrentDuration(
 												record.getCurrentDuration()	+ sinceLastCheck )
 											.withLastCheck(nowDate);
 				}
 				
 				// Otherwise if current streak is more or equal to allowed time, deny entry
-				return true;
+				return record.getAction();
 			}
+			
+			return false;
+		}
+		
+		
+		function timeoutLogic(id, record){
+			//logJ(record.getRegex());	
+			if(!(record.getRegex()) || !(record.getAction()) || !(record.getTimeout())){
+				// If record does not have property 'regex' or 'destination', skip it
+				return false;
+			}
+
+			if(!(urlAddress.match(new RegExp(record.getRegex()))))
+				return false; // If regex does not match, skip record
 							
+			let days = record.getTimeout().split("|");
+			let dayno = (nowDate.getDay() % days.length);
+			let groups = days[dayno].split(",");
+			
+			for(let ii = 0; ii < groups.length; ++ii){
+				let groupParts = groups[ii].split("@");
+				if(groupParts.length > 2) continue;
+				
+				let durations = groupParts[0].split("/");
+				if(durations.length != 2) continue;
+				
+				let normalBreak = timeToInt(durations[0]);
+				let normalTimeout = timeToInt(durations[1]);
+				
+				if(groupParts.length == 1){
+					let res = timeoutIncrementCheck(id, record, normalBreak, normalTimeout);
+					if(res !== false) return res;
+					else continue;
+				}
+				
+				let intervals = groupParts[1].split(";");
+				
+				for(let jj = 0; jj < intervals.length; ++jj){
+					console.log(intervals[jj]);
+					
+					let times = intervals[jj].split("-");
+					
+					if(times.length != 2) continue;
+					
+					let time0 = times[0].split(":");
+					let time1 = times[1].split(":");
+					
+					let begind = new Date();
+					let endd = new Date();
+					
+					begind.setHours(time0[0]);
+					begind.setMinutes(time0[1]);
+					endd.setHours(time1[0]);
+					endd.setMinutes(time1[1]);
+					
+					if(begind > nowDate || nowDate >= endd){
+						// Interval is valid but does not match, continue to the next one
+						continue;
+					}
+					
+					// Interval is valid and matches, therefore check time
+					let res = timeoutIncrementCheck(id, record, normalBreak, normalTimeout);
+					if(res !== false) return res;
+					else break;
+				}
+			}
+			
 			return false;
 		}
 		
@@ -211,10 +277,6 @@ export class RecordStorage {
 
 			if(!(urlAddress.match(new RegExp(record.getRegex()))))
 				return false; // If regex does not match, skip record
-
-			if(timeoutLogic(record, id)){
-				return record.getAction();
-			}
 
 			if((!softCheck && !record.getHardHours()) || (softCheck && !record.getSoftHours())){
 				return false; // Record does not have property to check time
@@ -260,11 +322,14 @@ export class RecordStorage {
 		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
 		
 		let destination = false;
-		for(let ii = 0; ii < arr.length && destination == false; ++ii){
-			destination = forbidLogic(ii, arr[ii]);
-		}
+		for(let ii = 0;
+			ii < arr.length && 
+			(destination = timeoutLogic(ii, arr[ii])) === false &&
+			(destination = forbidLogic(ii, arr[ii])) === false;
+			++ii);
 		
 		for(let key in updatedElements){
+			//TODO: refactor this bit away when improving effectivity
 			arr[key] = updatedElements[key];
 		}
 		
@@ -272,6 +337,4 @@ export class RecordStorage {
 		
 		return destination;
 	}
-	
-
 }

@@ -212,13 +212,10 @@ h1, #settingsButton {
 	font-size: 20px;
 }
 
-#timeoutsInputParent {
-	padding-bottom: 45px;
-}
-
 #patternInput,
 #softLockHoursInput,
 #hardLockHoursInput,
+#timeoutStringInput,
 #destinationInput {
 	width: 98%;
 	multiline: true;

@@ -23,6 +23,8 @@ export function timeToInt(timeoutString){
 	return sum;
 }
 
+// This regex is slightly edited version of https://stackoverflow.com/a/7536768 by Peter O.
+const timeRegex = new RegExp('^\\s*(?:[0-1]?[0-9]|2[0-3])\\s*:\\s*[0-5][0-9]\\s*$');
 
 /**
  * Validates time string
@@ -33,10 +35,7 @@ export function validateTimeString(timeString){
 	//  but in the end it seemed like a hard to maintain mess to me
 	//  so I wrote it like this, and it seems much more manageable
 	
-	if(timeString == "") return true;
-	
-	// This regex is slightly edited version of https://stackoverflow.com/a/7536768 by Peter O.
-	const timeRegex = new RegExp('^\\s*(?:[0-1]?[0-9]|2[0-3])\\s*:\\s*[0-5][0-9]\\s*$');
+	if(timeString.trim() === "") return true;
 	
 	let days = timeString.split("|");
 	
@@ -71,9 +70,9 @@ export function validateTimeStringInput(e, tp){
 	}
 };
 
-
-export function validateTimeoutString(timeoutString){
-	let arr = timeoutString.split(":").reverse().map((i)=>(parseInt(i)));
+// validates time duration, such as 60, 1:00, 99:59:59, 100:00:00, and so on
+export function validateTimeDuration(timeDuration){
+	let arr = timeDuration.split(":").reverse().map((i)=>(parseInt(i)));
 	if(arr.length > 3 || arr.length == 0) return false;
 	for(let ii = 0; ii < arr.length; ++ii){
 		if(!/^\d+$/.test(arr[ii]))
@@ -82,6 +81,45 @@ export function validateTimeoutString(timeoutString){
 	if(parseInt(arr[0]) < 0 || (parseInt(arr[0]) > 59 && arr.length > 1)) return false;
 	if(parseInt(arr[1]) < 0 || (parseInt(arr[1]) > 59 && arr.length > 2)) return false;
 	if(parseInt(arr[2]) < 0) return false;
+	
+	return true;
+}
+
+export function validateTimeoutString(timeoutString){
+	if(timeoutString.trim() === "") return true;
+	
+	let days = timeoutString.split("|");
+	
+	for(let ii = 0; ii < days.length; ++ii){
+		let groups = days[ii].split(",");
+
+		for(let jj = 0; jj < groups.length; ++jj){
+			let groupParts = groups[jj].split("@");
+			
+			if(groupParts.length > 2) return false;
+			if(groupParts.length == 2){
+				let timeIntervals = groupParts[1].split(";");
+				
+				for(let kk = 0; kk < timeIntervals; ++kk){
+					let times = timeIntervals[kk].split("-");
+					
+					if(times.length != 2) return false;
+					
+					for(let ll = 0; ll < times.length; ++ll){
+						let res = timeRegex.exec(times[ll].trim());
+						
+						if(!res || res.length != 1) return false;
+					}
+				}
+			}
+			
+			let durations = groupParts[0].split("/");
+			
+			if(durations.length != 2) return false;
+			if(!validateTimeDuration(durations[0]) || !validateTimeDuration(durations[1]))
+				return false;
+		}		
+	}
 	
 	return true;
 }

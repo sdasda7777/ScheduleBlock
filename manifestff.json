@@ -5,16 +5,13 @@
   "manifest_version": 2,
   "permissions": ["storage"],
 
-  "web_accessible_resources": [{
-	"matches": ["<all_urls>"],
-	"resources": [
-		"Misc.js",
-		"Record.js",
-		"RecordStorage.js",
-		"options.js",
-		"content.js"
-	]
-  }],
+  "web_accessible_resources": [
+	"Misc.js",
+	"Record.js",
+	"RecordStorage.js",
+	"options.js",
+	"content.js"
+  ],
   "background": {
 	"scripts": ["background.js"],
 	"persistent": false
