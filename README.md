@@ -74,7 +74,7 @@ In general, every record consists of:
 #### 1.1.5 (upcoming)
 - TODO: Improve effectivity by parsing records in RecordStorage only on load and on change
 - TODO: Clean up the translations
-- TODO: When import fails, return reason why
+- TODO: When import of settings fails, return reason why
 - TODO: Begin transition to new websites data location (load data from both "websites" and "ScheduleBlock_Websites", but save only to "ScheduleBlock_Websites")
 - TODO: Export language, check frequency and background color along with records
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)
@@ -88,7 +88,7 @@ In general, every record consists of:
 - Action when triggered is now more customizable (you can choose between redirection, closing of the window and execution of custom code)
 - Created credits in the settings, listed image authors and licenses
 - Made timeouts very customizable using similar format to time strings
-- TODO: Rework whole project so that it works on Firefox (.sendMessage())
+- Reworked most of the project so that it works on Firefox (.sendMessage(), browser vs chrome, etc.)
 
 #### 1.1.3
 - Fixed a critical bug that extension wouldn't work if specific key wasn't already present due to misplaced early return

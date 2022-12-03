@@ -83,7 +83,6 @@ export class RecordStorage {
 	async getGeneralProperties(){
 		if(this.#properties === undefined){
 			const res = await storageProvider().storage.sync.get(['ScheduleBlock_Properties']);
-			console.log(res);
 			this.#properties = (res && res.ScheduleBlock_Properties
 									? res.ScheduleBlock_Properties 
 						: {Language:"english", CheckFrequency:15, Background:"#808080"});
@@ -165,9 +164,8 @@ export class RecordStorage {
 	
 	async testWebsite(urlAddress, softCheck){
 		let updatedElements = {};
-		let interval = this.getGeneralProperties().CheckFrequency * 1000;
+		let interval = (await this.getGeneralProperties()).CheckFrequency * 1000;
 		let nowDate = new Date();
-		
 		
 		function timeoutIncrementCheck(id, record, normalBreak, normalTimeout){
 			
