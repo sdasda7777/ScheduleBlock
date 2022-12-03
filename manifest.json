@@ -3,7 +3,7 @@
   "description": "Block websites on a schedule",
   "version": "1.1.4",
   "manifest_version": 3,
-  "permissions": ["storage", "scripting"],
+  "permissions": ["storage"],
 
   "web_accessible_resources": [{
 	"matches": ["<all_urls>"],
