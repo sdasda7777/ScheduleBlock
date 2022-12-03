@@ -10,66 +10,51 @@ function logJ(){
 };
 
 
-let sending = chrome.runtime.sendMessage(
-{
-	type: "ScheduleBlock_RecordStorage_getGeneralProperties"
-},
-
-(result) => {
-	// Initial soft lock check
-	let sending = chrome.runtime.sendMessage(
-	{
-		type: "ScheduleBlock_RecordStorage_testWebsite",
-		urlAddress: window.location.href,
-		softCheck: true
-	},
-	(action) => {
-		//logJ(newDestination);
-		if(action !== undefined){
-			/*
-			let scriptElement = document.createElement("script");
-			scriptElement.textContent = action;
-			document.head.appendChild(scriptElement);
-			scriptElement.remove()
-			*/
+chrome.runtime.onMessage.addListener((message)=>{
+	if(message.type === "ScheduleBlock_Content_ExecuteAction"){
+		//logJ(message.action);
+		if(message.action !== undefined){
 			const scriptElement = document.createElement('div');
-			scriptElement.setAttribute('onclick', action);
+			scriptElement.setAttribute('onclick', message.action);
 			document.documentElement.appendChild(scriptElement);
 			scriptElement.click();
 			scriptElement.remove();
-		}
-	});
-
-	// This sets up continuous hard lock checks
-	let checker = setInterval(() => {
-		// This condition prevents "Uncaught error: Extension context invalidated"
-		//  (would otherwise happen when extension is unloaded during operation)
-		if(chrome === undefined || 
-			chrome.runtime === undefined ||
-			chrome.runtime.id === undefined){
+		}		
+	}else if(message.type === "ScheduleBlock_Content_Initalize"){
+		// This sets up continuous hard lock checks
+		let checker = setInterval(() => {
+			// This condition prevents "Uncaught error: Extension context invalidated"
+			//  (would otherwise happen when extension is unloaded during operation)
+			if(chrome === undefined || 
+				chrome.runtime === undefined ||
+				chrome.runtime.id === undefined){
 				
-			clearInterval(checker);
-			return;
-		}
-				
-		// Recurring hard lock check
-		let sending = chrome.runtime.sendMessage(
-		{
-			type: "ScheduleBlock_RecordStorage_testWebsite",
-			urlAddress: window.location.href,
-			softCheck: false
-		},
-		(action) => {
-			//logJ(newDestination);
-			if(action !== undefined){
-				const scriptElement = document.createElement('div');
-				scriptElement.setAttribute('onclick', action);
-				document.documentElement.appendChild(scriptElement);
-				scriptElement.click();
-				scriptElement.remove();
+				clearInterval(checker);
+				return;
 			}
-		});
-	}, result.CheckFrequency * 1000);
+					
+			// Recurring hard lock check
+			let sending = chrome.runtime.sendMessage(
+			{
+				type: "ScheduleBlock_RecordStorage_TestWebsite",
+				urlAddress: window.location.href,
+				softCheck: false
+			});
+		}, message.properties.CheckFrequency * 1000);
+	}
+});
+
+
+let sending1 = chrome.runtime.sendMessage(
+{
+	type: "ScheduleBlock_RecordStorage_TestWebsite",
+	urlAddress: window.location.href,
+	softCheck: true
+});
+
+let sending2 = chrome.runtime.sendMessage(
+{
+	type: "ScheduleBlock_InitializeContentScript"
 });
 
 

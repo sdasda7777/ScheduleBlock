@@ -13,7 +13,7 @@
 	"content.js"
   ],
   "background": {
-	"scripts": ["background.js"],
+	"scripts": ["background_loader.js"],
 	"persistent": false
   },
   "content_scripts" : [{

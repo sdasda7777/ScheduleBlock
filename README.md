@@ -52,7 +52,9 @@ In general, every record consists of:
 - Hard locked hours string (optional)
     - If not present, hard lock (redirect of already open page) is not applied to pages matching pattern.
     - Same format as Soft locked hours string.
-- Timeouts is a string in format similar to the two strings above. At its core is pair of time durations separated by a '/', such as '1:00/2:00:00'. First value indicates allowed time, second one indicates forbidden time per allowed time. After this pair, separated by '@', you can specify time intervals (separated with ';') when the rule applies, such as '1:00/2:00:00@12:00-14:00;16:00-18:00'. You can specify multiple such patterns per day separated by ',', and optionally separate different days with '|'.
+- Timeouts string (optional)
+	- If not present, timeout logic is not applied to to pages matching the pattern.
+	- The format is similar to the two strings above. At its core is pair of time durations separated by a '/', such as '1:00/2:00:00'. First value indicates allowed time, second one indicates forbidden time per allowed time. After this pair, separated by '@', you can specify time intervals (separated with ';') when the rule applies, such as '1:00/2:00:00@12:00-14:00;16:00-18:00'. You can specify multiple such patterns per day separated by ',', and optionally separate different days with '|'.
 - Action
     - JavaScript code that will be executed URL of the redirect destination. However you don't need to know any JavaScript, as common actions such as closing the tab and redirecting to different website are prepared to be selected in the edit menu.
 	- When redirecting, the destination address should include the protocol (most likely http:// or https://), otherwise undesired behaviour will likely occur.
@@ -72,6 +74,7 @@ In general, every record consists of:
 #### 1.1.5 (upcoming)
 - TODO: Improve effectivity by parsing records in RecordStorage only on load and on change
 - TODO: Clean up the translations
+- TODO: When import fails, return reason why
 - TODO: Begin transition to new websites data location (load data from both "websites" and "ScheduleBlock_Websites", but save only to "ScheduleBlock_Websites")
 - TODO: Export language, check frequency and background color along with records
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)

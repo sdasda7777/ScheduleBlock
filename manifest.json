@@ -16,7 +16,7 @@
 	]
   }],
   "background": {
-	"service_worker": "background.js",
+	"service_worker": "background_loader_mod.js",
 	"type": "module"
   },
   "content_scripts" : [{

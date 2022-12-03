@@ -85,145 +85,144 @@ function addSite(){
 	if(document.getElementById("newsite").value !== ""){
 		let sending = chrome.runtime.sendMessage(
 		{
-			type: "ScheduleBlock_RecordStorage_createNewRecord",
+			type: "ScheduleBlock_RecordStorage_CreateNewRecord",
 			regex: document.getElementById("newsite").value
-		},
-		()=>{
-			document.getElementById("newsite").value= "";
-			constructView();
 		});
+		document.getElementById("newsite").value= "";
 	}
 }
+
+
+/**/
+function contructViewCallback(data){
+	let arr = Record.fromJSON(data);
+	
+	let t = document.createElement("table");
+
+	// Generate table header row
+	let headerRow = document.createElement("tr");
+	let headerInnerTexts = [
+			tp.getTranslatedString(210),
+			tp.getTranslatedString(211),
+			tp.getTranslatedString(212),
+			tp.getTranslatedString(213),
+			tp.getTranslatedString(214),
+			tp.getTranslatedString(215),
+			tp.getTranslatedString(216)
+	];
+		
+	for(let ii = 0; ii < headerInnerTexts.length; ++ii){
+		let tempHeader = document.createElement("th");
+		tempHeader.innerText = headerInnerTexts[ii];
+		headerRow.appendChild(tempHeader);
+	}
+	t.appendChild(headerRow);
+	
+	for(let ii = 0; ii < arr.length; ++ii){
+		//logX(rec);
+		let row = document.createElement("tr");
+		
+		// Create order number control
+		let recordNumberCell = document.createElement("td");
+		let recordNumberBox = document.createElement("input");
+		recordNumberBox.id = "mvt"+ii;
+		recordNumberBox.type = "number";
+		recordNumberBox.value = (ii+1);
+		recordNumberBox.min = "1";
+		recordNumberBox.addEventListener("keyup", recordNumberBoxKeyEventHandler);
+		recordNumberCell.appendChild(recordNumberBox);
+		row.appendChild(recordNumberCell);
+		
+		// Create cells displaying information about records
+		{
+			let pattern = document.createElement("td");
+			pattern.innerText = arr[ii].getRegex();
+			row.appendChild(pattern);
+			
+			let softhours = document.createElement("td");
+			softhours.innerHTML = arr[ii].getSoftHours().replace(/\|/g, "|<br>");
+			row.appendChild(softhours);
+			
+			let hardhours = document.createElement("td");
+			hardhours.innerHTML = arr[ii].getHardHours().replace(/\|/g, "|<br>");
+			row.appendChild(hardhours);
+			
+			let timeouts = document.createElement("td");
+			timeouts.innerHTML = arr[ii].getTimeout();
+			row.appendChild(timeouts);
+			
+			let des = document.createElement("td");
+			des.innerText = arr[ii].getAction();
+			row.appendChild(des);
+		}
+		
+		// Create edit button
+		let editCell = document.createElement("td");
+		editCell.className = "editCell";
+		let editButton = document.createElement("input");
+		editButton.id = "edit" + ii;
+		editButton.type = "button";
+		editButton.className = "editButton"
+		editButton.value = "";
+		editButton.addEventListener("click", openRecordEditMenu);
+		editCell.appendChild(editButton);
+		row.appendChild(editCell);
+		
+		t.appendChild(row);
+	}
+	
+	document.getElementById("display").innerHTML = "";
+	document.getElementById("display").appendChild(t);
+};
 
 /**
  * Constructs table from storage content.
  */
 function constructView(){	
-	let buildCallback = (arr) => {
-		arr = Record.fromJSON(arr);
-		
-		let t = document.createElement("table");
-	
-		// Generate table header row
-		let headerRow = document.createElement("tr");
-		let headerInnerTexts = [
-				tp.getTranslatedString(210),
-				tp.getTranslatedString(211),
-				tp.getTranslatedString(212),
-				tp.getTranslatedString(213),
-				tp.getTranslatedString(214),
-				tp.getTranslatedString(215),
-				tp.getTranslatedString(216)
-		];
-			
-		for(let ii = 0; ii < headerInnerTexts.length; ++ii){
-			let tempHeader = document.createElement("th");
-			tempHeader.innerText = headerInnerTexts[ii];
-			headerRow.appendChild(tempHeader);
-		}
-		t.appendChild(headerRow);
-		
-		for(let ii = 0; ii < arr.length; ++ii){
-			//logX(rec);
-			let row = document.createElement("tr");
-			
-			// Create order number control
-			let recordNumberCell = document.createElement("td");
-			let recordNumberBox = document.createElement("input");
-			recordNumberBox.id = "mvt"+ii;
-			recordNumberBox.type = "number";
-			recordNumberBox.value = (ii+1);
-			recordNumberBox.min = "1";
-			recordNumberBox.addEventListener("keyup", recordNumberBoxKeyEventHandler);
-			recordNumberCell.appendChild(recordNumberBox);
-			row.appendChild(recordNumberCell);
-			
-			// Create cells displaying information about records
-			{
-				let pattern = document.createElement("td");
-				pattern.innerText = arr[ii].getRegex();
-				row.appendChild(pattern);
-				
-				let softhours = document.createElement("td");
-				softhours.innerHTML = arr[ii].getSoftHours().replace(/\|/g, "|<br>");
-				row.appendChild(softhours);
-				
-				let hardhours = document.createElement("td");
-				hardhours.innerHTML = arr[ii].getHardHours().replace(/\|/g, "|<br>");
-				row.appendChild(hardhours);
-				
-				let timeouts = document.createElement("td");
-				timeouts.innerHTML = arr[ii].getTimeout();
-				row.appendChild(timeouts);
-				
-				let des = document.createElement("td");
-				des.innerText = arr[ii].getAction();
-				row.appendChild(des);
-			}
-			
-			// Create edit button
-			let editCell = document.createElement("td");
-			editCell.className = "editCell";
-			let editButton = document.createElement("input");
-			editButton.id = "edit" + ii;
-			editButton.type = "button";
-			editButton.className = "editButton"
-			editButton.value = "";
-			editButton.addEventListener("click", openRecordEditMenu);
-			editCell.appendChild(editButton);
-			row.appendChild(editCell);
-			
-			t.appendChild(row);
-		}
-		
-		document.getElementById("display").innerHTML = "";
-		document.getElementById("display").appendChild(t);
-	};
 	
 	let sending = chrome.runtime.sendMessage(
 		{
-			type: "ScheduleBlock_RecordStorage_getAll"
-		},
-		buildCallback);
+			type: "ScheduleBlock_RefreshTable"
+		});
+}
+
+function openRecordEditMenuCallback(data){
+	let rec = Record.fromJSON(data)[0];
+	
+	document.getElementById("patternInput").value = rec.getRegex();
+	document.getElementById("softLockHoursInput").value = rec.getSoftHours();
+	document.getElementById("hardLockHoursInput").value = rec.getHardHours();
+	document.getElementById("timeoutStringInput").value = rec.getTimeout();
+			
+	if(rec.getAction() == "window.close();"){
+		document.getElementById("actionInputClose").checked = true;
+		document.getElementById("destinationInput").value = "";
+		document.getElementById("actionInputCustomCodeArea").value = "";
+	}else if(rec.getAction().substring(0, rec.getAction().indexOf("'") + 1)
+					== "window.location = '" &&
+				rec.getAction().substring(rec.getAction().lastIndexOf("'")) == "';"){
+		document.getElementById("actionInputRedirect").checked = true;
+		document.getElementById("destinationInput").value
+				= rec.getAction().substring(rec.getAction().indexOf("'") + 1,
+											rec.getAction().length-2);
+		document.getElementById("actionInputCustomCodeArea").value = "";
+	}else{
+		document.getElementById("actionInputCustom").checked = true;
+		document.getElementById("destinationInput").value = "";
+		document.getElementById("actionInputCustomCodeArea").value = rec.getAction();
+	}
+	
+	document.getElementById("recordEditOverlay").style.display = "flex";
 }
 
 function openRecordEditMenu(e){
 	recnum = parseInt(this.id.substr(4));
-	let callback = (rec) => {
-		rec = Record.fromJSON(rec)[0];
 		
-		document.getElementById("patternInput").value = rec.getRegex();
-		document.getElementById("softLockHoursInput").value = rec.getSoftHours();
-		document.getElementById("hardLockHoursInput").value = rec.getHardHours();
-		document.getElementById("timeoutStringInput").value = rec.getTimeout();
-				
-		if(rec.getAction() == "window.close();"){
-			document.getElementById("actionInputClose").checked = true;
-			document.getElementById("destinationInput").value = "";
-			document.getElementById("actionInputCustomCodeArea").value = "";
-		}else if(rec.getAction().substring(0, rec.getAction().indexOf("'") + 1)
-						== "window.location = '" &&
-					rec.getAction().substring(rec.getAction().lastIndexOf("'")) == "';"){
-			document.getElementById("actionInputRedirect").checked = true;
-			document.getElementById("destinationInput").value
-					= rec.getAction().substring(rec.getAction().indexOf("'") + 1,
-												rec.getAction().length-2);
-			document.getElementById("actionInputCustomCodeArea").value = "";
-		}else{
-			document.getElementById("actionInputCustom").checked = true;
-			document.getElementById("destinationInput").value = "";
-			document.getElementById("actionInputCustomCodeArea").value = rec.getAction();
-		}
-		
-		document.getElementById("recordEditOverlay").style.display = "flex";
-	}
-	
 	let sending = chrome.runtime.sendMessage(
-		{
-			type: "ScheduleBlock_RecordStorage_getOne",
-			id: recnum
-		},
-		callback);
+	{
+		type: "ScheduleBlock_OpenEditMenu",
+		id: recnum
+	});
 }
 
 /**
@@ -237,12 +236,9 @@ function recordNumberBoxKeyEventHandler(e){
 	
 	let sending = chrome.runtime.sendMessage(
 		{
-			type: "ScheduleBlock_RecordStorage_moveRecord",
+			type: "ScheduleBlock_RecordStorage_MoveRecord",
 			id: parseInt(this.id.substr(3)),
 			newId: this.valueAsNumber-1
-		},
-		()=>{
-			constructView();
 		});
 }
 
@@ -267,6 +263,41 @@ function testRegex(){
 
 export function main(){
 
+	chrome.runtime.onMessage.addListener((message)=>{
+		console.log(message);
+		
+		if(message.type === "ScheduleBlock_Options_SetTableData"){
+			contructViewCallback(message.data);
+		}else if(message.type === "ScheduleBlock_Options_OpenEditMenu"){
+			openRecordEditMenuCallback(message.data);
+		}else if(message.type === "ScheduleBlock_Options_Initialize"){
+			//console.log(result);
+			
+			let tmpLangIndex = tp.getStringVersions(0).indexOf(message.properties.Language);
+			if(tmpLangIndex != -1){
+				document.querySelector("#langPicker").selectedIndex = tmpLangIndex;
+				tp.setLanguageIndex(tmpLangIndex);
+			}
+			
+			document.querySelector("#freqPicker").value = message.properties.CheckFrequency;
+			
+			document.querySelector("#rebuildPersistantStylesheet")
+					.innerText = "* { background-color: " + message.properties.Background + "; }";
+			
+			document.querySelector("#colorPicker").value = message.properties.Background;
+			
+			translateGUI();
+		}else if(message.type === "ScheduleBlock_Options_Export"){
+			let a = document.createElement("a");
+			let file = new Blob([message.settings], {type: 'application/json'});
+			a.href = URL.createObjectURL(file);
+			a.download = "ScheduleBlockBackup_" + new Date().toISOString().slice(0, 10);
+			a.click();
+		}
+	});
+
+
+
 	// This code sets up event handlers for static elements and then constructs the current table
 	document.getElementById("newsite").addEventListener("keyup", e => {
 		if (e.keyCode === 13) {
@@ -282,31 +313,20 @@ export function main(){
 	document.getElementById("import2").addEventListener("change", () => {
 		if(document.getElementById("import2").files){
 			document.getElementById("import2").files[0].text()
-				.then((text) => {
+				.then((text) => {					
 					let sending = chrome.runtime.sendMessage(
 					{
-						type: "ScheduleBlock_RecordStorage_importSettings",
+						type: "ScheduleBlock_RecordStorage_ImportSettings",
 						newSettings: text
-					},
-					() => {
-						constructView();
-						// This line clears FileList, so that this event will get called properly next time as well
-						document.getElementById("import2").value = "";
 					});
 			});
+			document.getElementById("import2").value = "";
 		}
 	});
 	document.getElementById("export").addEventListener("click", ()=>{
 		let sending = chrome.runtime.sendMessage(
 		{
-			type: "ScheduleBlock_RecordStorage_exportSettings",
-		},
-		(result) => {
-			let a = document.createElement("a");
-			let file = new Blob([result.websites], {type: 'application/json'});
-			a.href = URL.createObjectURL(file);
-			a.download = "ScheduleBlockBackup_" + new Date().toISOString().slice(0, 10);
-			a.click();
+			type: "ScheduleBlock_RecordStorage_ExportSettings",
 		});
 	});
 
@@ -336,30 +356,10 @@ export function main(){
 
 	// Load preferred language, check frequency, color, set up listeners
 	{
-		let callback = (result) => {
-			console.log(result);
-			
-			let tmpLangIndex = tp.getStringVersions(0).indexOf(result.Language);
-			if(tmpLangIndex != -1){
-				document.querySelector("#langPicker").selectedIndex = tmpLangIndex;
-				tp.setLanguageIndex(tmpLangIndex);
-			}
-			
-			document.querySelector("#freqPicker").value = result.CheckFrequency;
-			
-			document.querySelector("#rebuildPersistantStylesheet")
-					.innerText = "* { background-color: " + result.Background + "; }";
-			
-			document.querySelector("#colorPicker").value = result.Background;
-			
-			translateGUI();
-		};
-		
 		let sending = chrome.runtime.sendMessage(
-		{
-			type: "ScheduleBlock_RecordStorage_getGeneralProperties"
-		},
-		callback);
+			{
+				type: "ScheduleBlock_InitializeOptions"
+			});
 		
 		
 		// Set up color change listener
@@ -426,14 +426,12 @@ export function main(){
 			
 			let sending = chrome.runtime.sendMessage(
 			{
-				type: "ScheduleBlock_RecordStorage_setGeneralProperties",
+				type: "ScheduleBlock_SaveGeneralProperties",
 				newProperties: {Language: newLangName,
 									CheckFrequency: newCheckFrequency,
 									Background: newBackground}
-			},
-			()=>{
-				document.getElementById("settingsChangeOverlay").style.display = "none";
 			});
+			document.getElementById("settingsChangeOverlay").style.display = "none";
 		});
 				
 		
@@ -456,13 +454,10 @@ export function main(){
 			if(confirm(tp.getTranslatedString(305))){
 				let sending = chrome.runtime.sendMessage(
 				{
-					type: "ScheduleBlock_RecordStorage_deleteRecord",
+					type: "ScheduleBlock_RecordStorage_DeleteRecord",
 					id: recnum
-				},
-				()=>{
-					document.getElementById("recordEditOverlay").style.display = "none";
-					constructView();
 				});
+				document.getElementById("recordEditOverlay").style.display = "none";
 			}
 		});
 
@@ -488,7 +483,7 @@ export function main(){
 			
 			let sending = chrome.runtime.sendMessage(
 			{
-				type: "ScheduleBlock_RecordStorage_editRecord",
+				type: "ScheduleBlock_RecordStorage_EditRecord",
 				id: recnum,
 				newValue: Record.toJSON([
 								new Record(document.getElementById("patternInput").value, 
@@ -499,11 +494,8 @@ export function main(){
 					document.getElementById("actionInputRedirect").checked ?
 						"window.location = '" + document.getElementById("destinationInput").value + "';" :
 						document.getElementById("actionInputCustomCodeArea").value))])
-			},
-			()=>{
-				document.getElementById("recordEditOverlay").style.display = "none";
-				constructView();
 			});
+			document.getElementById("recordEditOverlay").style.display = "none";
 		});
 	}
 

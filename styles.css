@@ -113,7 +113,6 @@ h1, #settingsButton {
 #freqPickerParent,
 #colorPickerParent,
 #creditsParent {
-	h-eight: 35px;
 	border: 2px solid black;
 	padding: 5px;
 	margin-top: 5px;
@@ -204,7 +203,6 @@ h1, #settingsButton {
 #hardLockHoursInputParent,
 #timeoutsInputParent,
 #destinationInputParent {
-	h-eight: 35px;
 	border: 2px solid black;
 	padding: 1%;
 	margin-top: 5px;
@@ -218,7 +216,6 @@ h1, #settingsButton {
 #timeoutStringInput,
 #destinationInput {
 	width: 98%;
-	multiline: true;
 }
 
 #timeoutsNATLabel,

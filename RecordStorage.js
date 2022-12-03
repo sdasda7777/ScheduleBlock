@@ -61,26 +61,30 @@ export class RecordStorage {
 	 * Imports previously exported settings, reloads table.
 	 * @param {string} jsonString - JSON representation of settings to be loaded
 	 */
-	async importSettings(jsonString, extraCallback = ()=>{}){
-		let __callback = async (result) => {
-			if(jsonString){
-				await chrome.storage.sync.set({websites:jsonString});
-				extraCallback();
-			}		
-		};
+	async importSettings(jsonString){
+		//logX("importSettings('" + jsonString + "') called");
 		
 		if(!this.validateExportedJSON(jsonString)) return false;
-		
-		await chrome.storage.sync.get(['websites'], __callback);
+				
+		//await chrome.storage.sync.get(['websites']);
+		await chrome.storage.sync.set({websites:jsonString});
 	}
 	
 	/**
 	 * Exports settings for later import.
 	 */
 	async exportSettings(){
-		let result = await chrome.storage.sync.get(['websites']);
+		let websites_res = await chrome.storage.sync.get(['websites']);
+		let websites_safe = (websites_res && websites_res.websites
+								? JSON.parse(websites_res.websites)
+								: []);
 		
-		return result;
+		for(let ii = 0; ii < websites_safe.length; ++ii){
+			delete websites_safe[ii].currentDuration;
+			delete websites_safe[ii].lastCheck;
+		}
+		
+		return JSON.stringify(websites_safe);
 	}
 	
 	
