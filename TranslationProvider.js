@@ -22,6 +22,8 @@ export class TranslationProvider {
 				"Budiž"],
 			2: ["Cancel",
 				"Zrušit"],
+			3: ["Settings",
+				"Nastavení"],
 			
 			// These keys belong to the controls at the top of the page
 			101: ["Language:",
@@ -34,6 +36,8 @@ export class TranslationProvider {
 					"Exportovat nastavení"],
 			105: ["Check period (in seconds):",
 					"Perioda kontrol (v sekundách):"],
+			106: ["Credits:",
+					"Autoři/práva:"],
 			
 			
 			// These keys belong to the main table and controls around and in it
@@ -41,6 +45,7 @@ export class TranslationProvider {
 			
 					"Zadejte stránky, časy, ve které je chcete mít zablokované a kam chcete být přesměrováni (pojem nenavštívitelnost odkazuje na stav, kdy pouze nepůjde otevřít nové karty, pojem znepřístupnění odkazuje na stav, kdy i již otevřené karty budou přesměrovány):"],
 		
+			
 			210: ["#",
 					"#"],
 			211: ["Regular expression",
@@ -53,10 +58,19 @@ export class TranslationProvider {
 					"Časovače"],
 			215: ["Action",
 					"Akce"],
-			216: ["Edit",
-					"Upravit"],
-			217: ["Delete",
+			
+			216: ["Close window",
+					"Zavřít okno"],
+			217: ["Redirect to",
+					"Přesměrovat na"],
+			218: ["Custom code",
+					"Vlastní kód"],
+			
+			249: ["Delete",
 					"Odstranit"],
+			250: ["Edit",
+					"Upravit"],
+			
 
 		
 			301: ["Must be time intervals in 24 hour format separated by commas. "+

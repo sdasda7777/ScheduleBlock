@@ -30,11 +30,13 @@ if (!String.prototype.format) {
 
 		
 function translateGUI(){
+	document.querySelector("#settingsButton").value = tp.getTranslatedString(3);
+	document.querySelector("#import").value = tp.getTranslatedString(103);
+	document.querySelector("#export").value = tp.getTranslatedString(104);
 	document.querySelector("#langPickerLabel").innerText = tp.getTranslatedString(101);
 	document.querySelector("#freqPickerLabel").innerText = tp.getTranslatedString(105);
 	document.querySelector("#colorPickerLabel").innerText = tp.getTranslatedString(102);
-	document.querySelector("#import").value = tp.getTranslatedString(103);
-	document.querySelector("#export").value = tp.getTranslatedString(104);
+	document.querySelector("#creditsLabel").innerText = tp.getTranslatedString(106);
 	
 	document.querySelector("#settingsMenuOK").value = tp.getTranslatedString(1);
 	document.querySelector("#settingsMenuCancel").value = tp.getTranslatedString(2);
@@ -49,7 +51,15 @@ function translateGUI(){
 		= tp.getTranslatedString(214) + ":";
 	document.querySelector("#destinationLabel").innerText
 		= tp.getTranslatedString(215) + ":";
-	document.querySelector("#recordEditDelete").value = tp.getTranslatedString(217);
+	
+	document.querySelector("#actionInputCloseLabel").innerText
+		= tp.getTranslatedString(216) + ":";
+	document.querySelector("#actionInputRedirectLabel").innerText
+		= tp.getTranslatedString(217) + ":";
+	document.querySelector("#actionInputCustomCodeLabel").innerText
+		= tp.getTranslatedString(218) + ":";
+		
+	document.querySelector("#recordEditDelete").value = tp.getTranslatedString(249);
 	
 	document.querySelector("#recordEditOK").value = tp.getTranslatedString(1);
 	document.querySelector("#recordEditCancel").value = tp.getTranslatedString(2);
@@ -108,7 +118,7 @@ function contructViewCallback(data){
 			tp.getTranslatedString(213),
 			tp.getTranslatedString(214),
 			tp.getTranslatedString(215),
-			tp.getTranslatedString(216)
+			tp.getTranslatedString(250)
 	];
 		
 	for(let ii = 0; ii < headerInnerTexts.length; ++ii){
