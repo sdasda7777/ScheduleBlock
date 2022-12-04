@@ -1,6 +1,6 @@
 function logX(){console.log.apply(this, Array.prototype.slice.call(arguments, 0));};
 
-import { timeToInt, validateTimeString } from './Misc.js';
+import { timeToInt, validateTimeString, validateTimeoutString } from './Misc.js';
 import { Record } from './Record.js';
 
 function storageProvider(){return (typeof browser == 'undefined' ? chrome : browser);}
@@ -15,8 +15,7 @@ export class RecordStorage {
 	 */
 	validateExportedJSON(jsonString){
 		if(!jsonString){
-			console.log("Settings empty or generally invalid");
-			return false;
+			return "Settings file is empty or generally invalid";
 		}
 		
 		let arr = null;
@@ -24,25 +23,30 @@ export class RecordStorage {
 		try{
 			arr = Record.fromJSON(jsonString);
 		}catch{
-			console.log("Settings could not be parsed by JSON parser");
-			return false;
+			return "Settings file could not be parsed by JSON parser";
 		}
 		
 		//console.log(arr);
 		
 		if(!(arr instanceof Array)){
-			console.log("Settings do not parse into array");
-			return false;
+			return "Settings file does not parse into an array";
 		}
 		
 		for(let ii = 0; ii < arr.length; ++ii){
 			if(!validateTimeString(arr[ii].getSoftHours())){
-				console.log("Settings invalid at record {0}, soft locked time is invalid".format(ii+1));
-				return false;
+				return "Settings invalid at record " + (ii+1) + 
+						" (regex '" + arr[ii].getRegex() +
+						"'):\nSoft locked time '" + arr[ii].getSoftHours() + "' is invalid";
 			}
 			if(!validateTimeString(arr[ii].getHardHours())){
-				console.log("Settings invalid at record {0}, hard locked time is invalid".format(ii+1));
-				return false;
+				return "Settings invalid at record " + (ii+1) + 
+						" (regex '" + arr[ii].getRegex() +
+						"'):\nHard locked time '" + arr[ii].getHardHours() + "' is invalid";
+			}
+			if(!validateTimeoutString(arr[ii].getTimeout())){
+				return "Settings invalid at record " + (ii+1) + 
+						" (regex '" + arr[ii].getRegex() + 
+						"'):\nTimeout string '" + arr[ii].getTimeout() + "' is invalid";
 			}
 		}
 		
@@ -55,11 +59,12 @@ export class RecordStorage {
 	 */
 	async importSettings(jsonString){
 		//logX("importSettings('" + jsonString + "') called");
-		
-		if(!this.validateExportedJSON(jsonString)) return false;
+		let valid = this.validateExportedJSON(jsonString);
+		if(valid !== true) return valid;
 				
 		//await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
 		await storageProvider().storage.local.set({ScheduleBlock_Websites:jsonString});
+		return true;
 	}
 	
 	/**

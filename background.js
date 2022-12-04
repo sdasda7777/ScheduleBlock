@@ -74,7 +74,17 @@ export function main(){
 		
 		(async ()=>{
 			if(message_type == 0){
-				await recordStorage.importSettings(message.newSettings);
+				await recordStorage.importSettings(message.newSettings)
+						.then((result)=>{
+							if(result !== true){
+								chrome.tabs.sendMessage(
+									sender.tab.id,
+									{
+										type: "ScheduleBlock_Options_ImportFailed",
+										reason: result
+									});
+							}
+						});
 			}else if(message_type == 6)
 				await recordStorage.createNewRecord(message.regex);
 			else if(message_type == 7)

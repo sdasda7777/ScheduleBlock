@@ -297,6 +297,8 @@ export function main(){
 			document.querySelector("#colorPicker").value = message.properties.Background;
 			
 			translateGUI();
+		}else if(message.type === "ScheduleBlock_Options_ImportFailed"){
+			alert("Import failed because:\n" + message.reason);
 		}else if(message.type === "ScheduleBlock_Options_Export"){
 			let a = document.createElement("a");
 			let file = new Blob([message.settings], {type: 'application/json'});
