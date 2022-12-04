@@ -58,15 +58,15 @@ export class RecordStorage {
 		
 		if(!this.validateExportedJSON(jsonString)) return false;
 				
-		//await storageProvider().storage.sync.get(['websites']);
-		await storageProvider().storage.sync.set({websites:jsonString});
+		//await storageProvider().storage.local.get(['websites']);
+		await storageProvider().storage.local.set({websites:jsonString});
 	}
 	
 	/**
 	 * Exports settings for later import.
 	 */
 	async exportSettings(){
-		let websites_res = await storageProvider().storage.sync.get(['websites']);
+		let websites_res = await storageProvider().storage.local.get(['websites']);
 		let websites_safe = (websites_res && websites_res.websites
 								? JSON.parse(websites_res.websites)
 								: []);
@@ -82,7 +82,7 @@ export class RecordStorage {
 	
 	async getGeneralProperties(){
 		if(this.#properties === undefined){
-			const res = await storageProvider().storage.sync.get(['ScheduleBlock_Properties']);
+			const res = await storageProvider().storage.local.get(['ScheduleBlock_Properties']);
 			this.#properties = (res && res.ScheduleBlock_Properties
 									? res.ScheduleBlock_Properties 
 						: {Language:"english", CheckFrequency:15, Background:"#808080"});
@@ -94,20 +94,20 @@ export class RecordStorage {
 	async setGeneralProperties(newProperties, skipStorage = false){
 		this.#properties = newProperties;
 		if(!skipStorage)
-			await storageProvider().storage.sync.set({ScheduleBlock_Properties: newProperties});
+			await storageProvider().storage.local.set({ScheduleBlock_Properties: newProperties});
 	}
 	
 	
 	
 	
 	async getAll(){		
-		const result = await storageProvider().storage.sync.get(['websites']);
+		const result = await storageProvider().storage.local.get(['websites']);
 		
 		return (result && result.websites ? Record.fromJSON(result.websites) : []);
 	}
 	
 	async getOne(recordNumber){
-		const result = await storageProvider().storage.sync.get(['websites']);
+		const result = await storageProvider().storage.local.get(['websites']);
 		
 		const arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
 		
@@ -117,16 +117,16 @@ export class RecordStorage {
 	}
 		
 	async createNewRecord(regularExpression){
-		let result = await storageProvider().storage.sync.get(['websites']);
+		let result = await storageProvider().storage.local.get(['websites']);
 		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
 		
 		arr.push((new Record()).withRegex(regularExpression));
 			
-		await storageProvider().storage.sync.set({websites:Record.toJSON(arr)});
+		await storageProvider().storage.local.set({websites:Record.toJSON(arr)});
 	}
 	
 	async moveRecord(recordNumber, newRecordNumber){
-		const result = await storageProvider().storage.sync.get(['websites']);
+		const result = await storageProvider().storage.local.get(['websites']);
 		
 		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
 		
@@ -136,11 +136,11 @@ export class RecordStorage {
 		let tmp = arr.splice(recordNumber, 1);
 		arr.splice(newRecordNumber, 0, tmp[0]);
 		
-		await storageProvider().storage.sync.set({websites:Record.toJSON(arr)});
+		await storageProvider().storage.local.set({websites:Record.toJSON(arr)});
 	}
 	
 	async editRecord(recordNumber, newValue){
-		const result = await storageProvider().storage.sync.get(['websites']);
+		const result = await storageProvider().storage.local.get(['websites']);
 		
 		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
 		
@@ -148,18 +148,18 @@ export class RecordStorage {
 		
 		arr[recordNumber] = newValue;
 	
-		await storageProvider().storage.sync.set({websites:Record.toJSON(arr)});
+		await storageProvider().storage.local.set({websites:Record.toJSON(arr)});
 	}
 	
 	async deleteRecord(recordNumber){
-		const result = await storageProvider().storage.sync.get(['websites']);
+		const result = await storageProvider().storage.local.get(['websites']);
 		
 		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
 		if(arr.length == 0) return;
 		
 		arr.splice(recordNumber, 1);
 		
-		await storageProvider().storage.sync.set({websites:Record.toJSON(arr)});
+		await storageProvider().storage.local.set({websites:Record.toJSON(arr)});
 	}
 	
 	async testWebsite(urlAddress, softCheck){
@@ -320,7 +320,7 @@ export class RecordStorage {
 		}
 		
 		
-		const result = await storageProvider().storage.sync.get(['websites']);
+		const result = await storageProvider().storage.local.get(['websites']);
 		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
 		
 		let destination = false;
@@ -335,7 +335,7 @@ export class RecordStorage {
 			arr[key] = updatedElements[key];
 		}
 		
-		await storageProvider().storage.sync.set({websites:Record.toJSON(arr)});
+		await storageProvider().storage.local.set({websites:Record.toJSON(arr)});
 		
 		return destination;
 	}

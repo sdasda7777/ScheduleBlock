@@ -72,6 +72,7 @@ In general, every record consists of:
 ### Changelog/Roadmap
 
 #### 1.1.5 (upcoming)
+- Switched from browser.storage.sync to browser.storage.local to prevent MAX_WRITE_OPERATIONS_PER_HOUR error (this will "delete" your settings, sorry)
 - TODO: Improve effectivity by parsing records in RecordStorage only on load and on change
 - TODO: Clean up the translations
 - TODO: When import of settings fails, return reason why
