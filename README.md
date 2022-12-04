@@ -78,13 +78,13 @@ In general, every record consists of:
 - TODO: Move source files into src directory
 - TODO: Create a page with basic tests
 
-#### 1.1.5 (upcoming)
+#### 1.1.5 (current)
 - Switched from browser.storage.sync to browser.storage.local to prevent MAX_WRITE_OPERATIONS_PER_HOUR error (this will "delete" your settings, sorry)
 - Cleaned up translations, fixed incorrect behavior of some labels
 - Transitioned to new websites data location ("ScheduleBlock_Websites"), since your data is unfortunately getting "deleted" anyway due to the first fix
-- TODO: When import of settings fails, return reason why
+- Added alert with reason when import of settings fails
 
-#### 1.1.4 (current)
+#### 1.1.4
 - Moved default settings values to RecordStorage
 - Completely reworked RecordStorage to hopefully make it thread safe
 - Fixed timeout function not increasing duration on the last cycle
