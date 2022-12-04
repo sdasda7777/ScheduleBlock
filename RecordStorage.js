@@ -58,17 +58,17 @@ export class RecordStorage {
 		
 		if(!this.validateExportedJSON(jsonString)) return false;
 				
-		//await storageProvider().storage.local.get(['websites']);
-		await storageProvider().storage.local.set({websites:jsonString});
+		//await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		await storageProvider().storage.local.set({ScheduleBlock_Websites:jsonString});
 	}
 	
 	/**
 	 * Exports settings for later import.
 	 */
 	async exportSettings(){
-		let websites_res = await storageProvider().storage.local.get(['websites']);
-		let websites_safe = (websites_res && websites_res.websites
-								? JSON.parse(websites_res.websites)
+		let websites_res = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		let websites_safe = (websites_res && websites_res.ScheduleBlock_Websites
+								? JSON.parse(websites_res.ScheduleBlock_Websites)
 								: []);
 		
 		for(let ii = 0; ii < websites_safe.length; ++ii){
@@ -101,15 +101,17 @@ export class RecordStorage {
 	
 	
 	async getAll(){		
-		const result = await storageProvider().storage.local.get(['websites']);
+		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
 		
-		return (result && result.websites ? Record.fromJSON(result.websites) : []);
+		return (result && result.ScheduleBlock_Websites 
+					? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 	}
 	
 	async getOne(recordNumber){
-		const result = await storageProvider().storage.local.get(['websites']);
+		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
 		
-		const arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
+		const arr = (result && result.ScheduleBlock_Websites
+						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 		
 		if(recordNumber >= arr.length) return null;
 		
@@ -117,18 +119,20 @@ export class RecordStorage {
 	}
 		
 	async createNewRecord(regularExpression){
-		let result = await storageProvider().storage.local.get(['websites']);
-		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
+		let result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		let arr = (result && result.ScheduleBlock_Websites
+						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 		
 		arr.push((new Record()).withRegex(regularExpression));
 			
-		await storageProvider().storage.local.set({websites:Record.toJSON(arr)});
+		await storageProvider().storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
 	}
 	
 	async moveRecord(recordNumber, newRecordNumber){
-		const result = await storageProvider().storage.local.get(['websites']);
+		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
 		
-		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
+		let arr = (result && result.ScheduleBlock_Websites
+						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 		
 		if(recordNumber >= arr.length) return false;
 		
@@ -136,30 +140,32 @@ export class RecordStorage {
 		let tmp = arr.splice(recordNumber, 1);
 		arr.splice(newRecordNumber, 0, tmp[0]);
 		
-		await storageProvider().storage.local.set({websites:Record.toJSON(arr)});
+		await storageProvider().storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
 	}
 	
 	async editRecord(recordNumber, newValue){
-		const result = await storageProvider().storage.local.get(['websites']);
+		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
 		
-		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
+		let arr = (result && result.ScheduleBlock_Websites
+						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 		
 		if(recordNumber >= arr.length) return;
 		
 		arr[recordNumber] = newValue;
 	
-		await storageProvider().storage.local.set({websites:Record.toJSON(arr)});
+		await storageProvider().storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
 	}
 	
 	async deleteRecord(recordNumber){
-		const result = await storageProvider().storage.local.get(['websites']);
+		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
 		
-		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
+		let arr = (result && result.ScheduleBlock_Websites
+						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 		if(arr.length == 0) return;
 		
 		arr.splice(recordNumber, 1);
 		
-		await storageProvider().storage.local.set({websites:Record.toJSON(arr)});
+		await storageProvider().storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
 	}
 	
 	async testWebsite(urlAddress, softCheck){
@@ -320,8 +326,9 @@ export class RecordStorage {
 		}
 		
 		
-		const result = await storageProvider().storage.local.get(['websites']);
-		let arr = (result && result.websites ? Record.fromJSON(result.websites) : []);
+		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		let arr = (result && result.ScheduleBlock_Websites
+						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 		
 		let destination = false;
 		for(let ii = 0;
@@ -335,7 +342,7 @@ export class RecordStorage {
 			arr[key] = updatedElements[key];
 		}
 		
-		await storageProvider().storage.local.set({websites:Record.toJSON(arr)});
+		await storageProvider().storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
 		
 		return destination;
 	}

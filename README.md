@@ -71,16 +71,18 @@ In general, every record consists of:
 
 ### Changelog/Roadmap
 
-#### 1.1.5 (upcoming)
-- Switched from browser.storage.sync to browser.storage.local to prevent MAX_WRITE_OPERATIONS_PER_HOUR error (this will "delete" your settings, sorry)
+#### 1.1.6 (planned)
 - TODO: Improve effectivity by parsing records in RecordStorage only on load and on change
-- TODO: Clean up the translations
-- TODO: When import of settings fails, return reason why
-- TODO: Begin transition to new websites data location (load data from both "websites" and "ScheduleBlock_Websites", but save only to "ScheduleBlock_Websites")
 - TODO: Export language, check frequency and background color along with records
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)
 - TODO: Move source files into src directory
 - TODO: Create a page with basic tests
+
+#### 1.1.5 (upcoming)
+- Switched from browser.storage.sync to browser.storage.local to prevent MAX_WRITE_OPERATIONS_PER_HOUR error (this will "delete" your settings, sorry)
+- Cleaned up translations, fixed incorrect behavior of some labels
+- Transitioned to new websites data location ("ScheduleBlock_Websites"), since your data is unfortunately getting "deleted" anyway due to the first fix
+- TODO: When import of settings fails, return reason why
 
 #### 1.1.4 (current)
 - Moved default settings values to RecordStorage
