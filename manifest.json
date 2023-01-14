@@ -8,25 +8,25 @@
   "web_accessible_resources": [{
 	"matches": ["<all_urls>"],
 	"resources": [
-		"Misc.js",
-		"Record.js",
-		"RecordStorage.js",
-		"options.js",
-		"content.js"
+		"src/Misc.js",
+		"src/Record.js",
+		"src/RecordStorage.js",
+		"src/options.js",
+		"src/content.js"
 	]
   }],
   "background": {
-	"service_worker": "background_loader_mod.js",
+	"service_worker": "src/background_loader_mod.js",
 	"type": "module"
   },
   "content_scripts" : [{
         "matches" : [ "<all_urls>"],
-        "js" : ["content.js"],
+        "js" : ["src/content.js"],
 	"run_at": "document_start"
   }],
 
   "icons": {
     "128": "/images/ScheduleBlock128.png"
   },
-  "options_page": "options.html"
+  "options_page": "src/options.html"
 }

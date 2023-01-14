@@ -47,7 +47,7 @@ h1, #settingsButton {
 	float: right;
 	
 	font-size: 20px;	
-	background: url('images/cog.png') left center no-repeat;
+	background: url('../images/cog.png') left center no-repeat;
 	background-size: 30px;
 	padding-left: 35px;	
 	cursor: pointer;
@@ -179,7 +179,7 @@ h1, #settingsButton {
 	margin: 10%;
 	width: 30px;
 	height: 30px;
-	background: url('images/pencil.png') left center no-repeat;
+	background: url('../images/pencil.png') left center no-repeat;
 	background-size: 25px;
 	
 	border-width: 0;

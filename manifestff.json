@@ -6,19 +6,19 @@
   "permissions": ["storage"],
 
   "web_accessible_resources": [
-	"Misc.js",
-	"Record.js",
-	"RecordStorage.js",
-	"options.js",
-	"content.js"
+	"src/Misc.js",
+	"src/Record.js",
+	"src/RecordStorage.js",
+	"src/options.js",
+	"src/content.js"
   ],
   "background": {
-	"scripts": ["background_loader.js"],
+	"scripts": ["src/background_loader.js"],
 	"persistent": false
   },
   "content_scripts" : [{
         "matches" : [ "<all_urls>"],
-        "js" : ["content.js"],
+        "js" : ["src/content.js"],
 	"run_at": "document_start"
     }],
 
@@ -28,7 +28,7 @@
     "128": "images/ScheduleBlock128.png"
   },
   "options_ui": {
-	"page": "options.html",
+	"page": "src/options.html",
 	"browser_style": false,
 	"open_in_tab": true
   },
