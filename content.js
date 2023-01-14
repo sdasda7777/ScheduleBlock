@@ -9,17 +9,24 @@ function logJ(){
 		Array.prototype.slice.call(arguments, 0).map((i)=>JSON.stringify(i)));
 };
 
+const defaultLocationChangeRegex
+	= new RegExp("^window\\.location = '[^']*';$");
 
 chrome.runtime.onMessage.addListener((message)=>{
 	if(message.type === "ScheduleBlock_Content_ExecuteAction"){
 		//logJ(message.action);
-		if(message.action !== undefined){
+		if(message.action == "window.close();"){
+			window.close();
+		}else if(defaultLocationChangeRegex.test(message.action)){
+			window.location
+				= message.action.slice("window.location = '".length, -("';".length));
+		}else if(message.action !== undefined){
 			const scriptElement = document.createElement('div');
 			scriptElement.setAttribute('onclick', message.action);
 			document.documentElement.appendChild(scriptElement);
 			scriptElement.click();
 			scriptElement.remove();
-		}		
+		}
 	}else if(message.type === "ScheduleBlock_Content_Initalize"){
 		// This sets up continuous hard lock checks
 		let checker = setInterval(() => {
