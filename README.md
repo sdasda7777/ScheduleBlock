@@ -80,7 +80,7 @@ In general, every record consists of:
 - Added basic fallbacks for when website doesn't allow script execution
 - Moved source files into the src directory
 - Added a custom lock page showing original address and lock time remaining
-- TODO: Disable record action input fields when given action is not selected.
+- Disabled record action input fields when given action is not selected
 - TODO: Create basic tests
 
 #### 1.1.5 (current)

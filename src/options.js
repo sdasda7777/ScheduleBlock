@@ -201,14 +201,19 @@ function constructView(){
 function openRecordEditMenuCallback(data){
 	let rec = Record.fromJSON(data)[0];
 	
+	// Set up the first four text inputs
 	document.getElementById("patternInput").value = rec.getRegex();
 	document.getElementById("softLockHoursInput").value = rec.getSoftHours();
 	document.getElementById("hardLockHoursInput").value = rec.getHardHours();
 	document.getElementById("timeoutStringInput").value = rec.getTimeout();
 	
+	// Clear and disable all record action inputs
 	document.getElementById("destinationInput").value = "";
 	document.getElementById("actionInputCustomCodeArea").value = "";
+	document.getElementById("destinationInput").disabled = true;
+	document.getElementById("actionInputCustomCodeArea").disabled = true;
 	
+	// Set up record action
 	if(rec.getAction() == "window.close();"){
 		document.getElementById("actionInputClose").checked = true;	
 	}else if(rec.getAction() == "window.location = '$ScheduleBlock_LockScreen$';"){
@@ -217,11 +222,13 @@ function openRecordEditMenuCallback(data){
 					== "window.location = '" &&
 				rec.getAction().substring(rec.getAction().lastIndexOf("'")) == "';"){
 		document.getElementById("actionInputRedirect").checked = true;
+		document.getElementById("destinationInput").disabled = false;
 		document.getElementById("destinationInput").value
 				= rec.getAction().substring(rec.getAction().indexOf("'") + 1,
 											rec.getAction().length-2);
 	}else{
 		document.getElementById("actionInputCustom").checked = true;
+		document.getElementById("actionInputCustomCodeArea").disabled = false;
 		document.getElementById("actionInputCustomCodeArea").value = rec.getAction();
 	}
 	
@@ -454,6 +461,25 @@ export function main(){
 
 	// Set up edit menu listeners
 	{
+		let enableActionInputs = (bits) => {
+			let inputs = [document.getElementById("destinationInput"),
+							document.getElementById("actionInputCustomCodeArea")];
+			for(let ii=0; ii < inputs.length; ++ii){
+				inputs[ii].disabled = ((bits >> ii) & 1) !== 1;
+			}			
+		};
+		
+		document.getElementById("actionInputClose")
+			.addEventListener("click", () => { enableActionInputs(0); });
+		document.getElementById("actionInputLockPage")
+			.addEventListener("click", () => { enableActionInputs(0); });
+		document.getElementById("actionInputRedirect")
+			.addEventListener("click", () => { enableActionInputs(1); });
+		document.getElementById("actionInputCustom")
+			.addEventListener("click", () => { enableActionInputs(2); });
+		
+		
+		
 		document.getElementById("recordEditOverlay").addEventListener("click", (e) => {
 			if(document.getElementById("recordEditOverlay") !== event.target) return;
 				
