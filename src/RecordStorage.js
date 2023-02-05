@@ -1,13 +1,15 @@
 function logX(){console.log.apply(this, Array.prototype.slice.call(arguments, 0));};
 
-import { timeToInt, validateTimeString, validateTimeoutString } from './Misc.js';
+import { validateTimeString, validateTimeoutString } from './Misc.js';
 import { Record } from './Record.js';
-
-function storageProvider(){return (typeof browser == 'undefined' ? chrome : browser);}
 
 export class RecordStorage {
 	#properties;
-	constructor(){}
+	#storageProvider;
+	
+	constructor(storageProvider = (typeof browser == 'undefined' ? chrome : browser)){
+		this.#storageProvider = storageProvider;
+	}
 	
 	/**
 	 * Validates settings JSON
@@ -63,7 +65,7 @@ export class RecordStorage {
 		if(valid !== true) return valid;
 				
 		//await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
-		await storageProvider().storage.local.set({ScheduleBlock_Websites:jsonString});
+		await this.#storageProvider.storage.local.set({ScheduleBlock_Websites:jsonString});
 		return true;
 	}
 	
@@ -71,7 +73,8 @@ export class RecordStorage {
 	 * Exports settings for later import.
 	 */
 	async exportSettings(){
-		let websites_res = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		let websites_res = await this.#storageProvider
+									.storage.local.get(['ScheduleBlock_Websites']);
 		let websites_safe = (websites_res && websites_res.ScheduleBlock_Websites
 								? JSON.parse(websites_res.ScheduleBlock_Websites)
 								: []);
@@ -87,7 +90,8 @@ export class RecordStorage {
 	
 	async getGeneralProperties(){
 		if(this.#properties === undefined){
-			const res = await storageProvider().storage.local.get(['ScheduleBlock_Properties']);
+			const res = await this.#storageProvider
+								.storage.local.get(['ScheduleBlock_Properties']);
 			this.#properties = (res && res.ScheduleBlock_Properties
 									? res.ScheduleBlock_Properties 
 						: {Language:"english", CheckFrequency:15, Background:"#808080"});
@@ -99,21 +103,24 @@ export class RecordStorage {
 	async setGeneralProperties(newProperties, skipStorage = false){
 		this.#properties = newProperties;
 		if(!skipStorage)
-			await storageProvider().storage.local.set({ScheduleBlock_Properties: newProperties});
+			await this.#storageProvider
+					.storage.local.set({ScheduleBlock_Properties: newProperties});
 	}
 	
 	
 	
 	
 	async getAll(){		
-		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		const result = await this.#storageProvider
+								.storage.local.get(['ScheduleBlock_Websites']);
 		
 		return (result && result.ScheduleBlock_Websites 
 					? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 	}
 	
 	async getOne(recordNumber){
-		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		const result = await this.#storageProvider
+								.storage.local.get(['ScheduleBlock_Websites']);
 		
 		const arr = (result && result.ScheduleBlock_Websites
 						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
@@ -124,17 +131,18 @@ export class RecordStorage {
 	}
 		
 	async createNewRecord(regularExpression){
-		let result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		let result = await this.#storageProvider.storage.local.get(['ScheduleBlock_Websites']);
 		let arr = (result && result.ScheduleBlock_Websites
 						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 		
 		arr.push((new Record()).withRegex(regularExpression));
 			
-		await storageProvider().storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
+		await this.#storageProvider
+				.storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
 	}
 	
 	async moveRecord(recordNumber, newRecordNumber){
-		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		const result = await this.#storageProvider.storage.local.get(['ScheduleBlock_Websites']);
 		
 		let arr = (result && result.ScheduleBlock_Websites
 						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
@@ -145,210 +153,81 @@ export class RecordStorage {
 		let tmp = arr.splice(recordNumber, 1);
 		arr.splice(newRecordNumber, 0, tmp[0]);
 		
-		await storageProvider().storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
+		await this.#storageProvider
+				.storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
 	}
 	
 	async editRecord(recordNumber, newValue){
-		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		const result = await this.#storageProvider.storage.local.get(['ScheduleBlock_Websites']);
 		
 		let arr = (result && result.ScheduleBlock_Websites
 						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 		
-		if(recordNumber >= arr.length) return;
+		if(recordNumber >= arr.length) return false;
 		
 		arr[recordNumber] = newValue;
 	
-		await storageProvider().storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
+		await this.#storageProvider
+				.storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
 	}
 	
 	async deleteRecord(recordNumber){
-		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		const result = await this.#storageProvider.storage.local.get(['ScheduleBlock_Websites']);
 		
 		let arr = (result && result.ScheduleBlock_Websites
 						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
-		if(arr.length == 0) return;
+		if(arr.length == 0) return false;
 		
 		arr.splice(recordNumber, 1);
 		
-		await storageProvider().storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
+		await this.#storageProvider
+				.storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
 	}
+	
 	
 	async testWebsite(urlAddress, softCheck){
 		let updatedElements = {};
-		let interval = (await this.getGeneralProperties()).CheckFrequency * 1000;
+		let checkInterval = (await this.getGeneralProperties()).CheckFrequency * 1000;
 		let nowDate = new Date();
 		
-		function timeoutIncrementCheck(id, record, normalBreak, normalTimeout){
-			
-			let sinceLastCheck = Math.min(nowDate.getTime()
-												- record.getLastCheck().getTime(),
-										  interval);
-			
-			if(record.getCurrentDuration() + sinceLastCheck < normalBreak * 1000 &&
-				nowDate.getTime() > record.getLastCheck().getTime() &&
-				nowDate.getTime() < record.getLastCheck().getTime()
-										+ normalTimeout * 1000){
-				// If timeout didn't pass since last visit
-				//	and currentStreak is less than allowed time,
-				// 	increment current streak
-				updatedElements[id] = record.withCurrentDuration(
-												record.getCurrentDuration()	+ sinceLastCheck )
-											.withLastCheck(nowDate);
-											
-			}else if(nowDate.getTime()
-						>= record.getLastCheck().getTime() + normalTimeout * 1000){
-				// If timeout did pass since last visit
-				//	reset current streak
-				updatedElements[id] = record.withCurrentDuration(0).withLastCheck(nowDate);
-				
-			}else if(record.getCurrentDuration() + sinceLastCheck >= normalBreak * 1000){
-				if(record.getCurrentDuration() < normalBreak * 1000){
-					updatedElements[id] = record.withCurrentDuration(
-												record.getCurrentDuration()	+ sinceLastCheck )
-											.withLastCheck(nowDate);
-				}
-				
-				// Otherwise if current streak is more or equal to allowed time, deny entry
-				return record.getAction();
-			}
-			
-			return false;
-		}
-		
-		
-		function timeoutLogic(id, record){
-			//logJ(record.getRegex());	
-			if(!(record.getRegex()) || !(record.getAction()) || !(record.getTimeout())){
-				// If record does not have property 'regex' or 'destination', skip it
-				return false;
-			}
-
-			if(!(urlAddress.match(new RegExp(record.getRegex()))))
-				return false; // If regex does not match, skip record
-							
-			let days = record.getTimeout().split("|");
-			let dayno = (nowDate.getDay() % days.length);
-			let groups = days[dayno].split(",");
-			
-			for(let ii = 0; ii < groups.length; ++ii){
-				let groupParts = groups[ii].split("@");
-				if(groupParts.length > 2) continue;
-				
-				let durations = groupParts[0].split("/");
-				if(durations.length != 2) continue;
-				
-				let normalBreak = timeToInt(durations[0]);
-				let normalTimeout = timeToInt(durations[1]);
-				
-				if(groupParts.length == 1){
-					let res = timeoutIncrementCheck(id, record, normalBreak, normalTimeout);
-					if(res !== false) return res;
-					else continue;
-				}
-				
-				let intervals = groupParts[1].split(";");
-				
-				for(let jj = 0; jj < intervals.length; ++jj){
-					console.log(intervals[jj]);
-					
-					let times = intervals[jj].split("-");
-					
-					if(times.length != 2) continue;
-					
-					let time0 = times[0].split(":");
-					let time1 = times[1].split(":");
-					
-					let begind = new Date();
-					let endd = new Date();
-					
-					begind.setHours(time0[0]);
-					begind.setMinutes(time0[1]);
-					endd.setHours(time1[0]);
-					endd.setMinutes(time1[1]);
-					
-					if(begind > nowDate || nowDate >= endd){
-						// Interval is valid but does not match, continue to the next one
-						continue;
-					}
-					
-					// Interval is valid and matches, therefore check time
-					let res = timeoutIncrementCheck(id, record, normalBreak, normalTimeout);
-					if(res !== false) return res;
-					else break;
-				}
-			}
-			
-			return false;
-		}
-		
-		function forbidLogic(id, record){
-			//logJ(record.getRegex());	
-			if(!(record.getRegex()) || !(record.getAction())){
-				// If record does not have property 'regex' or 'destination', skip it
-				return false;
-			}
-
-			if(!(urlAddress.match(new RegExp(record.getRegex()))))
-				return false; // If regex does not match, skip record
-
-			if((!softCheck && !record.getHardHours()) || (softCheck && !record.getSoftHours())){
-				return false; // Record does not have property to check time
-			}
-							
-			let days = (softCheck ? record.getSoftHours() : record.getHardHours()).split("|");
-			let dayno = (nowDate.getDay() % days.length);
-			let intervals = days[dayno].split(",");
-			
-			for(let jj = 0; jj < intervals.length; ++jj){
-				let times = intervals[jj].split("-");
-				
-				if(times.length != 2){
-					// This implies interval does not have exactly one '-', so just skip it
-					continue;
-				}
-					
-				let time0 = times[0].split(":");
-				let time1 = times[1].split(":");
-				
-				let begind = new Date();
-				let endd = new Date();
-				
-				begind.setHours(time0[0]);
-				begind.setMinutes(time0[1]);
-				endd.setHours(time1[0]);
-				endd.setMinutes(time1[1]);
-				
-				if(begind > nowDate || nowDate >= endd){
-					// Interval is valid but does not match, continue to the next one
-					continue;
-				}
-				
-				// Interval is valid and matches, therefore return destination
-				return record.getAction();
-			}
-			
-			return false;
-		}
-		
-		
-		const result = await storageProvider().storage.local.get(['ScheduleBlock_Websites']);
+		const result = await this.#storageProvider.storage.local.get(['ScheduleBlock_Websites']);
 		let arr = (result && result.ScheduleBlock_Websites
 						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
 		
-		let destination = false;
-		for(let ii = 0;
-			ii < arr.length && 
-			(destination = timeoutLogic(ii, arr[ii])) === false &&
-			(destination = forbidLogic(ii, arr[ii])) === false;
-			++ii);
+		let testResult = false;
+		for(let ii = 0; ii < arr.length && testResult === false; ++ii){
+			testResult = arr[ii].testWebsite(urlAddress, softCheck, checkInterval, nowDate);
+			
+			let incremented = arr[ii].getIncrementedTimeout(urlAddress, nowDate, checkInterval);
+			if(incremented !== false)
+				arr[ii] = incremented;
+		}
+				
+		await this.#storageProvider.storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
 		
-		for(let key in updatedElements){
-			//TODO: refactor this bit away when improving effectivity
-			arr[key] = updatedElements[key];
+		return (testResult === false ? false : testResult[1]);
+	}
+	
+	async getWebsiteUnlockTime(urlAddress){	
+		let updatedElements = {};
+		let checkInterval = (await this.getGeneralProperties()).CheckFrequency * 1000;
+		let nowDate = new Date();
+		
+		const result = await this.#storageProvider.storage.local.get(['ScheduleBlock_Websites']);
+		let arr = (result && result.ScheduleBlock_Websites
+						? Record.fromJSON(result.ScheduleBlock_Websites) : []);
+		
+		let maxResult = new Date(nowDate.getTime() - 1);
+		
+		let testResult = false;
+		for(let ii = 0; ii < arr.length; ++ii){
+			testResult = arr[ii].testWebsite(urlAddress, true, checkInterval, nowDate);
+			
+			if(testResult !== false && testResult[0] > maxResult){
+				maxResult = testResult[0];
+			}
 		}
 		
-		await storageProvider().storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});
-		
-		return destination;
+		return maxResult;
 	}
 }

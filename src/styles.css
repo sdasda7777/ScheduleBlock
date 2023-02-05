@@ -109,10 +109,7 @@ h1, #settingsButton {
 	justify-content: center;
 }
 
-#langPickerParent,
-#freqPickerParent,
-#colorPickerParent,
-#creditsParent {
+.settingsFullsizeParent {
 	border: 2px solid black;
 	padding: 5px;
 	margin-top: 5px;

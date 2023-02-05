@@ -2,18 +2,19 @@ import { Record } from "./Record.js";
 import { RecordStorage } from "./RecordStorage.js";
 
 const ScheduleBlock_messages = [
-	"ScheduleBlock_RecordStorage_ImportSettings",	//  0
-	"ScheduleBlock_RecordStorage_ExportSettings",	//  1
-	"ScheduleBlock_InitializeOptions",				//  2
-	"ScheduleBlock_SaveGeneralProperties",			//  3
-	"ScheduleBlock_RefreshTable",					//  4
-	"ScheduleBlock_OpenEditMenu",					//  5
-	"ScheduleBlock_RecordStorage_CreateNewRecord",	//  6
-	"ScheduleBlock_RecordStorage_MoveRecord",		//  7
-	"ScheduleBlock_RecordStorage_EditRecord",		//  8
-	"ScheduleBlock_RecordStorage_DeleteRecord",		//  9
-	"ScheduleBlock_RecordStorage_TestWebsite",		// 10
-	"ScheduleBlock_InitializeContentScript"			// 11
+	"ScheduleBlock_RecordStorage_ImportSettings",	    //  0
+	"ScheduleBlock_RecordStorage_ExportSettings",	    //  1
+	"ScheduleBlock_InitializeOptions",				    //  2
+	"ScheduleBlock_SaveGeneralProperties",			    //  3
+	"ScheduleBlock_RefreshTable",					    //  4
+	"ScheduleBlock_OpenEditMenu",					    //  5
+	"ScheduleBlock_RecordStorage_CreateNewRecord",	    //  6
+	"ScheduleBlock_RecordStorage_MoveRecord",		    //  7
+	"ScheduleBlock_RecordStorage_EditRecord",		    //  8
+	"ScheduleBlock_RecordStorage_DeleteRecord",		    //  9
+	"ScheduleBlock_RecordStorage_TestWebsite",		    // 10
+	"ScheduleBlock_RecordStorage_GetWebsiteUnlockTime", // 11
+	"ScheduleBlock_InitializeContentScript"			    // 12
 ];
 
 export function main(){
@@ -114,15 +115,37 @@ export function main(){
 				if(userScript !== false){
 					console.log("Sending script '" + userScript + 
 								"' to '" + message.urlAddress + "'");
+					
 					chrome.tabs.sendMessage(
 						sender.tab.id,
 						{
 							type: "ScheduleBlock_Content_ExecuteAction",
-							action: userScript
+							action: userScript.replace("$ScheduleBlock_LockScreen$",
+										chrome.runtime.getURL("src/ScheduleBlock_LockSite.html")
+											+ "?source="
+											+ btoa(message.urlAddress))
 						});
 				}
 			});
 	  }else if(message_type == 11){
+		//"ScheduleBlock_RecordStorage_GetWebsiteUnlockTime"
+		
+		await recordStorage.getWebsiteUnlockTime(message.urlAddress).then(
+			(unlockTime)=>{
+				if(unlockTime !== false){
+					/*console.log("Sending script '" + userScript + 
+								"' to '" + message.urlAddress + "'");*/
+					
+					
+					chrome.tabs.sendMessage(
+						sender.tab.id,
+						{
+							type: "ScheduleBlock_LockScreen_SetUnlockTime",
+							unlockTime: unlockTime.getTime()
+						});
+				}
+			});
+	  }else if(message_type == 12){
 		//"ScheduleBlock_InitializeContentScript"
 		await recordStorage.getGeneralProperties().then(
 			(properties)=>{

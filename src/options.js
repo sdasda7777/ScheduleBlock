@@ -53,7 +53,9 @@ function translateGUI(){
 		= tp.getTranslatedString(215) + ":";
 	
 	document.querySelector("#actionInputCloseLabel").innerText
-		= tp.getTranslatedString(216) + ":";
+		= tp.getTranslatedString(216);
+	document.querySelector("#actionInputLockPageLabel").innerText
+		= tp.getTranslatedString(219);
 	document.querySelector("#actionInputRedirectLabel").innerText
 		= tp.getTranslatedString(217) + ":";
 	document.querySelector("#actionInputCustomCodeLabel").innerText
@@ -203,11 +205,14 @@ function openRecordEditMenuCallback(data){
 	document.getElementById("softLockHoursInput").value = rec.getSoftHours();
 	document.getElementById("hardLockHoursInput").value = rec.getHardHours();
 	document.getElementById("timeoutStringInput").value = rec.getTimeout();
-			
+	
+	document.getElementById("destinationInput").value = "";
+	document.getElementById("actionInputCustomCodeArea").value = "";
+	
 	if(rec.getAction() == "window.close();"){
-		document.getElementById("actionInputClose").checked = true;
-		document.getElementById("destinationInput").value = "";
-		document.getElementById("actionInputCustomCodeArea").value = "";
+		document.getElementById("actionInputClose").checked = true;	
+	}else if(rec.getAction() == "window.location = '$ScheduleBlock_LockScreen$';"){
+		document.getElementById("actionInputLockPage").checked = true;
 	}else if(rec.getAction().substring(0, rec.getAction().indexOf("'") + 1)
 					== "window.location = '" &&
 				rec.getAction().substring(rec.getAction().lastIndexOf("'")) == "';"){
@@ -215,10 +220,8 @@ function openRecordEditMenuCallback(data){
 		document.getElementById("destinationInput").value
 				= rec.getAction().substring(rec.getAction().indexOf("'") + 1,
 											rec.getAction().length-2);
-		document.getElementById("actionInputCustomCodeArea").value = "";
 	}else{
 		document.getElementById("actionInputCustom").checked = true;
-		document.getElementById("destinationInput").value = "";
 		document.getElementById("actionInputCustomCodeArea").value = rec.getAction();
 	}
 	
@@ -503,7 +506,9 @@ export function main(){
 										timeoutStringInput.value,
 				(document.getElementById("actionInputClose").checked ? 
 						"window.close();" :
-					document.getElementById("actionInputRedirect").checked ?
+				document.getElementById("actionInputLockPage").checked ? 
+						"window.location = '$ScheduleBlock_LockScreen$';" :
+				document.getElementById("actionInputRedirect").checked ?
 						"window.location = '" + document.getElementById("destinationInput").value + "';" :
 						document.getElementById("actionInputCustomCodeArea").value))])
 			});

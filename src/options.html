@@ -47,24 +47,24 @@
 			<input type="button" id="import" value="Import settings">
 			<input type="file" id="import2" name="import2" style="display: none;" />
 			
-			<div id="langPickerParent">
+			<div id="langPickerParent" class="settingsFullsizeParent">
 				<label for="langPicker" id="langPickerLabel">Language:</label>
 				</br>
 				<select id="langPicker">
 				  <option value="lang">language</option>
 				</select>
 			</div>
-			<div id="freqPickerParent">
+			<div id="freqPickerParent" class="settingsFullsizeParent">
 				<label for="freqPicker" id="freqPickerLabel">Check frequency (s):</label>
 				</br>
 				<input type="number" id="freqPicker" min="0" value="15">
 			</div>
-			<div id="colorPickerParent">
+			<div id="colorPickerParent" class="settingsFullsizeParent">
 				<label for="colorPicker" id="colorPickerLabel">Background color:</label>
 				</br>
 				<input type="color" id="colorPicker" value="#808080">
 			</div>
-			<div id="creditsParent">
+			<div id="creditsParent" class="settingsFullsizeParent">
 				<label id="creditsLabel">Credits:</label>
 				</br>
 				- <a href="https://github.com/sdasda7777">sdasda7777</a> (<a href="https://github.com/sdasda7777/ScheduleBlock">programming</a>, under GPL-3.0)
@@ -75,6 +75,11 @@
 				</br>
 				- <a href="https://delapouite.com/">Delapouite</a> 
 					(<a href="https://game-icons.net/1x1/delapouite/pencil.html">Pencil icon</a>, under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>)
+			</div>
+			<div class="settingsFullsizeParent">
+				<label id="creditsLabel">Other:</label>
+				</br>
+				<a href="../SpecRunner.html">Run tests</a>
 			</div>
 			
 			
@@ -114,6 +119,9 @@
 				
 				<input type="radio" id="actionInputClose" name="actionInput" value="Close">
 					<label for="actionInputClose" id="actionInputCloseLabel">Close window</label><br>
+					
+				<input type="radio" id="actionInputLockPage" name="actionInput" value="Close">
+					<label for="actionInputLockPage" id="actionInputLockPageLabel">Redirect to lock page</label><br>
 				
 				<input type="radio" id="actionInputRedirect" name="actionInput" value="Redirect">
 					<label for="actionInputRedirect" id="actionInputRedirectLabel">Redirect to: </label>

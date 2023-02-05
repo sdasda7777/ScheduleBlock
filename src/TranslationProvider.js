@@ -65,6 +65,8 @@ export class TranslationProvider {
 					"Přesměrovat na"],
 			218: ["Custom code",
 					"Vlastní kód"],
+			219: ["Redirect to lock page",
+					"Přesměrovat na zamykací stránku"],
 			
 			249: ["Delete",
 					"Odstranit"],

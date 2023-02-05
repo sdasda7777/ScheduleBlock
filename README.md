@@ -74,13 +74,14 @@ In general, every record consists of:
 #### 1.1.7 (planned)
 - TODO: Export language, check frequency and background color along with records
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)
-- TODO: Create tests
+- TODO: Improve effectivity by parsing records in RecordStorage only on load and on change
 
 #### 1.1.6 (upcoming)
 - Added basic fallbacks for when website doesn't allow script execution
 - Moved source files into the src directory
-- TODO: Add a custom lock page which would show original address and locked time remaining
-- TODO: Improve effectivity by parsing records in RecordStorage only on load and on change
+- Added a custom lock page showing original address and lock time remaining
+- TODO: Disable record action input fields when given action is not selected.
+- TODO: Create basic tests
 
 #### 1.1.5 (current)
 - Switched from browser.storage.sync to browser.storage.local to prevent MAX_WRITE_OPERATIONS_PER_HOUR error (this will "delete" your settings, sorry)
