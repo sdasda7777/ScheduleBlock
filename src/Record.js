@@ -87,6 +87,7 @@ export class Record{
 		for(let dayIterator = 0; dayIterator < textDays.length + 1; ++dayIterator){
 			let baseDayDate = new Date(nowDate);
 			baseDayDate.setDate(baseDayDate.getDate() + dayIterator);
+			baseDayDate.setSeconds(0);
 			
 			let textIntervals = textDays[(beginDayNo + dayIterator) % textDays.length].split(",");
 			
@@ -156,6 +157,7 @@ export class Record{
 		for(let dayIterator = 0; dayIterator < textDays.length + 1; ++dayIterator){
 			let baseDayDate = new Date(nowDate);
 			baseDayDate.setDate(baseDayDate.getDate() + dayIterator);
+			baseDayDate.setSeconds(0);
 			
 			let textGroups = textDays[(beginDayNo + dayIterator) % textDays.length].split(",");
 			
@@ -207,7 +209,7 @@ export class Record{
 		
 		// 2) Sort and unify the overlaps
 		relevantIntervals.sort((a,b) => (a[0] === b[0] ? 0 : (a[0] > b[0] ? 1 : -1)));
-		
+				
 		for(let ii = 0; ii < relevantIntervals.length; ++ii){
 			while(ii+1 < relevantIntervals.length && 
 			relevantIntervals[ii][1] >= relevantIntervals[ii+1][0]){
@@ -221,20 +223,20 @@ export class Record{
 						relevantIntervals[ii][1] = tmp[1];
 				}else if(relevantIntervals[ii][2] < relevantIntervals[ii+1][2] ||
 					(relevantIntervals[ii][2] == relevantIntervals[ii+1][2] &&
-						relevantIntervals[ii+1][3] > relevantIntervals[ii+1][3])){
+						relevantIntervals[ii][3] > relevantIntervals[ii+1][3])){
 					
 					// The former interval is stricter, so shorten the latter
-					relevantIntervals[ii+1][0] = relevantIntervals[ii][1];
+					relevantIntervals[ii+1][0] = new Date(relevantIntervals[ii][1].getTime()+1);
 				}else if(relevantIntervals[ii][2] > relevantIntervals[ii+1][2] ||
 					(relevantIntervals[ii][2] == relevantIntervals[ii+1][2] &&
-						relevantIntervals[ii+1][3] < relevantIntervals[ii+1][3])){
+						relevantIntervals[ii][3] < relevantIntervals[ii+1][3])){
 					
 					// The latter interval is stricter, so shorten the former
-					relevantIntervals[ii][1] = relevantIntervals[ii+1][0];
+					relevantIntervals[ii][1] = new Date(relevantIntervals[ii+1][0].getTime()-1);
 				}
 			}
-		}		
-		
+		}
+				
 		// 3) Find nearest point in time when either
 		//			the permitted break is larger than current break or
 		//			the demanded timeout is smaller than distance from last check
@@ -254,6 +256,13 @@ export class Record{
 				return new Date(relevantIntervals[ii][0].getTime());
 			}else if(this.#lastCheck.getTime() + relevantIntervals[ii][3] * 1000 
 														< relevantIntervals[ii][1]){
+				if(this.#lastCheck.getTime() + relevantIntervals[ii][3] * 1000
+														< relevantIntervals[ii][0]){
+					// The timeout is big enough not to run out during previous interval,
+					//	but small enough to be counter as served in this one
+					return new Date(relevantIntervals[ii][0]);
+				}															
+				
 				// The timeout runs out during the iterated interval
 				return new Date(this.#lastCheck.getTime() + relevantIntervals[ii][3] * 1000);
 			}else if(ii + 1 == relevantIntervals.length ||
@@ -266,7 +275,7 @@ export class Record{
 		return defaultAnswer;		
 	}
 	
-	testWebsite(websiteAddress, softCheck, checkInterval, nowDate){
+	testWebsite(websiteAddress, softCheck, nowDate){
 		// returns either [Date, string] or false
 		//  where Date is time when the website will be accessible
 		//	and string is code to be executed

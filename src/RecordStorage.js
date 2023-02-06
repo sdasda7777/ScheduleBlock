@@ -196,7 +196,7 @@ export class RecordStorage {
 		
 		let testResult = false;
 		for(let ii = 0; ii < arr.length && testResult === false; ++ii){
-			testResult = arr[ii].testWebsite(urlAddress, softCheck, checkInterval, nowDate);
+			testResult = arr[ii].testWebsite(urlAddress, softCheck, nowDate);
 			
 			let incremented = arr[ii].getIncrementedTimeout(urlAddress, nowDate, checkInterval);
 			if(incremented !== false)
@@ -221,7 +221,7 @@ export class RecordStorage {
 		
 		let testResult = false;
 		for(let ii = 0; ii < arr.length; ++ii){
-			testResult = arr[ii].testWebsite(urlAddress, true, checkInterval, nowDate);
+			testResult = arr[ii].testWebsite(urlAddress, true, nowDate);
 			
 			if(testResult !== false && testResult[0] > maxResult){
 				maxResult = testResult[0];
