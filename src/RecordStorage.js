@@ -196,11 +196,14 @@ export class RecordStorage {
 		
 		let testResult = false;
 		for(let ii = 0; ii < arr.length && testResult === false; ++ii){
-			testResult = arr[ii].testWebsite(urlAddress, softCheck, nowDate);
-			
 			let incremented = arr[ii].getIncrementedTimeout(urlAddress, nowDate, checkInterval);
 			if(incremented !== false)
 				arr[ii] = incremented;
+			
+			//TODO: this will not work properly for 
+			//			allowed timeouts shorter than the checkInterval
+			//			How to check it does work properly???
+			testResult = arr[ii].testWebsite(urlAddress, softCheck, nowDate);
 		}
 				
 		await this.#storageProvider.storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});

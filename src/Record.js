@@ -350,7 +350,7 @@ export class Record{
 		return [0, 0];
 	}
 	getIncrementedTimeout(websiteAddress, nowDate, checkInterval){
-		if(!(this.#regex) || !(this.#action) || 
+		if(!(this.#regex) || !(this.#action) || !(this.#timeout) ||
 			!(websiteAddress.match(new RegExp(this.#regex)))){
 			// If regex or action is unset or address doesn't match, return false
 			return false;
@@ -363,10 +363,7 @@ export class Record{
 											- this.#lastCheck.getTime(),
 									  checkInterval);
 		
-		if(this.#currentDuration + sinceLastCheck < normalBreak * 1000 &&
-			nowDate.getTime() > this.#lastCheck.getTime() &&
-			nowDate.getTime() < this.#lastCheck.getTime()
-									+ normalTimeout * 1000){
+		if(this.#currentDuration < normalBreak * 1000){
 			// If timeout didn't pass since last visit
 			//	and currentStreak is less than allowed time,
 			// 	increment current streak
@@ -374,18 +371,11 @@ export class Record{
 								this.#currentDuration + sinceLastCheck )
 						.withLastCheck(nowDate);
 										
-		}else if(nowDate.getTime()
-					>= this.#lastCheck.getTime() + normalTimeout * 1000){
+		}else if(nowDate.getTime() >= this.#lastCheck.getTime() + normalTimeout * 1000){
 			// If timeout did pass since last visit
 			//	reset current streak
 			return this.withCurrentDuration(0).withLastCheck(nowDate);
 			
-		}else if(this.#currentDuration + sinceLastCheck >= normalBreak * 1000 &&
-					this.#currentDuration < normalBreak * 1000){
-			
-			return this.withCurrentDuration(
-							this.#currentDuration + sinceLastCheck )
-						.withLastCheck(nowDate);
 		}
 		
 		return false;

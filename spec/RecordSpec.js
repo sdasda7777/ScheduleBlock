@@ -410,6 +410,9 @@ describe('Record', function() {
 				recordA = new Record("^regexA$", "softHoursA", "hardHoursA",
 										"timeoutA",	"actionA", 60000, new Date(nowDateA));
 				
+				nowDateB = new Date(nowDateA);
+				nowDateB.setMinutes(34);
+				
 				expect(recordA.testWebsite("www.duckduckgo.com", true, nowDateB)).toBe(false);
 				expect(recordA.testWebsite("www.duckduckgo.com", false, nowDateB)).toBe(false);
 				
@@ -420,6 +423,65 @@ describe('Record', function() {
 			xit('(3.2) check locks work when both set');
 			xit('(3.3) check timeouts work when both set');
 		})	
+	});
+	
+	describe('timeout incrementation', function(){
+		let recordA, recordB, recordC,
+			nowDateA, nowDateB, nowDateC, nowDateD;
+		
+		it('check incrementing works, but is immutable', function() {
+			nowDateA = new Date();			
+			nowDateB = new Date(nowDateA.getTime() + 15000);
+			nowDateC = new Date(nowDateB.getTime() + 15000);
+			
+			recordA = new Record("^regexA$", "", "", "0:30/1:00:00",
+									"actionA", 0, new Date(nowDateA));
+									
+			recordB = recordA.getIncrementedTimeout("regexA", nowDateB, 15000);
+			recordC = recordB.getIncrementedTimeout("regexA", nowDateC, 15000);
+			
+			expect(recordA.calculateNearestTimeoutAvailability(nowDateA))
+				.toEqual(new Date(nowDateA.getTime() - 1));
+			expect(recordB.calculateNearestTimeoutAvailability(nowDateB))
+				.toEqual(new Date(nowDateB.getTime() - 1));
+			expect(recordC.calculateNearestTimeoutAvailability(nowDateC))
+				.toEqual(new Date(nowDateC.getTime() + 60*60*1000));
+			
+			// expect record to be unchanged
+			expect(recordA).toEqualToRecord(new Record("^regexA$", "", "", "0:30/1:00:00",
+															"actionA", 0, nowDateA));
+			expect(recordB).toEqualToRecord(new Record("^regexA$", "", "", "0:30/1:00:00",
+															"actionA", 15000, nowDateB));
+			expect(recordC).toEqualToRecord(new Record("^regexA$", "", "", "0:30/1:00:00",
+															"actionA", 30000, nowDateC));
+		});
+		
+		it('works properly for timeouts shorter than check interval', function(){
+			nowDateA = new Date();			
+			nowDateB = new Date(nowDateA.getTime() + 30000);
+			nowDateC = new Date(nowDateB.getTime() + 30000);
+			
+			recordA = new Record("^regexA$", "", "", "0:15/1:00:00",
+									"actionA", 0, new Date(nowDateA));
+									
+			recordB = recordA.getIncrementedTimeout("regexA", nowDateB, 30000);
+			recordC = recordB.getIncrementedTimeout("regexA", nowDateC, 30000);
+			
+			expect(recordA.calculateNearestTimeoutAvailability(nowDateA))
+				.toEqual(new Date(nowDateA.getTime() - 1));
+			expect(recordB.calculateNearestTimeoutAvailability(nowDateB))
+				.toEqual(new Date(nowDateB.getTime() + 60*60*1000));
+			
+			// expect record to be unchanged
+			expect(recordA).toEqualToRecord(new Record("^regexA$", "", "", "0:15/1:00:00",
+															"actionA", 0, nowDateA));
+			expect(recordB).toEqualToRecord(new Record("^regexA$", "", "", "0:15/1:00:00",
+															"actionA", 30000, nowDateB));
+			expect(recordC).toEqualToRecord(new Record("^regexA$", "", "", "0:15/1:00:00",
+															"actionA", 30000, nowDateC));
+			
+		});
+		
 	});
 		
 	describe('serialization', function() {
