@@ -5,7 +5,8 @@
 
 import { Record } from "./Record.js";
 import { TranslationProvider } from "./TranslationProvider.js";
-import { intToTime, timeToInt,
+import { validateURLInput,
+		 intToTime, timeToInt,
 		 validateTimeString, validateTimeStringInput,
 		 validateTimeoutString, validateTimeoutStringInput} from "./Misc.js";
 
@@ -306,6 +307,8 @@ export function main(){
 			
 			document.querySelector("#colorPicker").value = message.properties.Background;
 			
+			document.querySelector("#lockScreenBase").value = message.properties.LockScreenBase;
+			
 			translateGUI();
 		}else if(message.type === "ScheduleBlock_Options_ImportFailed"){
 			alert("Import failed because:\n" + message.reason);
@@ -394,7 +397,7 @@ export function main(){
 
 	// Set up settings button and settings overlay listeners
 	{
-		let languageBackup, intervalBackup, colorBackup;
+		let languageBackup, intervalBackup, colorBackup, lockScreenBaseBackup;
 		document.getElementById("settingsButton").addEventListener("click", (e) => {
 			if(document.getElementById("settingsButton") !== event.target) return;
 			
@@ -402,6 +405,7 @@ export function main(){
 																	.selectedIndex];
 			intervalBackup = parseInt(document.getElementById("freqPicker").value);
 			colorBackup = document.getElementById("colorPicker").value;
+			lockScreenBaseBackup = document.getElementById("lockScreenBase").value;
 			
 			document.getElementById("settingsChangeOverlay").style.display = "flex";
 		});
@@ -409,21 +413,25 @@ export function main(){
 		function resetSettingsBackups(){
 			document.getElementById("langPicker").value = tp.getStringVersions(0)
 																.indexOf(languageBackup);
-			document.getElementById("langPicker").dispatchEvent(new UIEvent('change', {
-																	'view': window,
-																	'bubbles': true,
-																	'cancelable': true}));
 			document.getElementById("freqPicker").value = intervalBackup;
-			document.getElementById("freqPicker").dispatchEvent(new UIEvent('change', {
-																	'view': window,
-																	'bubbles': true,
-																	'cancelable': true}));
 			document.getElementById("colorPicker").value = colorBackup;
-			document.getElementById("colorPicker").dispatchEvent(new UIEvent('change', {
-																	'view': window,
-																	'bubbles': true,
-																	'cancelable': true}));
+			document.getElementById("lockScreenBase").value = lockScreenBaseBackup;
+			
+			[document.getElementById("langPicker"),
+			 document.getElementById("freqPicker"),
+			 document.getElementById("colorPicker"),
+			 document.getElementById("lockScreenBase")
+			].forEach((i)=>{i.dispatchEvent(new UIEvent('change', {
+														'view': window,
+														'bubbles': true,
+														'cancelable': true}));});
 		}
+		
+		
+		// On change validators
+		document.getElementById("lockScreenBase")
+			.addEventListener("change", (e) => validateURLInput(e.target, tp));
+		
 		
 		document.getElementById("settingsChangeOverlay").addEventListener("click", (e) => {
 			if(document.getElementById("settingsChangeOverlay") !== event.target) return;
@@ -437,21 +445,23 @@ export function main(){
 			document.getElementById("settingsChangeOverlay").style.display = "none";
 		});
 		
-		
-		
-		
 		document.getElementById("settingsMenuOK").addEventListener("click", (e) => {
+			if(!validateURLInput(document.getElementById("lockScreenBase"), tp))
+				return;
+			
 			let newLangIndex = document.getElementById("langPicker").selectedIndex;
 			let newLangName = tp.getStringVersions(0)[newLangIndex];
 			let newCheckFrequency = parseInt(document.getElementById("freqPicker").value);
 			let newBackground = document.getElementById("colorPicker").value;
+			let newLockScreenBase = document.getElementById("lockScreenBase").value;
 			
 			let sending = chrome.runtime.sendMessage(
 			{
 				type: "ScheduleBlock_SaveGeneralProperties",
 				newProperties: {Language: newLangName,
 									CheckFrequency: newCheckFrequency,
-									Background: newBackground}
+									Background: newBackground,
+									LockScreenBase: newLockScreenBase}
 			});
 			document.getElementById("settingsChangeOverlay").style.display = "none";
 		});

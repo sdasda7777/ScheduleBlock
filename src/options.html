@@ -64,6 +64,12 @@
 				</br>
 				<input type="color" id="colorPicker" value="#808080">
 			</div>
+			<div id="lockScreenBaseParent" class="settingsFullsizeParent">
+				<label for="lockScreenBase" id="lockScreenBaseLabel">Lock Screen Base URL:</label>
+				</br>
+				<p>Note: This should be a domain you have large amount of trust in. It also should not be in your block list and preferably should be lightweight. Honestly, unless you have a really good reason just leave it as it is (https://www.iana.org).</p>
+				<input id="lockScreenBase" name="lockScreenBase" type="url" required/>
+			</div>
 			<div id="creditsParent" class="settingsFullsizeParent">
 				<label id="creditsLabel">Credits:</label>
 				</br>
@@ -81,7 +87,6 @@
 				</br>
 				<a href="../SpecRunner.html">Run tests</a>
 			</div>
-			
 			
 			<input type="button" id="settingsMenuOK" value="OK">
 			<input type="button" id="settingsMenuCancel" value="Cancel">

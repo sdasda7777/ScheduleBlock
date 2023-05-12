@@ -23,6 +23,17 @@ export function timeToInt(timeoutString){
 	return sum;
 }
 
+export function validateURLInput(element, translationProvider){
+	if(element.value.match("^(https?|ftps?)://") == null){
+		element.setCustomValidity(translationProvider.getTranslatedString(151));
+		element.reportValidity();
+		return false;
+	}else{
+		element.setCustomValidity("");
+		return true;
+	}
+}
+
 // This regex is slightly edited version of https://stackoverflow.com/a/7536768 by Peter O.
 const timeRegex = new RegExp('^\\s*(?:[0-1]?[0-9]|2[0-3])\\s*:\\s*[0-5][0-9]\\s*$');
 

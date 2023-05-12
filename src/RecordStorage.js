@@ -93,8 +93,17 @@ export class RecordStorage {
 			const res = await this.#storageProvider
 								.storage.local.get(['ScheduleBlock_Properties']);
 			this.#properties = (res && res.ScheduleBlock_Properties
-									? res.ScheduleBlock_Properties 
-						: {Language:"english", CheckFrequency:15, Background:"#808080"});
+									? res.ScheduleBlock_Properties : {});
+			
+			if(!this.#properties.Language)
+				this.#properties.Language = "english";
+			if(!this.#properties.CheckFrequency)
+				this.#properties.CheckFrequency = 15;
+			if(!this.#properties.Background)
+				this.#properties.Background = "#808080";
+			if(!this.#properties.LockScreenBase)
+				this.#properties.LockScreenBase = "https://www.iana.org";
+			
 		}
 		
 		return this.#properties;

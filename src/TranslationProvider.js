@@ -39,6 +39,8 @@ export class TranslationProvider {
 			106: ["Credits:",
 					"Autoři/práva:"],
 			
+			151: ["Must be valid URL including ://",
+					"Musí být platná URL včetně ://"],
 			
 			// These keys belong to the main table and controls around and in it
 			201: ["Enter websites, times when you want them blocked, and where you want them to redirect you (the term soft lock refers to a state when only new tabs cannot be opened, the term hard lock refers to state when even already open tabs will be redirected):",

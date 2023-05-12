@@ -116,6 +116,9 @@ h1, #settingsButton {
 	
 	font-size: 20px;
 }
+.settingsFullsizeParent > p {
+	font-size: 12px;
+}
 #langPickerLabel,
 #freqPickerLabel,
 #colorPickerLabel{

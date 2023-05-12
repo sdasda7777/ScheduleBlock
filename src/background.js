@@ -14,7 +14,7 @@ const ScheduleBlock_messages = [
 	"ScheduleBlock_RecordStorage_DeleteRecord",		    //  9
 	"ScheduleBlock_RecordStorage_TestWebsite",		    // 10
 	"ScheduleBlock_RecordStorage_GetWebsiteUnlockTime", // 11
-	"ScheduleBlock_InitializeContentScript"			    // 12
+	"ScheduleBlock_InitialContentCheck"			    // 12
 ];
 
 export function main(){
@@ -111,19 +111,21 @@ export function main(){
 	  }else if(message_type == 10){
 		//"ScheduleBlock_RecordStorage_TestWebsite"
 		await recordStorage.testWebsite(message.urlAddress, message.softCheck).then(
-			(userScript)=>{
+			async (userScript)=>{
 				if(userScript !== false){
-					console.log("Sending script '" + userScript + 
+					await recordStorage.getGeneralProperties().then(
+						(settings)=>{
+							console.log("Sending script '" + userScript + 
 								"' to '" + message.urlAddress + "'");
-					
-					chrome.tabs.sendMessage(
-						sender.tab.id,
-						{
-							type: "ScheduleBlock_Content_ExecuteAction",
-							action: userScript.replace("$ScheduleBlock_LockScreen$",
-										chrome.runtime.getURL("src/ScheduleBlock_LockSite.html")
-											+ "?source="
-											+ btoa(message.urlAddress))
+							chrome.tabs.sendMessage(
+								sender.tab.id,
+								{
+									type: "ScheduleBlock_Content_ExecuteAction",
+									action: userScript.replace("$ScheduleBlock_LockScreen$",
+																settings.LockScreenBase
+																+ "?requested_by=ScheduleBlock&source="
+																+ btoa(message.urlAddress))
+								});
 						});
 				}
 			});
@@ -146,14 +148,46 @@ export function main(){
 				}
 			});
 	  }else if(message_type == 12){
-		//"ScheduleBlock_InitializeContentScript"
+		//"ScheduleBlock_InitialContentCheck"
+		
 		await recordStorage.getGeneralProperties().then(
-			(properties)=>{
-				chrome.tabs.sendMessage(
-					sender.tab.id,
-					{
-						type: "ScheduleBlock_Content_Initalize",
-						properties: properties
+			async (settings)=>{
+				if(message.urlAddress.indexOf(settings.LockScreenBase) === 0
+					&& message.urlAddress.indexOf('requested_by=ScheduleBlock') != -1){
+					// Create alock screen
+					chrome.tabs.sendMessage(
+						sender.tab.id,
+						{
+							type: "ScheduleBlock_Content_CreateLockScreen"
+						});
+					
+					return;
+				}
+				
+				await recordStorage.testWebsite(message.urlAddress, true).then(
+					(userScript)=>{
+						if(userScript !== false){
+							// Execute action (such as a redirect)
+							console.log("Sending script '" + userScript + 
+										"' to '" + message.urlAddress + "'");
+							chrome.tabs.sendMessage(
+								sender.tab.id,
+								{
+									type: "ScheduleBlock_Content_ExecuteAction",
+									action: userScript.replace("$ScheduleBlock_LockScreen$",
+																settings.LockScreenBase
+																+ "?requested_by=ScheduleBlock&source="
+																+ btoa(message.urlAddress))
+								});
+						} else {
+							// Establish check cycle
+							chrome.tabs.sendMessage(
+								sender.tab.id,
+								{
+									type: "ScheduleBlock_Content_Initalize",
+									properties: settings
+								});
+						}
 					});
 			});
 	  }

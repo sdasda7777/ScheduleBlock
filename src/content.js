@@ -3,6 +3,11 @@
  * @author sdasda7777
  */
 
+let documentLoaded = false;
+window.addEventListener("load", function(){
+	documentLoaded = true;
+});
+
 // Logging function
 function logJ(){
 	console.log.apply(this,
@@ -48,20 +53,89 @@ chrome.runtime.onMessage.addListener((message)=>{
 				softCheck: false
 			});
 		}, message.properties.CheckFrequency * 1000);
+	}else if(message.type === "ScheduleBlock_Content_CreateLockScreen"){
+		let CreateLockScreenLambda = ()=>{
+			console.log("lambda");
+			document.querySelector("html").innerHTML = "";
+			//TODO: background color?
+			
+			let sourceUrl = atob(new URLSearchParams(window.location.search).get("source"));
+			
+			let sourceDisplay = document.createElement("h2");
+			sourceDisplay.id = "sourceDisplay";
+			sourceDisplay.innerText = sourceUrl;
+			document.querySelector("body").appendChild(sourceDisplay);
+			
+			let remainingTimeDisplay = document.createElement("h2");
+			remainingTimeDisplay.id = "remainingTimeDisplay";
+			document.querySelector("body").appendChild(remainingTimeDisplay);
+			
+			let backButton = document.createElement("input");
+			backButton.type = "button";
+			backButton.value = "Go back";
+			document.querySelector("body").appendChild(backButton);
+			backButton.addEventListener("click", ()=>{window.location = sourceUrl;});
+			
+			let unlockTime = 0;
+			let displayIntervalHandle = null;
+
+			chrome.runtime.onMessage.addListener((message)=>{
+				console.log(message);
+		
+				if(message.type === "ScheduleBlock_LockScreen_SetUnlockTime"){
+					if(displayIntervalHandle !== null)
+						clearInterval(displayIntervalHandle);
+						unlockTime = new Date(message.unlockTime);
+			
+					let updateTimeDisplay = () => {
+						let currentTime = new Date();
+						if(currentTime.getTime() >= unlockTime){
+							document.getElementById("remainingTimeDisplay").innerText = "00:00:00";
+						}else{
+							let timeDifference = Math.floor((unlockTime - currentTime.getTime()) / 1000);
+							
+							let seconds = timeDifference % 60;
+							let minutes = ((timeDifference - seconds) / 60) % 60;
+							let hours =   ((timeDifference - 60 * minutes - seconds) / 3600);
+							
+							document.getElementById("remainingTimeDisplay").innerText
+								= "" + String("0" + hours).slice(-2)
+									+ ":" + String("0" + minutes).slice(-2)
+									+ ":" + String("0" + seconds).slice(-2);
+						}
+					};
+				
+					updateTimeDisplay();
+					displayIntervalHandle = setInterval(updateTimeDisplay, 1000);
+				}
+			});
+
+			//TODO: clear interval on extension failure
+			let storageIntervalHandle = null;
+			function updateTimeFromStorage(){
+				let sending = chrome.runtime.sendMessage({
+					type: "ScheduleBlock_RecordStorage_GetWebsiteUnlockTime",
+					urlAddress: sourceUrl
+				});
+			}
+
+			updateTimeFromStorage();
+			storageIntervalHandle = setInterval(updateTimeFromStorage, 3*60*1000);
+		};
+					
+		if(documentLoaded){
+			CreateLockScreenLambda();
+		}else{
+			window.addEventListener("load", CreateLockScreenLambda);
+		}
 	}
 });
 
 
 let sending1 = chrome.runtime.sendMessage(
 {
-	type: "ScheduleBlock_RecordStorage_TestWebsite",
-	urlAddress: window.location.href,
-	softCheck: true
-});
-
-let sending2 = chrome.runtime.sendMessage(
-{
-	type: "ScheduleBlock_InitializeContentScript"
+	type: "ScheduleBlock_InitialContentCheck",
+	urlAddress: window.location.href
 });
 
 
