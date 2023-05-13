@@ -1,0 +1,2 @@
+# Libraries shouldn't be diffed
+lib/**	binary -crlf -diff -merge
