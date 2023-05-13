@@ -82,9 +82,11 @@ chrome.runtime.onMessage.addListener((message)=>{
 			backButton.addEventListener("click", ()=>{window.location = sourceUrl;});
 
 			// Create style tag, set background color
+			console.log(message.properties);
 			let styleSheet = document.createElement("style");
 			styleSheet.type = "text/css";
 			styleSheet.innerHTML = "*{background-color:" + message.properties.Background + ";}";
+			document.querySelector("body").appendChild(styleSheet);
 
 			// Initialize timer
 			let unlockTime = 0;
@@ -99,6 +101,14 @@ chrome.runtime.onMessage.addListener((message)=>{
 						unlockTime = new Date(message.unlockTime);
 
 					let updateTimeDisplay = () => {
+						if(chrome === undefined ||
+							chrome.runtime === undefined ||
+							chrome.runtime.id === undefined){
+
+							clearInterval(displayIntervalHandle);
+							return;
+						}
+
 						let currentTime = new Date();
 						if(currentTime.getTime() >= unlockTime){
 							document.getElementById("remainingTimeDisplay").innerText = "00:00:00";
@@ -124,6 +134,14 @@ chrome.runtime.onMessage.addListener((message)=>{
 			//TODO: clear interval on extension failure
 			let storageIntervalHandle = null;
 			function updateTimeFromStorage(){
+				if(chrome === undefined ||
+					chrome.runtime === undefined ||
+					chrome.runtime.id === undefined){
+
+					clearInterval(storageIntervalHandle);
+					return;
+				}
+
 				let sending = chrome.runtime.sendMessage({
 					type: "ScheduleBlock_RecordStorage_GetWebsiteUnlockTime",
 					urlAddress: sourceUrl

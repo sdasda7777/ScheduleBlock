@@ -1,7 +1,7 @@
 {
   "name": "ScheduleBlock",
   "description": "Block websites on a schedule",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "manifest_version": 3,
   "permissions": ["storage"],
 
@@ -12,9 +12,7 @@
 		"src/Record.js",
 		"src/RecordStorage.js",
 		"src/options.js",
-		"src/content.js",
-		"src/ScheduleBlock_LockSite.html",
-		"src/ScheduleBlock_LockSite.js"
+		"src/content.js"
 	]
   }],
   "background": {

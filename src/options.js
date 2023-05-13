@@ -295,7 +295,7 @@ export function main(){
 		}else if(message.type === "ScheduleBlock_Options_OpenEditMenu"){
 			openRecordEditMenuCallback(message.data);
 		}else if(message.type === "ScheduleBlock_Options_Initialize"){
-			//console.log(result);
+			console.log(message);
 			
 			let tmpLangIndex = tp.getStringVersions(0).indexOf(message.properties.Language);
 			if(tmpLangIndex != -1){
