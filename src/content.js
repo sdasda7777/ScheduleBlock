@@ -37,14 +37,14 @@ chrome.runtime.onMessage.addListener((message)=>{
 		let checker = setInterval(() => {
 			// This condition prevents "Uncaught error: Extension context invalidated"
 			//  (would otherwise happen when extension is unloaded during operation)
-			if(chrome === undefined || 
+			if(chrome === undefined ||
 				chrome.runtime === undefined ||
 				chrome.runtime.id === undefined){
-				
+
 				clearInterval(checker);
 				return;
 			}
-					
+
 			// Recurring hard lock check
 			let sending = chrome.runtime.sendMessage(
 			{
@@ -92,30 +92,30 @@ chrome.runtime.onMessage.addListener((message)=>{
 
 			chrome.runtime.onMessage.addListener((message)=>{
 				console.log(message);
-		
+
 				if(message.type === "ScheduleBlock_LockScreen_SetUnlockTime"){
 					if(displayIntervalHandle !== null)
 						clearInterval(displayIntervalHandle);
 						unlockTime = new Date(message.unlockTime);
-			
+
 					let updateTimeDisplay = () => {
 						let currentTime = new Date();
 						if(currentTime.getTime() >= unlockTime){
 							document.getElementById("remainingTimeDisplay").innerText = "00:00:00";
 						}else{
 							let timeDifference = Math.floor((unlockTime - currentTime.getTime()) / 1000);
-							
+
 							let seconds = timeDifference % 60;
 							let minutes = ((timeDifference - seconds) / 60) % 60;
 							let hours =   ((timeDifference - 60 * minutes - seconds) / 3600);
-							
+
 							document.getElementById("remainingTimeDisplay").innerText
 								= "" + String("0" + hours).slice(-2)
 									+ ":" + String("0" + minutes).slice(-2)
 									+ ":" + String("0" + seconds).slice(-2);
 						}
 					};
-				
+
 					updateTimeDisplay();
 					displayIntervalHandle = setInterval(updateTimeDisplay, 1000);
 				}
