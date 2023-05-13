@@ -71,19 +71,20 @@ In general, every record consists of:
 
 ### Changelog/Roadmap
 
-#### 1.1.7 (planned)
+#### 1.1.7 (upcoming)
 - TODO: Export language, check frequency and background color along with records
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)
 - TODO: Improve effectivity by parsing records in RecordStorage only on load and on change
 
-#### 1.1.6 (upcoming)
+#### 1.1.6 (current)
 - Added basic fallbacks for when website doesn't allow script execution
 - Moved source files into the src directory
 - Disabled record action input fields when given action is not selected
 - Created few basic tests
 - Added a lock page functionality showing original address and lock time remaining
+- Created a simple Python script to automate "build" process
 
-#### 1.1.5 (current)
+#### 1.1.5
 - Switched from browser.storage.sync to browser.storage.local to prevent MAX_WRITE_OPERATIONS_PER_HOUR error (this will "delete" your settings, sorry)
 - Cleaned up translations, fixed incorrect behavior of some labels
 - Transitioned to new websites data location ("ScheduleBlock_Websites"), since your data is unfortunately getting "deleted" anyway due to the first fix
