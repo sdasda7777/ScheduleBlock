@@ -24,7 +24,7 @@ export class TranslationProvider {
 				"Zrušit"],
 			3: ["Settings",
 				"Nastavení"],
-			
+
 			// These keys belong to the controls at the top of the page
 			101: ["Language:",
 					"Jazyk:"],
@@ -38,13 +38,18 @@ export class TranslationProvider {
 					"Perioda kontrol (v sekundách):"],
 			106: ["Credits:",
 					"Autoři/práva:"],
+			107: ["Lock Screen Base URL:",
+					"URL zamykací obrazovky:"],
+			108: ["Note: This should be a domain you have large amount of trust in. It also should not be in your block list and preferably should be lightweight. Honestly, unless you have a really good reason just leave it as it is (default: https://www.iana.org).",
+
+					"Poznámka: Mělo by se jednat o doménu, ve kterou máte velkou důvěru. Také by neměla být na vašem seznamu blokovaných stránek a měla by být jednoduchá (lightweight). Pokud nemáte dobrý důvod, raději ji neměnte (defaultně: https://www.iana.org)."],
 			
 			151: ["Must be valid URL including ://",
 					"Musí být platná URL včetně ://"],
-			
+
 			// These keys belong to the main table and controls around and in it
 			201: ["Enter websites, times when you want them blocked, and where you want them to redirect you (the term soft lock refers to a state when only new tabs cannot be opened, the term hard lock refers to state when even already open tabs will be redirected):",
-			
+
 					"Zadejte stránky, časy, ve které je chcete mít zablokované a kam chcete být přesměrováni (pojem nenavštívitelnost odkazuje na stav, kdy pouze nepůjde otevřít nové karty, pojem znepřístupnění odkazuje na stav, kdy i již otevřené karty budou přesměrovány):"],
 		
 			

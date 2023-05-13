@@ -79,9 +79,9 @@ In general, every record consists of:
 #### 1.1.6 (upcoming)
 - Added basic fallbacks for when website doesn't allow script execution
 - Moved source files into the src directory
-- Added a custom lock page showing original address and lock time remaining
 - Disabled record action input fields when given action is not selected
-- TODO: Create basic tests
+- Created few basic tests
+- Added a lock page functionality showing original address and lock time remaining
 
 #### 1.1.5 (current)
 - Switched from browser.storage.sync to browser.storage.local to prevent MAX_WRITE_OPERATIONS_PER_HOUR error (this will "delete" your settings, sorry)

@@ -29,7 +29,7 @@ if (!String.prototype.format) {
 }
 
 
-		
+
 function translateGUI(){
 	document.querySelector("#settingsButton").value = tp.getTranslatedString(3);
 	document.querySelector("#import").value = tp.getTranslatedString(103);
@@ -38,10 +38,13 @@ function translateGUI(){
 	document.querySelector("#freqPickerLabel").innerText = tp.getTranslatedString(105);
 	document.querySelector("#colorPickerLabel").innerText = tp.getTranslatedString(102);
 	document.querySelector("#creditsLabel").innerText = tp.getTranslatedString(106);
-	
+
+	document.querySelector("#lockScreenBaseLabel").innerText = tp.getTranslatedString(107);
+	document.querySelector("#lockScreenBaseNote").innerText = tp.getTranslatedString(108);
+
 	document.querySelector("#settingsMenuOK").value = tp.getTranslatedString(1);
 	document.querySelector("#settingsMenuCancel").value = tp.getTranslatedString(2);
-	
+
 	document.querySelector("#patternInputLabel").innerText
 		= tp.getTranslatedString(211) + ":";
 	document.querySelector("#softLockHoursLabel").innerText
@@ -52,7 +55,7 @@ function translateGUI(){
 		= tp.getTranslatedString(214) + ":";
 	document.querySelector("#destinationLabel").innerText
 		= tp.getTranslatedString(215) + ":";
-	
+
 	document.querySelector("#actionInputCloseLabel").innerText
 		= tp.getTranslatedString(216);
 	document.querySelector("#actionInputLockPageLabel").innerText
@@ -61,16 +64,16 @@ function translateGUI(){
 		= tp.getTranslatedString(217) + ":";
 	document.querySelector("#actionInputCustomCodeLabel").innerText
 		= tp.getTranslatedString(218) + ":";
-		
+
 	document.querySelector("#recordEditDelete").value = tp.getTranslatedString(249);
-	
+
 	document.querySelector("#recordEditOK").value = tp.getTranslatedString(1);
 	document.querySelector("#recordEditCancel").value = tp.getTranslatedString(2);
-		
+
 	document.querySelector("#tableHint").innerText = tp.getTranslatedString(201);
 	document.querySelector("#newsite").placeholder = tp.getTranslatedString(350);
 	document.querySelector("#newsiteadd").value = tp.getTranslatedString(351);
-	
+
 	document.querySelector("#testertitle").innerText = tp.getTranslatedString(401);
 	document.querySelector("#testerinput1").placeholder = tp.getTranslatedString(402);
 	document.querySelector("#testerinput2").placeholder = tp.getTranslatedString(403);
@@ -82,14 +85,14 @@ function translateGUI(){
 		testerresult.innerText = tp.getTranslatedString(405);
 	}
 	document.querySelector("#testerbutton").value = tp.getTranslatedString(407);
-	
+
 	document.querySelector("#personalmessagetitle").innerText
 		= tp.getTranslatedString(451);
 	document.querySelector("#personalmessagecontent").innerHTML
 		= tp.getTranslatedString(452);
-	
+
 	constructView();
-}			
+}
 
 /**
  * Adds new record into the storage, taking pattern from #newsite element.

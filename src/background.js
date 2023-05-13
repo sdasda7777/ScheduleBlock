@@ -158,7 +158,8 @@ export function main(){
 					chrome.tabs.sendMessage(
 						sender.tab.id,
 						{
-							type: "ScheduleBlock_Content_CreateLockScreen"
+							type: "ScheduleBlock_Content_CreateLockScreen",
+							properties: settings
 						});
 					
 					return;

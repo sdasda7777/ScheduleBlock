@@ -477,8 +477,7 @@ describe('Record', function() {
 															"actionA", 0, nowDateA));
 			expect(recordB).toEqualToRecord(new Record("^regexA$", "", "", "0:15/1:00:00",
 															"actionA", 30000, nowDateB));
-			expect(recordC).toEqualToRecord(new Record("^regexA$", "", "", "0:15/1:00:00",
-															"actionA", 30000, nowDateC));
+			expect(recordC).toEqual(false);
 			
 		});
 		

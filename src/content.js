@@ -55,27 +55,38 @@ chrome.runtime.onMessage.addListener((message)=>{
 		}, message.properties.CheckFrequency * 1000);
 	}else if(message.type === "ScheduleBlock_Content_CreateLockScreen"){
 		let CreateLockScreenLambda = ()=>{
-			console.log("lambda");
+			// Clear the website
 			document.querySelector("html").innerHTML = "";
-			//TODO: background color?
-			
+
+			// Initialize main elements
 			let sourceUrl = atob(new URLSearchParams(window.location.search).get("source"));
-			
+			window.top.document.title = sourceUrl;
+			let iconOverride = document.createElement("link");
+			iconOverride.rel = "icon";
+			iconOverride.href = "https://broken.favicon.png";
+			window.top.document.querySelector("head").appendChild(iconOverride);
+
 			let sourceDisplay = document.createElement("h2");
 			sourceDisplay.id = "sourceDisplay";
 			sourceDisplay.innerText = sourceUrl;
 			document.querySelector("body").appendChild(sourceDisplay);
-			
+
 			let remainingTimeDisplay = document.createElement("h2");
 			remainingTimeDisplay.id = "remainingTimeDisplay";
 			document.querySelector("body").appendChild(remainingTimeDisplay);
-			
+
 			let backButton = document.createElement("input");
 			backButton.type = "button";
 			backButton.value = "Go back";
 			document.querySelector("body").appendChild(backButton);
 			backButton.addEventListener("click", ()=>{window.location = sourceUrl;});
-			
+
+			// Create style tag, set background color
+			let styleSheet = document.createElement("style");
+			styleSheet.type = "text/css";
+			styleSheet.innerHTML = "*{background-color:" + message.properties.Background + ";}";
+
+			// Initialize timer
 			let unlockTime = 0;
 			let displayIntervalHandle = null;
 
@@ -122,7 +133,7 @@ chrome.runtime.onMessage.addListener((message)=>{
 			updateTimeFromStorage();
 			storageIntervalHandle = setInterval(updateTimeFromStorage, 3*60*1000);
 		};
-					
+
 		if(documentLoaded){
 			CreateLockScreenLambda();
 		}else{
