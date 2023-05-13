@@ -63,7 +63,7 @@ chrome.runtime.onMessage.addListener((message)=>{
 			window.top.document.title = sourceUrl;
 			let iconOverride = document.createElement("link");
 			iconOverride.rel = "icon";
-			iconOverride.href = "https://broken.favicon.png";
+			iconOverride.href = chrome.runtime.getURL("images/ScheduleBlock128.png");
 			window.top.document.querySelector("head").appendChild(iconOverride);
 
 			let sourceDisplay = document.createElement("h2");

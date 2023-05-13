@@ -10,7 +10,8 @@
 	"src/Record.js",
 	"src/RecordStorage.js",
 	"src/options.js",
-	"src/content.js"
+	"src/content.js",
+	"images/ScheduleBlock128.png"
   ],
   "background": {
 	"scripts": ["src/background_loader.js"],
