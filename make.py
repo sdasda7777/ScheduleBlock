@@ -20,7 +20,7 @@ def zip_dir(targetZip: zipfile.ZipFile,
 
 if __name__ == "__main__":
     # Check versions are in sync
-    manifest_chrome = json.loads(open("manifestch.json", "r").read())
+    manifest_chrome = json.loads(open("manifest.json", "r").read())
     manifest_firefox = json.loads(open("manifestff.json", "r").read())
     if manifest_chrome["version"] != manifest_firefox["version"]:
         if input(f"Manifest version for Chrome ({manifest_chrome['version']}) is different than the manifest version for Firefox ({manifest_firefox['version']}). Continue? (y/[n])").lower() != "y":
@@ -31,11 +31,11 @@ if __name__ == "__main__":
     # Build zip for Chrome
     with zipfile.ZipFile(f"build/ScheduleBlock_{manifest_chrome['version']}.zip", "w", zipfile.ZIP_DEFLATED) as zipf:
         zip_dir(targetZip=zipf, sourceDir=".", includeRootDir=True,
-                aliasedFiles=[("manifestch.json", "manifest.json")],
                 excludeDirs=[".git", "build"])
 
     # Build zip for Firefox
     with zipfile.ZipFile(f"build/ScheduleBlockFF_{manifest_firefox['version']}.zip", "w", zipfile.ZIP_DEFLATED) as zipf:
         zip_dir(targetZip=zipf, sourceDir=".", includeRootDir=False,
-                aliasedFiles=[("manifestff.json", "manifest.json")],
-                excludeDirs=[".git", "build"])
+                excludeDirs=[".git", "build"],
+                aliasedFiles=[("manifest.json", "manifestch.json"),
+                              ("manifestff.json", "manifest.json")])
