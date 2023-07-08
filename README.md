@@ -73,7 +73,7 @@ In general, every record consists of:
 
 #### 1.1.7 (upcoming)
 - Fixed inaccurate timeouts (off by one check cycle after being reset)
-- TODO: Remove ScheduleBlock thumbnail from the lock page
+- TODO: Remove ScheduleBlock thumbnail from the lock page (so that it isn't cached as the pages thumbnail)
 - TODO: Export language, check frequency and background color along with records
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)
 - TODO: Improve effectivity by parsing records in RecordStorage only on load and on change

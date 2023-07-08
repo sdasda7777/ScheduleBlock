@@ -1,18 +1,67 @@
 import { timeToInt } from './Misc.js';
 
+/**
+ * Record is a single (immutable) row in the list of rules.
+ *   It contains the regex and any other relevant information
+ *     (see member variables declarations below).
+ *   It does TODO: does what exactly?
+ */
 export class Record
 {
-	// Class retaining information about a record: one line of directives
-	// It should be completely immutable
-
+	/**
+	 * #regex is the string form of the regex a site has to match for constraints to apply to it.
+	 *   Typically used as `websiteAddress.match(new RegExp(this.#regex))`
+	 * @type {!string} #regex
+	 */
 	#regex;
+
+	/**
+	 * #softHours and #hardHours describe the time intervals when.record is applicable.
+	 *   Should be in format "((TI(,TI)*)(|TI(,TI)*)*)?",
+	 *     where TI is time interval in format "T-T",
+	 *     where T is time in format "(([0,1]?\d)|(2[0-3])):[0-5][0-9]" TODO: 24:00?
+	 * @type {!string} #softHours
+	 * @type {!string} #hardHours
+	 */
 	#softHours;
 	#hardHours;
+
+	/**
+	 * #timeout describes the allowed durations, timeouts, and time intervals when.they are applicable.
+	 *   Should be in format "((TS(,TS)*)(|TS(,TS)*)*)?",
+	 *     where TS is string in format "D/D(@(TI)(|TI)*)?"
+	 *     where D is time duration in format "((\d+:)?\d+:)?\d+" (hours, minutes, seconds)
+	 *     where TI is time interval in format "T-T",
+	 *     where T is time in format "(([0,1]?\d)|(2[0-3])):[0-5][0-9]" TODO: 24:00?
+	 * @type {!string} #timeout
+	 */
 	#timeout;
+
+	/**
+	 * #action is piece of JavaScript code to be run every check interval when conditions are met.
+	 *   For values matching "window.location = '.*';", TODO: better regex
+	 *     the code is not executed directly to avoid script execution preventions.
+	 * @type {!string} #action
+	 */
 	#action;
+
+	/**
+	 * #currentDuration is current number of miliseconds that was spent on sites matching the #regex.
+	 * @type {!int} #currentDuration
+	 */
 	#currentDuration;
+
+	/**
+	 * #lastCheck is the last known date when site was successfully accessed.
+	 *   (doesn't include unsuccessful access attempts)
+	 * @type {!Date} #lastCheck
+	 */
 	#lastCheck;
 
+	/**
+	 * Create a Record.
+	 *   See annotations for member variables to get more information about the arguments.
+	 */
 	constructor(regex = null, softHours = null, hardHours = null, timeout = null,
 					action = null, currentDuration = null, lastCheck = null)
 	{
@@ -26,58 +75,129 @@ export class Record
 		this.#lastCheck = 		(lastCheck == null ? new Date() : new Date(lastCheck));
 	}
 
-	// Duplicator
+	/**
+	 * Exact duplicator method
+	 * @returns an exact copy of receiver Record object
+	 */
 	#copy()
 	{
-		let ret = new Record();
-		ret.#regex  			= this.#regex;
-		ret.#softHours 			= this.#softHours;
-		ret.#hardHours 			= this.#hardHours;
-		ret.#timeout	 		= this.#timeout;
-		ret.#action 			= this.#action;
-		ret.#currentDuration 	= this.#currentDuration;
-		ret.#lastCheck			= this.#lastCheck;
-		return ret;
+		return new Record(this.#regex, this.#softHours, this.#hardHours, this.#timeout,
+						  this.#action, this.#currentDuration, this.#lastCheck);
 	}
 
-	// Immutable alternative to setters
+	/**
+	 * #regex copy mutator
+	 * @param regex
+	 * @returns exact copy, but with provided value in #regex
+	 */
 	withRegex(regex)
 	{
 		let ret = this.#copy(); ret.#regex = regex; return ret;
 	}
+
+	/**
+	 * #softHours copy mutator
+	 * @param softHours
+	 * @returns exact copy, but with provided value in #softHours
+	 */
 	withSoftHours(softHours)
 	{
 		let ret = this.#copy(); ret.#softHours = softHours; return ret;
 	}
+
+	/**
+	 * #hardHours copy mutator
+	 * @param hardHours
+	 * @returns exact copy, but with provided value in #hardHours
+	 */
 	withHardHours(hardHours)
 	{
 		let ret = this.#copy(); ret.#hardHours = hardHours; return ret;
 	}
+
+	/**
+	 * #timeout copy mutator
+	 * @param timeout
+	 * @returns exact copy, but with provided value in #timeout
+	 */
 	withTimeout(timeout)
 	{
 		let ret = this.#copy(); ret.#timeout = timeout; return ret;
 	}
+
+	/**
+	 * #action copy mutator
+	 * @param action
+	 * @returns exact copy, but with provided value in #action
+	 */
 	withAction(action)
 	{
 		let ret = this.#copy(); ret.#action = action; return ret;
 	}
+
+	/**
+	 * #currentDuration copy mutator
+	 * @param currentDuration
+	 * @returns exact copy, but with provided value in #currentDuration
+	 */
 	withCurrentDuration(currentDuration)
 	{
 		let ret = this.#copy();	ret.#currentDuration = currentDuration; return ret;
 	}
+
+	/**
+	 * #lastCheck copy mutator
+	 * @param lastCheck
+	 * @returns exact copy, but with provided value in #lastCheck
+	 */
 	withLastCheck(lastCheck)
 	{
 		let ret = this.#copy(); ret.#lastCheck = new Date(lastCheck); return ret;
 	}
 
-	// Getters
+
+	/**
+	 * #regex getter
+	 * @returns #regex
+	 */
 	getRegex(){return this.#regex;}
+
+	/**
+	 * #softHours getter
+	 * @returns #softHours
+	 */
 	getSoftHours(){return this.#softHours;}
+
+	/**
+	 * #hardHours getter
+	 * @returns #hardHours
+	 */
 	getHardHours(){return this.#hardHours;}
+
+	/**
+	 * #timeout getter
+	 * @returns #timeout
+	 */
 	getTimeout(){return this.#timeout;}
+
+	/**
+	 * #action getter
+	 * @returns #action
+	 */
 	getAction(){return this.#action;}
+
+	/**
+	 * #currentDuration getter
+	 * @returns #currentDuration
+	 */
 	getCurrentDuration(){return this.#currentDuration;}
+
+	/**
+	 * #lastCheck getter
+	 * @returns #lastCheck
+	 */
 	getLastCheck(){return this.#lastCheck;}
+
 
 	// Time checking related methods
 	calculateNearestHoursAvailability(nowDate, softCheck)
@@ -409,16 +529,19 @@ export class Record
 		}
 		else if(nowDate.getTime() >= this.#lastCheck.getTime() + normalTimeout * 1000)
 		{
-			// If timeout did pass since last visit
-			//	initialize with check interval (since page is currently being visited)
-			return this.withCurrentDuration(checkInterval).withLastCheck(nowDate);
+			// If timeout did pass since last visit, initialize with 0
+			return this.withCurrentDuration(0).withLastCheck(nowDate);
 		}
 
 		return false;
 	}
 
 
-	// Serialization
+	/**
+	 * Serialize array of Records to JSON string
+	 * @param {!Array} recordArray array of Record instances
+	 * @returns {!string} JSON string containing serialized data
+	 */
 	static toJSON(recordArray)
 	{
 		let ret = [];
@@ -438,6 +561,11 @@ export class Record
 		return JSON.stringify(ret);
 	}
 
+	/**
+	 * Deserialize Records from JSON string
+	 * @param {!string} jsonString containing the data
+	 * @returns {!Array} array of deserialized Record instances
+	 */
 	static fromJSON(jsonString)
 	{
 		let pojos = JSON.parse(jsonString);
@@ -449,11 +577,11 @@ export class Record
 								pojos[ii].softHours,
 								pojos[ii].hardHours,
 								pojos[ii].timeout,
-								(pojos[ii].action ||
-									pojos[ii].action === ""
-									? pojos[ii].action
-									: (pojos[ii].destination ?
-										"window.location = '"+pojos[ii].destination+"';" : null)),
+								(pojos[ii].action || pojos[ii].action === ""
+								 ? pojos[ii].action
+								 : (pojos[ii].destination // For backwards compatibility
+									? "window.location = '" +pojos[ii].destination + "';"
+									: null)),
 								pojos[ii].currentDuration,
 								new Date(pojos[ii].lastCheck)));
 		}
