@@ -39,7 +39,7 @@ export class Record
 
 	/**
 	 * #action is piece of JavaScript code to be run every check interval when conditions are met.
-	 *   For values matching "window.location = '.*';", TODO: better regex
+	 *   For values matching "^window.location = '(?:[^\\']|\\.)*';$",
 	 *     the code is not executed directly to avoid script execution preventions.
 	 * @type {!string} #action
 	 */
@@ -534,6 +534,18 @@ export class Record
 		}
 
 		return false;
+	}
+
+	/**
+	 * @returns printable (partial) representation of the record
+	 */
+	toString()
+	{
+		return "Record('" + this.#regex + "', '"
+						  + this.#softHours + "', '"
+						  + this.#hardHours + "', '"
+						  + this.#timeout + "', '"
+						  + this.#action + "')";
 	}
 
 

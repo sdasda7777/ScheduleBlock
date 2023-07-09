@@ -10,27 +10,45 @@ import { validateURLInput,
 		 validateTimeString, validateTimeStringInput,
 		 validateTimeoutString, validateTimeoutStringInput} from "./Misc.js";
 
-let recnum = 0;
+/**
+ * @type {!int} currentRecordNumber
+ * @type {Record} currentRecord
+ */
+let currentRecordNumber = 0;
+let currentRecord = null;
+
+/**
+ * @type {!TranslationProvider} tp
+ */
 let tp = new TranslationProvider();
 
 
-
-/** 
- * Adds format functionality to strings
- * Taken from https://sebhastian.com/javascript-format-string/
- */
-if (!String.prototype.format) {
-  String.prototype.format = function () {
-	var args = arguments;
-	return this.replace(/{(\d+)}/g, function (match, number) {
-	  return typeof args[number] != "undefined" ? args[number] : match;
-	});
-  };
+// Taken from https://sebhastian.com/javascript-format-string/
+if (!String.prototype.format)
+{
+	/*
+	 * Simple format functionality for strings, replaces "{\d+}" with arguments
+	 * @param {...*} arguments to be inserted at "{\d+}" (first at "{0}", etc.)
+	 * @returns receiver string with "{\d+}" replaced with arguments
+	 */
+	String.prototype.format = function ()
+	{
+		let args = arguments;
+		return this.replace(/{(\d+)}/g,
+			(match, number) =>
+			{
+				return typeof args[number] != "undefined" ? args[number] : match;
+			}
+		);
+	};
 }
 
 
-
-function translateGUI(){
+/**
+ * Applies text in currently selected language to all elements
+ */
+function translateGUI()
+{
 	document.querySelector("#settingsButton").value = tp.getTranslatedString(3);
 	document.querySelector("#import").value = tp.getTranslatedString(103);
 	document.querySelector("#export").value = tp.getTranslatedString(104);
@@ -78,12 +96,8 @@ function translateGUI(){
 	document.querySelector("#testerinput1").placeholder = tp.getTranslatedString(402);
 	document.querySelector("#testerinput2").placeholder = tp.getTranslatedString(403);
 	document.querySelector("#testerresultlabel").innerText = tp.getTranslatedString(404);
-	let testerresult = document.querySelector("#testerresult");
-	if(testerresult.getAttribute("result") == "matching"){
-		testerresult.innerText = tp.getTranslatedString(406);
-	}else{
-		testerresult.innerText = tp.getTranslatedString(405);
-	}
+	document.querySelector("#testerresult").innerText
+		= tp.getTranslatedString((testerresult.getAttribute("result") == "matching" ? 406 : 405));
 	document.querySelector("#testerbutton").value = tp.getTranslatedString(407);
 
 	document.querySelector("#personalmessagetitle").innerText
@@ -97,22 +111,28 @@ function translateGUI(){
 /**
  * Adds new record into the storage, taking pattern from #newsite element.
  */
-function addSite(){
-	if(document.getElementById("newsite").value !== ""){
+function addSite()
+{
+	if(document.getElementById("newsite").value !== "")
+	{
 		let sending = chrome.runtime.sendMessage(
-		{
-			type: "ScheduleBlock_RecordStorage_CreateNewRecord",
-			regex: document.getElementById("newsite").value
-		});
+			{
+				type: "ScheduleBlock_RecordStorage_CreateNewRecord",
+				regex: document.getElementById("newsite").value
+			}
+		);
 		document.getElementById("newsite").value= "";
 	}
 }
 
 
-/**/
-function contructViewCallback(data){
+/**
+ * Constructs table from given data
+ * @param {!string} JSON encoded array of Records
+ */
+function contructViewCallback(data)
+{
 	let arr = Record.fromJSON(data);
-	
 	let t = document.createElement("table");
 
 	// Generate table header row
@@ -126,18 +146,19 @@ function contructViewCallback(data){
 			tp.getTranslatedString(215),
 			tp.getTranslatedString(250)
 	];
-		
-	for(let ii = 0; ii < headerInnerTexts.length; ++ii){
+
+	for(let ii = 0; ii < headerInnerTexts.length; ++ii)
+	{
 		let tempHeader = document.createElement("th");
 		tempHeader.innerText = headerInnerTexts[ii];
 		headerRow.appendChild(tempHeader);
 	}
 	t.appendChild(headerRow);
 	
-	for(let ii = 0; ii < arr.length; ++ii){
-		//logX(rec);
+	for(let ii = 0; ii < arr.length; ++ii)
+	{
 		let row = document.createElement("tr");
-		
+
 		// Create order number control
 		let recordNumberCell = document.createElement("td");
 		let recordNumberBox = document.createElement("input");
@@ -148,7 +169,7 @@ function contructViewCallback(data){
 		recordNumberBox.addEventListener("keyup", recordNumberBoxKeyEventHandler);
 		recordNumberCell.appendChild(recordNumberBox);
 		row.appendChild(recordNumberCell);
-		
+
 		// Create cells displaying information about records
 		{
 			let pattern = document.createElement("td");
@@ -171,7 +192,7 @@ function contructViewCallback(data){
 			des.innerText = arr[ii].getAction();
 			row.appendChild(des);
 		}
-		
+
 		// Create edit button
 		let editCell = document.createElement("td");
 		editCell.className = "editCell";
@@ -183,7 +204,7 @@ function contructViewCallback(data){
 		editButton.addEventListener("click", openRecordEditMenu);
 		editCell.appendChild(editButton);
 		row.appendChild(editCell);
-		
+
 		t.appendChild(row);
 	}
 	
@@ -192,68 +213,84 @@ function contructViewCallback(data){
 };
 
 /**
- * Constructs table from storage content.
+ * Requests data from the BackEnd, answer to which constructs the table
  */
-function constructView(){	
-	
+function constructView()
+{
 	let sending = chrome.runtime.sendMessage(
 		{
 			type: "ScheduleBlock_RefreshTable"
-		});
+		}
+	);
 }
 
-function openRecordEditMenuCallback(data){
-	let rec = Record.fromJSON(data)[0];
-	
+/**
+ * Opens edit menu for given Record
+ * @param {!string} JSON encoded array containing the Record
+ */
+function openRecordEditMenuCallback(data)
+{
+	currentRecord = Record.fromJSON(data)[0];
+
 	// Set up the first four text inputs
-	document.getElementById("patternInput").value = rec.getRegex();
-	document.getElementById("softLockHoursInput").value = rec.getSoftHours();
-	document.getElementById("hardLockHoursInput").value = rec.getHardHours();
-	document.getElementById("timeoutStringInput").value = rec.getTimeout();
-	
+	document.getElementById("patternInput").value = currentRecord.getRegex();
+	document.getElementById("softLockHoursInput").value = currentRecord.getSoftHours();
+	document.getElementById("hardLockHoursInput").value = currentRecord.getHardHours();
+	document.getElementById("timeoutStringInput").value = currentRecord.getTimeout();
+
 	// Clear and disable all record action inputs
 	document.getElementById("destinationInput").value = "";
 	document.getElementById("actionInputCustomCodeArea").value = "";
 	document.getElementById("destinationInput").disabled = true;
 	document.getElementById("actionInputCustomCodeArea").disabled = true;
-	
+
 	// Set up record action
-	if(rec.getAction() == "window.close();"){
+	if(currentRecord.getAction() == "window.close();")
+	{
 		document.getElementById("actionInputClose").checked = true;	
-	}else if(rec.getAction() == "window.location = '$ScheduleBlock_LockScreen$';"){
+	}
+	else if(currentRecord.getAction() == "window.location = '$ScheduleBlock_LockScreen$';")
+	{
 		document.getElementById("actionInputLockPage").checked = true;
-	}else if(rec.getAction().substring(0, rec.getAction().indexOf("'") + 1)
-					== "window.location = '" &&
-				rec.getAction().substring(rec.getAction().lastIndexOf("'")) == "';"){
+	}
+	else if(currentRecord.getAction().match(new RegExp("^window.location = '(?:[^\\']|\\.)*';$")))
+	{
 		document.getElementById("actionInputRedirect").checked = true;
 		document.getElementById("destinationInput").disabled = false;
 		document.getElementById("destinationInput").value
-				= rec.getAction().substring(rec.getAction().indexOf("'") + 1,
-											rec.getAction().length-2);
-	}else{
+				= currentRecord.getAction().substring(
+					currentRecord.getAction().indexOf("'") + 1,
+					currentRecord.getAction().length-2);
+	}
+	else
+	{
 		document.getElementById("actionInputCustom").checked = true;
 		document.getElementById("actionInputCustomCodeArea").disabled = false;
-		document.getElementById("actionInputCustomCodeArea").value = rec.getAction();
+		document.getElementById("actionInputCustomCodeArea").value = currentRecord.getAction();
 	}
 	
 	document.getElementById("recordEditOverlay").style.display = "flex";
 }
 
-function openRecordEditMenu(e){
-	recnum = parseInt(this.id.substr(4));
-		
+/**
+ * Requests data from the BackEnd, answer to which opens edit menu
+ */
+function openRecordEditMenu(e)
+{
 	let sending = chrome.runtime.sendMessage(
-	{
-		type: "ScheduleBlock_OpenEditMenu",
-		id: recnum
-	});
+		{
+			type: "ScheduleBlock_OpenEditMenu",
+			id: (currentRecordNumber = parseInt(this.id.substr(4)))
+		}
+	);
 }
 
 /**
  * Handles record number modification (i.e. reordering) using keyboard.
  * @param {KeyboardEvent} e - keyup event to be handled
  */
-function recordNumberBoxKeyEventHandler(e){
+function recordNumberBoxKeyEventHandler(e)
+{
 	if (e.keyCode !== 13) return;
 	
 	e.preventDefault();
@@ -263,119 +300,145 @@ function recordNumberBoxKeyEventHandler(e){
 			type: "ScheduleBlock_RecordStorage_MoveRecord",
 			id: parseInt(this.id.substr(3)),
 			newId: this.valueAsNumber-1
-		});
+		}
+	);
 }
 
 /**
  * Handles behaviour of the pattern tester "widget".
  */
-function testRegex(){
-	let re = document.getElementById("testerinput1").value, str = document.getElementById("testerinput2").value;
-	
+function testRegex()
+{
+	let re = document.getElementById("testerinput1").value;
+	let str = document.getElementById("testerinput2").value;
+
 	let testerresult = document.querySelector("#testerresult");
-	
-	if(str.match(new RegExp(re))){
+	if(str.match(new RegExp(re)))
+	{
 		console.log("Tester: '" + re + "' matches '" + str + "'");
 		testerresult.setAttribute("result", "matching");
 		testerresult.innerText = tp.getTranslatedString(406);
-	}else{
+	}
+	else
+	{
 		console.log("Tester: '" + re + "' does not match '" + str + "'");
 		testerresult.setAttribute("result", "not_matching");
 		testerresult.innerText = tp.getTranslatedString(405);
 	}
 }
 
-export function main(){
-
-	chrome.runtime.onMessage.addListener((message)=>{
-		console.log(message);
-		
-		if(message.type === "ScheduleBlock_Options_SetTableData"){
-			contructViewCallback(message.data);
-		}else if(message.type === "ScheduleBlock_Options_OpenEditMenu"){
-			openRecordEditMenuCallback(message.data);
-		}else if(message.type === "ScheduleBlock_Options_Initialize"){
+export function main()
+{
+	chrome.runtime.onMessage.addListener(
+		(message)=>{
 			console.log(message);
-			
-			let tmpLangIndex = tp.getStringVersions(0).indexOf(message.properties.Language);
-			if(tmpLangIndex != -1){
-				document.querySelector("#langPicker").selectedIndex = tmpLangIndex;
-				tp.setLanguageIndex(tmpLangIndex);
-			}
-			
-			document.querySelector("#freqPicker").value = message.properties.CheckFrequency;
-			
-			document.querySelector("#rebuildPersistantStylesheet")
-					.innerText = "* { background-color: " + message.properties.Background + "; }";
-			
-			document.querySelector("#colorPicker").value = message.properties.Background;
-			
-			document.querySelector("#lockScreenBase").value = message.properties.LockScreenBase;
-			
-			translateGUI();
-		}else if(message.type === "ScheduleBlock_Options_ImportFailed"){
-			alert("Import failed because:\n" + message.reason);
-		}else if(message.type === "ScheduleBlock_Options_Export"){
-			let a = document.createElement("a");
-			let file = new Blob([message.settings], {type: 'application/json'});
-			a.href = URL.createObjectURL(file);
-			a.download = "ScheduleBlockBackup_" + new Date().toISOString().slice(0, 10);
-			a.click();
-		}
-	});
 
+			if(message.type === "ScheduleBlock_Options_SetTableData")
+			{
+				contructViewCallback(message.data);
+			}
+			else if(message.type === "ScheduleBlock_Options_OpenEditMenu")
+			{
+				openRecordEditMenuCallback(message.data);
+			}
+			else if(message.type === "ScheduleBlock_Options_Initialize")
+			{
+				//console.log(message);
+
+				let tmpLangIndex = tp.getStringVersions(0).indexOf(message.properties.Language);
+				if(tmpLangIndex != -1)
+				{
+					document.querySelector("#langPicker").selectedIndex = tmpLangIndex;
+					tp.setLanguageIndex(tmpLangIndex);
+				}
+
+				document.querySelector("#freqPicker").value = message.properties.CheckFrequency;
+				document.querySelector("#rebuildPersistantStylesheet").innerText
+					= "* { background-color: " + message.properties.Background + "; }";
+				document.querySelector("#colorPicker").value = message.properties.Background;
+				document.querySelector("#lockScreenBase").value = message.properties.LockScreenBase;
+
+				translateGUI();
+			}
+			else if(message.type === "ScheduleBlock_Options_ImportFailed")
+			{
+				alert("Import failed because:\n" + message.reason);
+			}
+			else if(message.type === "ScheduleBlock_Options_Export")
+			{
+				let a = document.createElement("a");
+				let file = new Blob([message.settings], {type: 'application/json'});
+				a.href = URL.createObjectURL(file);
+				a.download = "ScheduleBlockBackup_" + new Date().toISOString().slice(0, 10);
+				a.click();
+			}
+		}
+	);
 
 
 	// This code sets up event handlers for static elements and then constructs the current table
-	document.getElementById("newsite").addEventListener("keyup", e => {
-		if (e.keyCode === 13) {
-			e.preventDefault();
-			addSite();
+	document.getElementById("newsite").addEventListener("keyup",
+		e => {
+			if (e.keyCode === 13) {
+				e.preventDefault();
+				addSite();
+			}
 		}
-	});
+	);
 	document.getElementById("newsiteadd").addEventListener("click", addSite);
 	document.getElementById("testerbutton").addEventListener("click", testRegex);
-	document.getElementById("import").addEventListener("click", () => {
-		document.getElementById("import2").click();
-	});
-	document.getElementById("import2").addEventListener("change", () => {
-		if(document.getElementById("import2").files){
-			document.getElementById("import2").files[0].text()
-				.then((text) => {					
-					let sending = chrome.runtime.sendMessage(
-					{
-						type: "ScheduleBlock_RecordStorage_ImportSettings",
-						newSettings: text
-					});
-			});
-			document.getElementById("import2").value = "";
+	document.getElementById("import").addEventListener("click",
+		() => {
+			document.getElementById("import2").click();
 		}
-	});
-	document.getElementById("export").addEventListener("click", ()=>{
-		let sending = chrome.runtime.sendMessage(
-		{
-			type: "ScheduleBlock_RecordStorage_ExportSettings",
-		});
-	});
+	);
+	document.getElementById("import2").addEventListener("change",
+		() => {
+			if(document.getElementById("import2").files){
+				document.getElementById("import2").files[0].text()
+					.then(
+						(text) => {
+							let sending = chrome.runtime.sendMessage(
+								{
+									type: "ScheduleBlock_RecordStorage_ImportSettings",
+									newSettings: text
+								}
+							);
+						}
+					);
+				document.getElementById("import2").value = "";
+			}
+		}
+	);
+	document.getElementById("export").addEventListener("click",
+		() => {
+			let sending = chrome.runtime.sendMessage(
+				{
+					type: "ScheduleBlock_RecordStorage_ExportSettings",
+				}
+			);
+		}
+	);
 
 
 	// Set up language picker
 	{
 		let picker = document.querySelector("#langPicker");
-		
-		for (let lang in picker){
+
+		for (let lang in picker)
+		{
 			picker.remove(lang);
 		}
-		
+
 		let languages = tp.getStringVersions(0);
-		
+
 		for (let lang in languages){
 			let option = document.createElement('option');
 			option.value = lang;
 			option.innerHTML = languages[lang];
 			picker.appendChild(option);
 		}
-		
+
 		picker.addEventListener("change", (e) => {
 			tp.setLanguageIndex(e.target.selectedIndex);
 			translateGUI();
@@ -387,89 +450,101 @@ export function main(){
 		let sending = chrome.runtime.sendMessage(
 			{
 				type: "ScheduleBlock_InitializeOptions"
-			});
-		
-		
+			}
+		);
+
 		// Set up color change listener
-		document.getElementById("colorPicker").addEventListener("change", (e) => {
-			document.querySelector("#rebuildPersistantStylesheet")
-				.innerText = "* { background-color: " + e.srcElement.value + "; }";
-		});
+		document.getElementById("colorPicker").addEventListener("change",
+			(e) => {
+				document.querySelector("#rebuildPersistantStylesheet")
+					.innerText = "* { background-color: " + e.srcElement.value + "; }";
+			}
+		);
 	}
 
 
 	// Set up settings button and settings overlay listeners
 	{
 		let languageBackup, intervalBackup, colorBackup, lockScreenBaseBackup;
-		document.getElementById("settingsButton").addEventListener("click", (e) => {
-			if(document.getElementById("settingsButton") !== event.target) return;
-			
-			languageBackup = tp.getStringVersions(0)[document.getElementById("langPicker")
-																	.selectedIndex];
-			intervalBackup = parseInt(document.getElementById("freqPicker").value);
-			colorBackup = document.getElementById("colorPicker").value;
-			lockScreenBaseBackup = document.getElementById("lockScreenBase").value;
-			
-			document.getElementById("settingsChangeOverlay").style.display = "flex";
-		});
-		
-		function resetSettingsBackups(){
-			document.getElementById("langPicker").value = tp.getStringVersions(0)
-																.indexOf(languageBackup);
+		document.getElementById("settingsButton").addEventListener("click",
+			(e) => {
+				if(document.getElementById("settingsButton") !== event.target) return;
+
+				languageBackup = tp.getStringVersions(0)[document.getElementById("langPicker").selectedIndex];
+				intervalBackup = parseInt(document.getElementById("freqPicker").value);
+				colorBackup = document.getElementById("colorPicker").value;
+				lockScreenBaseBackup = document.getElementById("lockScreenBase").value;
+
+				document.getElementById("settingsChangeOverlay").style.display = "flex";
+			}
+		);
+
+		function resetSettingsBackups()
+		{
+			document.getElementById("langPicker").value = tp.getStringVersions(0).indexOf(languageBackup);
 			document.getElementById("freqPicker").value = intervalBackup;
 			document.getElementById("colorPicker").value = colorBackup;
 			document.getElementById("lockScreenBase").value = lockScreenBaseBackup;
-			
+
 			[document.getElementById("langPicker"),
 			 document.getElementById("freqPicker"),
 			 document.getElementById("colorPicker"),
 			 document.getElementById("lockScreenBase")
-			].forEach((i)=>{i.dispatchEvent(new UIEvent('change', {
-														'view': window,
-														'bubbles': true,
-														'cancelable': true}));});
+			].forEach(
+				(i) => {
+					i.dispatchEvent(
+						new UIEvent('change', {'view': window, 'bubbles': true, 'cancelable': true})
+					);
+				}
+			);
 		}
-		
-		
+
 		// On change validators
-		document.getElementById("lockScreenBase")
-			.addEventListener("change", (e) => validateURLInput(e.target, tp));
-		
-		
-		document.getElementById("settingsChangeOverlay").addEventListener("click", (e) => {
-			if(document.getElementById("settingsChangeOverlay") !== event.target) return;
+		document.getElementById("lockScreenBase").addEventListener("change",
+			(e) => validateURLInput(e.target, tp)
+		);
+
+		document.getElementById("settingsChangeOverlay").addEventListener("click",
+			(e) => {
+				if(document.getElementById("settingsChangeOverlay") !== event.target) return;
+
+				resetSettingsBackups();
+				document.getElementById("settingsChangeOverlay").style.display = "none";
+			}
+		);
+
+		document.getElementById("settingsMenuCancel").addEventListener("click",
+			(e) => {
+				resetSettingsBackups();
+				document.getElementById("settingsChangeOverlay").style.display = "none";
+			}
+		);
+
+		document.getElementById("settingsMenuOK").addEventListener("click",
+			(e) => {
+				if(!validateURLInput(document.getElementById("lockScreenBase"), tp))
+					return;
+
+				let newLangIndex = document.getElementById("langPicker").selectedIndex;
+				let newLangName = tp.getStringVersions(0)[newLangIndex];
+				let newCheckFrequency = parseInt(document.getElementById("freqPicker").value);
+				let newBackground = document.getElementById("colorPicker").value;
+				let newLockScreenBase = document.getElementById("lockScreenBase").value;
 			
-			resetSettingsBackups();
-			document.getElementById("settingsChangeOverlay").style.display = "none";
-		});
-		
-		document.getElementById("settingsMenuCancel").addEventListener("click", (e) => {
-			resetSettingsBackups();
-			document.getElementById("settingsChangeOverlay").style.display = "none";
-		});
-		
-		document.getElementById("settingsMenuOK").addEventListener("click", (e) => {
-			if(!validateURLInput(document.getElementById("lockScreenBase"), tp))
-				return;
-			
-			let newLangIndex = document.getElementById("langPicker").selectedIndex;
-			let newLangName = tp.getStringVersions(0)[newLangIndex];
-			let newCheckFrequency = parseInt(document.getElementById("freqPicker").value);
-			let newBackground = document.getElementById("colorPicker").value;
-			let newLockScreenBase = document.getElementById("lockScreenBase").value;
-			
-			let sending = chrome.runtime.sendMessage(
-			{
-				type: "ScheduleBlock_SaveGeneralProperties",
-				newProperties: {Language: newLangName,
-									CheckFrequency: newCheckFrequency,
-									Background: newBackground,
-									LockScreenBase: newLockScreenBase}
-			});
-			document.getElementById("settingsChangeOverlay").style.display = "none";
-		});
-				
-		
+				let sending = chrome.runtime.sendMessage(
+					{
+						type: "ScheduleBlock_SaveGeneralProperties",
+						newProperties: {
+							Language: newLangName,
+							CheckFrequency: newCheckFrequency,
+							Background: newBackground,
+							LockScreenBase: newLockScreenBase
+						}
+					}
+				);
+				document.getElementById("settingsChangeOverlay").style.display = "none";
+			}
+		);
 	}
 
 	// Set up edit menu listeners
@@ -477,85 +552,114 @@ export function main(){
 		let enableActionInputs = (bits) => {
 			let inputs = [document.getElementById("destinationInput"),
 							document.getElementById("actionInputCustomCodeArea")];
-			for(let ii=0; ii < inputs.length; ++ii){
+			for(let ii=0; ii < inputs.length; ++ii)
+			{
 				inputs[ii].disabled = ((bits >> ii) & 1) !== 1;
-			}			
+			}
 		};
-		
-		document.getElementById("actionInputClose")
-			.addEventListener("click", () => { enableActionInputs(0); });
-		document.getElementById("actionInputLockPage")
-			.addEventListener("click", () => { enableActionInputs(0); });
-		document.getElementById("actionInputRedirect")
-			.addEventListener("click", () => { enableActionInputs(1); });
-		document.getElementById("actionInputCustom")
-			.addEventListener("click", () => { enableActionInputs(2); });
-		
-		
-		
-		document.getElementById("recordEditOverlay").addEventListener("click", (e) => {
-			if(document.getElementById("recordEditOverlay") !== event.target) return;
+
+		document.getElementById("actionInputClose").addEventListener("click",
+			() => {
+				enableActionInputs(0);
+			}
+		);
+		document.getElementById("actionInputLockPage").addEventListener("click",
+			() => {
+				enableActionInputs(0);
+			}
+		);
+		document.getElementById("actionInputRedirect").addEventListener("click",
+			() => {
+				enableActionInputs(1);
+			}
+		);
+		document.getElementById("actionInputCustom").addEventListener("click",
+			() => {
+				enableActionInputs(2);
+			}
+		);
+
+		document.getElementById("recordEditOverlay").addEventListener("click",
+			(e) => {
+				if(document.getElementById("recordEditOverlay") !== event.target) return;
 				
-			document.getElementById("recordEditOverlay").style.display = "none";
-		});
-		
-		document.getElementById("recordEditCancel").addEventListener("click", (e) => {
-			document.getElementById("recordEditOverlay").style.display = "none";
-		});
-		
-		
-		document.getElementById("recordEditDelete").addEventListener("click", (e) => {
-			if(confirm(tp.getTranslatedString(305))){
-				let sending = chrome.runtime.sendMessage(
-				{
-					type: "ScheduleBlock_RecordStorage_DeleteRecord",
-					id: recnum
-				});
 				document.getElementById("recordEditOverlay").style.display = "none";
 			}
-		});
+		);
 
-		
-		// On change validators
-		document.getElementById("softLockHoursInput")
-			.addEventListener("change", (e)=> validateTimeStringInput(e, tp));
-		document.getElementById("hardLockHoursInput")
-			.addEventListener("change", (e)=> validateTimeStringInput(e, tp));
-		document.getElementById("timeoutStringInput")
-			.addEventListener("change", (e)=> validateTimeoutStringInput(e, tp));
-		
-		document.getElementById("recordEditOK").addEventListener("click", (e) => {
-			let softhoursInput = document.getElementById("softLockHoursInput");
-			let hardhoursInput = document.getElementById("hardLockHoursInput");
-			let timeoutStringInput = document.getElementById("timeoutStringInput");
-			
-			if(!validateTimeStringInput({target:softhoursInput}, tp) || 
-				!validateTimeStringInput({target:hardhoursInput}, tp) ||
-				!validateTimeoutStringInput({target:timeoutStringInput}, tp)){
-				return;
+		document.getElementById("recordEditCancel").addEventListener("click",
+			(e) => {
+				document.getElementById("recordEditOverlay").style.display = "none";
 			}
-			
-			let sending = chrome.runtime.sendMessage(
-			{
-				type: "ScheduleBlock_RecordStorage_EditRecord",
-				id: recnum,
-				newValue: Record.toJSON([
-								new Record(document.getElementById("patternInput").value, 
-										softhoursInput.value, hardhoursInput.value,
-										timeoutStringInput.value,
-				(document.getElementById("actionInputClose").checked ? 
-						"window.close();" :
-				document.getElementById("actionInputLockPage").checked ? 
-						"window.location = '$ScheduleBlock_LockScreen$';" :
-				document.getElementById("actionInputRedirect").checked ?
-						"window.location = '" + document.getElementById("destinationInput").value + "';" :
-						document.getElementById("actionInputCustomCodeArea").value))])
-			});
-			document.getElementById("recordEditOverlay").style.display = "none";
-		});
+		);
+
+		document.getElementById("recordEditDelete").addEventListener("click",
+			(e) => {
+				if(confirm(tp.getTranslatedString(305).format(currentRecord.toString())))
+				{
+					let sending = chrome.runtime.sendMessage(
+						{
+							type: "ScheduleBlock_RecordStorage_DeleteRecord",
+							id: currentRecordNumber
+						}
+					);
+					document.getElementById("recordEditOverlay").style.display = "none";
+				}
+			}
+		);
+
+
+		// On change validators
+		document.getElementById("softLockHoursInput").addEventListener("change",
+			(e) => validateTimeStringInput(e, tp)
+		);
+		document.getElementById("hardLockHoursInput").addEventListener("change",
+			(e) => validateTimeStringInput(e, tp)
+		);
+		document.getElementById("timeoutStringInput").addEventListener("change",
+			(e)=> validateTimeoutStringInput(e, tp)
+		);
+
+		document.getElementById("recordEditOK").addEventListener("click",
+			(e) => {
+				let softhoursInput = document.getElementById("softLockHoursInput");
+				let hardhoursInput = document.getElementById("hardLockHoursInput");
+				let timeoutStringInput = document.getElementById("timeoutStringInput");
+
+				if(!validateTimeStringInput({target:softhoursInput}, tp)
+				   || !validateTimeStringInput({target:hardhoursInput}, tp)
+				   || !validateTimeoutStringInput({target:timeoutStringInput}, tp))
+					return;
+
+				let sending = chrome.runtime.sendMessage(
+					{
+						type: "ScheduleBlock_RecordStorage_EditRecord",
+						id: currentRecordNumber,
+						newValue: Record.toJSON(
+							[
+								new Record(
+									document.getElementById("patternInput").value,
+									softhoursInput.value, hardhoursInput.value,
+									timeoutStringInput.value,
+									(document.getElementById("actionInputClose").checked
+									 ? "window.close();"
+									 : document.getElementById("actionInputLockPage").checked
+									   ? "window.location = '$ScheduleBlock_LockScreen$';"
+									   : document.getElementById("actionInputRedirect").checked
+									     ? "window.location = '" + document.getElementById("destinationInput").value + "';"
+										 : document.getElementById("actionInputCustomCodeArea").value
+									)
+								)
+							]
+						)
+					}
+				);
+				document.getElementById("recordEditOverlay").style.display = "none";
+			}
+		);
 	}
 
 	// Construct table
-	//constructView();
-	//translateGUI();
+	// constructView();
+	// translateGUI();
 }
