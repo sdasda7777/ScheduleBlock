@@ -72,7 +72,7 @@ In general, every record consists of:
 ### Changelog/Roadmap
 
 #### 1.1.7 (upcoming)
-- Fixed inaccurate timeouts (off by one check cycle after being reset)
+- Abandoned attempts at fixing inaccurate timeouts (sometimes off by one cycle due to scheduling)
 - TODO: Remove ScheduleBlock thumbnail from the lock page (so that it isn't cached as the pages thumbnail)
 - TODO: Export language, check frequency and background color along with records
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)

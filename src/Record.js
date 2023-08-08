@@ -423,11 +423,18 @@ export class Record
 		return defaultAnswer;
 	}
 
+	/**
+	 * Test if record forbids access to given url
+	 * @param websiteAddress
+	 * @param softCheck
+	 * @param nowDate
+	 * @returns {![Date, string]}
+	 */
 	testWebsite(websiteAddress, softCheck, nowDate)
 	{
 		// returns either [Date, string] or false
 		//  where Date is time when the website will be accessible
-		//	and string is code to be executed
+		//  and string is code to be executed
 
 		if(!(this.#regex) || !(this.#action)
 		   || !(websiteAddress.match(new RegExp(this.#regex))))
@@ -507,8 +514,7 @@ export class Record
 	{
 		if(!(this.#regex) || !(this.#action) || !(this.#timeout)
 		   || !(websiteAddress.match(new RegExp(this.#regex))))
-		{
-			// If regex or action is unset or address doesn't match, return false
+		{ // If regex or action is unset or address doesn't match, return false
 			return false;
 		}
 
@@ -521,16 +527,18 @@ export class Record
 		if(this.#currentDuration < normalBreak * 1000)
 		{
 			// If timeout didn't pass since last visit
-			//	and currentStreak is less than allowed time,
-			// 	increment current streak
-			return this.withCurrentDuration(
-								this.#currentDuration + sinceLastCheck )
+			//  and currentStreak is less than allowed time,
+			//  increment current streak
+			let res = this.withCurrentDuration(this.#currentDuration + sinceLastCheck)
 						.withLastCheck(nowDate);
+			// console.log("did a timer increment to:", Record.toJSON([res]));
+			return res;
 		}
 		else if(nowDate.getTime() >= this.#lastCheck.getTime() + normalTimeout * 1000)
-		{
-			// If timeout did pass since last visit, initialize with 0
-			return this.withCurrentDuration(0).withLastCheck(nowDate);
+		{ // If timeout did pass since last visit, initialize with 0
+			let res = this.withCurrentDuration(0).withLastCheck(nowDate);
+			// console.log("did a timer reset to:", Record.toJSON([res]));
+			return res;
 		}
 
 		return false;
