@@ -76,11 +76,11 @@ chrome.runtime.onMessage.addListener(
 
 				// Initialize main elements
 				let sourceUrl = atob(new URLSearchParams(window.location.search).get("source"));
-				window.top.document.title = sourceUrl;
-				let iconOverride = document.createElement("link");
-				iconOverride.rel = "icon";
-				iconOverride.href = chrome.runtime.getURL("images/ScheduleBlock128.png");
-				window.top.document.querySelector("head").appendChild(iconOverride);
+				window.top.document.title = "Locked: " + sourceUrl;
+				//let iconOverride = document.createElement("link");
+				//iconOverride.rel = "icon";
+				//iconOverride.href = chrome.runtime.getURL("images/ScheduleBlock128.png");
+				//window.top.document.querySelector("head").appendChild(iconOverride);
 
 				let sourceDisplay = document.createElement("h2");
 				sourceDisplay.id = "sourceDisplay";
