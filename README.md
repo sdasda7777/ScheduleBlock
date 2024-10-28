@@ -80,10 +80,10 @@ In general, every record consists of:
 - Abandoned attempts at fixing inaccurate timeouts (sometimes off by one cycle due to scheduling)
 - Removed ScheduleBlock thumbnail from the lock page (so that it isn't cached as the pages thumbnail)
 - Upgraded modal windows
-- TODO: improve record creation UX
-- TODO: fix critical regex bug
+- Improved record creation UX by adding "EZ mode"
+- Fixed annoying bug when entering invalid regex
 
-#### 1.1.6 (current)
+#### 1.1.6
 - Added basic fallbacks for when website doesn't allow script execution
 - Moved source files into the src directory
 - Disabled record action input fields when given action is not selected

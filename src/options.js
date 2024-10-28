@@ -89,8 +89,10 @@ function translateGUI()
 	document.querySelector("#recordEditCancel").value = tp.getTranslatedString(2);
 
 	document.querySelector("#tableHint").innerText = tp.getTranslatedString(201);
-	document.querySelector("#newsite").placeholder = tp.getTranslatedString(350);
-	document.querySelector("#newsiteadd").value = tp.getTranslatedString(351);
+	document.querySelector("#newsite-ez").placeholder = tp.getTranslatedString(349);
+	document.querySelector("#newsiteadd-ez").value = tp.getTranslatedString(351);
+	document.querySelector("#newsite-regex").placeholder = tp.getTranslatedString(350);
+	document.querySelector("#newsiteadd-regex").value = tp.getTranslatedString(351);
 
 	document.querySelector("#testertitle").innerText = tp.getTranslatedString(401);
 	document.querySelector("#testerinput1").placeholder = tp.getTranslatedString(402);
@@ -109,19 +111,72 @@ function translateGUI()
 }
 
 /**
- * Adds new record into the storage, taking pattern from #newsite element.
+ * Adds new record into the storage, guessing from the content of the #newsite-ez element.
  */
-function addSite()
+function addSiteEZ()
 {
-	if (document.getElementById("newsite").value !== "" && validateRegexInput({target:document.getElementById("newsite")}, tp))
+	if (document.getElementById("newsite-ez").value !== "")
+	{
+		let regex = document.getElementById("newsite-ez").value.replaceAll(".", "\\.");
+
+		// 1) find `://` and replace/prepend with `^(https?://|.*\.)`
+		const index = regex.indexOf("://");
+		if (index == -1) {
+			regex = "^(https?://|.*\.)" + regex;
+		} else {
+			regex = "^(https?://|.*\.)" + regex.substring(index + 3);
+		}
+
+		// 2) find the next `/` after TLD, replace/append with `(/.*)?$`
+		function findNthOccurrence(originalString, substring, n) {
+			let index = -1;
+			let count = 0;
+			while (count < n) {
+				index = originalString.indexOf(substring, index + 1);
+				if (index === -1) {
+					return -1;
+				}
+				count++;
+			}
+			return index;
+		}
+		const thirdSlashIndex = findNthOccurrence(regex, "/", 3);
+		if (thirdSlashIndex == -1) {
+			regex = regex + "(/.*)?$";
+		} else {
+			regex = regex.substring(0, thirdSlashIndex) + "(/.*)?$";
+		}
+
+		// 3) profit
+		try {
+			let r = new RegExp(regex);
+			let sending = chrome.runtime.sendMessage(
+				{
+					type: "ScheduleBlock_RecordStorage_CreateNewRecord",
+					regex: regex
+				}
+			);
+			document.getElementById("newsite-ez").value= "";
+		} catch {
+			console.log(`Warning: built '${regex}', which is not a valid RegExp`);
+		}
+	}
+}
+
+/**
+ * Adds new record into the storage, taking pattern from #newsite-regex element.
+ */
+function addSiteRegex()
+{
+	if (document.getElementById("newsite-regex").value !== "" && validateRegexInput({target:document.getElementById("newsite-regex")}, tp))
 	{
 		let sending = chrome.runtime.sendMessage(
 			{
 				type: "ScheduleBlock_RecordStorage_CreateNewRecord",
-				regex: document.getElementById("newsite").value
+				regex: document.getElementById("newsite-regex").value
 			}
 		);
-		document.getElementById("newsite").value= "";
+		document.getElementById("newsite-regex").value= "";
 	}
 }
 
@@ -377,15 +432,24 @@ export function main()
 
 
 	// This code sets up event handlers for static elements and then constructs the current table
-	document.getElementById("newsite").addEventListener("keyup",
+	document.getElementById("newsite-ez").addEventListener("keyup",
 		e => {
 			if (e.keyCode === 13) {
 				e.preventDefault();
-				addSite();
+				addSiteEZ();
 			}
 		}
 	);
-	document.getElementById("newsiteadd").addEventListener("click", addSite);
+	document.getElementById("newsiteadd-ez").addEventListener("click", addSiteEZ);
+	document.getElementById("newsite-regex").addEventListener("keyup",
+		e => {
+			if (e.keyCode === 13) {
+				e.preventDefault();
+				addSiteRegex();
+			}
+		}
+	);
+	document.getElementById("newsiteadd-regex").addEventListener("click", addSiteRegex);
 	document.getElementById("testerbutton").addEventListener("click", testRegex);
 	document.getElementById("import").addEventListener("click",
 		() => {

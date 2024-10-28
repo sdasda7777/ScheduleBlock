@@ -106,8 +106,10 @@ export class TranslationProvider
 					"{0}\n" +
 					"ze seznamu pravidel?"],
 
-			350: ["Regular expression that matches the site you want to be blocked",
-					"Regulární výraz objímající stránky, které chcete zablokovat"],
+			349: ["Website that you want to be blocked (EZ mode)",
+					"Webová stránka, kterou chcete zablokovat (jednodušší)"],
+			350: ["Regular expression that matches the site you want to be blocked (Detailed mode)",
+					"Regulární výraz objímající stránky, které chcete zablokovat (obtížnější)"],
 			351: ["Add to the list",
 					"Přidat na seznam"],
 
