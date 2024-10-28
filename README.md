@@ -71,12 +71,17 @@ In general, every record consists of:
 
 ### Changelog/Roadmap
 
-#### 1.1.7 (upcoming)
-- Abandoned attempts at fixing inaccurate timeouts (sometimes off by one cycle due to scheduling)
-- Removed ScheduleBlock thumbnail from the lock page (so that it isn't cached as the pages thumbnail)
+#### 1.1.8 (future)
 - TODO: Export language, check frequency and background color along with records
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)
 - TODO: Improve effectivity by parsing records in RecordStorage only on load and on change
+
+#### 1.1.7 (upcoming)
+- Abandoned attempts at fixing inaccurate timeouts (sometimes off by one cycle due to scheduling)
+- Removed ScheduleBlock thumbnail from the lock page (so that it isn't cached as the pages thumbnail)
+- Upgraded modal windows
+- TODO: improve record creation UX
+- TODO: fix critical regex bug
 
 #### 1.1.6 (current)
 - Added basic fallbacks for when website doesn't allow script execution

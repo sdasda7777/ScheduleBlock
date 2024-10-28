@@ -46,7 +46,7 @@ h1, #settingsButton {
 	margin-right: 5px;
 	float: right;
 	
-	font-size: 20px;	
+	font-size: 20px;
 	background: url('../images/cog.png') left center no-repeat;
 	background-size: 30px;
 	padding-left: 35px;	
@@ -91,22 +91,16 @@ h1, #settingsButton {
 }
 
 
-/* Source: https://www.w3schools.com/howto/howto_css_overlay.asp */
 #settingsChangeOverlay,
 #recordEditOverlay {
-	position: fixed; /* Sit on top of the page content */
-	display: none; /* Hidden by default */
-	width: 100%; /* Full width (cover the whole page) */
-	height: 100%; /* Full height (cover the whole page) */
+	display: none;
+	position: fixed;
 	top: 0;
 	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-	z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-	cursor: pointer; /* Add a pointer on hover */
-		
-	justify-content: center;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.7);
+	overflow-y: auto;
 }
 
 .settingsFullsizeParent {
@@ -157,15 +151,13 @@ h1, #settingsButton {
 }
 
 #settingsMenu {
-	margin-top: 5px;
-	width: 100%;
-	min-width: 220px;
-	max-width: 440px;
-	
-	max-height: 775px;
-	padding: 5px;
-	
-	cursor: default;
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	max-width: 500px;
+	width: 90%;
+	margin: auto auto;
 }
 
 
@@ -187,15 +179,13 @@ h1, #settingsButton {
 }
 
 #recordChangeMenu {
-	margin-top: 5px;
-	width: 100%;
-	min-width: 220px;
-	max-width: 440px;
-	
-	max-height: 650px;
-	padding: 1%;
-	
-	cursor: default;
+	display: flex;
+	flex-direction: column;
+	padding: 10px;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	max-width: 500px;
+	width: 90%;
+	margin: auto auto;
 }
 
 #patternInputParent,
@@ -240,6 +230,8 @@ h1, #settingsButton {
 }
 #actionInputCustomCodeArea{
 	width: 98%;
+	min-width: 98%;
+	max-width: 98%;
 }
 
 #recordEditDelete {
