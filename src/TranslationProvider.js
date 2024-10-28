@@ -47,6 +47,8 @@ export class TranslationProvider
 
 					"Poznámka: Mělo by se jednat o doménu, ve kterou máte velkou důvěru. Také by neměla být na vašem seznamu blokovaných stránek a měla by být jednoduchá (lightweight). Pokud nemáte dobrý důvod, raději ji neměnte (defaultně: https://www.iana.org)."],
 
+			150: ["Must be valid regular expression",
+					"Musí být platný regulární výraz"],
 			151: ["Must be valid URL including ://",
 					"Musí být platná URL včetně ://"],
 

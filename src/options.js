@@ -7,7 +7,7 @@ import { Record } from "./Record.js";
 import { TranslationProvider } from "./TranslationProvider.js";
 import { validateURLInput,
 		 intToTime, timeToInt,
-		 validateTimeString, validateTimeStringInput,
+		 validateRegexInput, validateTimeString, validateTimeStringInput,
 		 validateTimeoutString, validateTimeoutStringInput} from "./Misc.js";
 
 /**
@@ -113,7 +113,7 @@ function translateGUI()
  */
 function addSite()
 {
-	if(document.getElementById("newsite").value !== "")
+	if (document.getElementById("newsite").value !== "" && validateRegexInput({target:document.getElementById("newsite")}, tp))
 	{
 		let sending = chrome.runtime.sendMessage(
 			{
@@ -624,6 +624,9 @@ export function main()
 
 
 		// On change validators
+		document.getElementById("patternInput").addEventListener("change",
+			(e) => validateRegexInput(e, tp)
+		);
 		document.getElementById("softLockHoursInput").addEventListener("change",
 			(e) => validateTimeStringInput(e, tp)
 		);
@@ -636,11 +639,13 @@ export function main()
 
 		document.getElementById("recordEditOK").addEventListener("click",
 			(e) => {
+				let patternInput = document.getElementById("patternInput");
 				let softhoursInput = document.getElementById("softLockHoursInput");
 				let hardhoursInput = document.getElementById("hardLockHoursInput");
 				let timeoutStringInput = document.getElementById("timeoutStringInput");
 
-				if(!validateTimeStringInput({target:softhoursInput}, tp)
+				if(!validateRegexInput({target:patternInput}, tp)
+				   || !validateTimeStringInput({target:softhoursInput}, tp)
 				   || !validateTimeStringInput({target:hardhoursInput}, tp)
 				   || !validateTimeoutStringInput({target:timeoutStringInput}, tp))
 					return;
