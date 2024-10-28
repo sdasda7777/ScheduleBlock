@@ -259,10 +259,10 @@ export class RecordStorage
 	/**
 	 * Tests whether website is currently denied
 	 * @param {!string} urlAddress is the address
-	 * @param {!boolean} softCheck
+	 * @param {!boolean} intitalCheck is true iff initial check
 	 * @returns {(false|string)} false iff not denied, action JS otherwise
 	 */
-	async testWebsite(urlAddress, softCheck)
+	async testWebsite(urlAddress, intitalCheck)
 	{
 		let updatedElements = {};
 		let checkInterval = (await this.getGeneralProperties()).CheckFrequency * 1000;
@@ -282,7 +282,7 @@ export class RecordStorage
 			//TODO: this will not work properly for
 			//			allowed timeouts shorter than the checkInterval
 			//			How to check it does work properly???
-			testResult = arr[ii].testWebsite(urlAddress, softCheck, nowDate);
+			testResult = arr[ii].testWebsite(urlAddress, intitalCheck, nowDate);
 		}
 
 		await this.#storageProvider.storage.local.set({ScheduleBlock_Websites:Record.toJSON(arr)});

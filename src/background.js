@@ -136,7 +136,7 @@ export function main()
 		else if(message_type == 10)
 		{
 			//"ScheduleBlock_RecordStorage_TestWebsite"
-			await recordStorage.testWebsite(message.urlAddress, message.softCheck).then(
+			await recordStorage.testWebsite(message.urlAddress, message.intitalCheck).then(
 				async (userScript) => {
 					if(userScript !== false)
 					{
@@ -187,7 +187,7 @@ export function main()
 					if(message.urlAddress.indexOf(settings.LockScreenBase) === 0
 						&& message.urlAddress.indexOf('requested_by=ScheduleBlock') != -1)
 					{
-						// Create alock screen
+						// Create a lock screen
 						chrome.tabs.sendMessage(
 							sender.tab.id,
 							{

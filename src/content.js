@@ -61,7 +61,7 @@ chrome.runtime.onMessage.addListener(
 						{
 							type: "ScheduleBlock_RecordStorage_TestWebsite",
 							urlAddress: window.location.href,
-							softCheck: false
+							intitalCheck: false
 						}
 					);
 				},
