@@ -462,6 +462,19 @@ export function main()
 		);
 	}
 
+	function blinkElement(e) {
+		e.animate(
+			{
+				filter: ['invert(100%)', 'invert(0%)'],
+			},
+			{
+				duration: 500,
+				fill: 'forwards',
+				easing: 'linear',
+			}
+		);
+	}
+
 
 	// Set up settings button and settings overlay listeners
 	{
@@ -508,8 +521,8 @@ export function main()
 			(e) => {
 				if(document.getElementById("settingsChangeOverlay") !== event.target) return;
 
-				resetSettingsBackups();
-				document.getElementById("settingsChangeOverlay").style.display = "none";
+				blinkElement(document.querySelector('#settingsMenuOK'));
+				blinkElement(document.querySelector('#settingsMenuCancel'));
 			}
 		);
 
@@ -583,7 +596,8 @@ export function main()
 			(e) => {
 				if(document.getElementById("recordEditOverlay") !== event.target) return;
 				
-				document.getElementById("recordEditOverlay").style.display = "none";
+				blinkElement(document.querySelector('#recordEditOK'));
+				blinkElement(document.querySelector('#recordEditCancel'));
 			}
 		);
 
