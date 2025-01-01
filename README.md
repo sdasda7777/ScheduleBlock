@@ -76,11 +76,11 @@ In general, every record consists of:
 - TODO: Add settings option to wipe all data (or at least to explore it in more detail)
 - TODO: Improve effectivity by parsing records in RecordStorage only on load and on change
 
-#### 1.1.7 (upcoming)
+#### 1.1.7 (current)
 - Abandoned attempts at fixing inaccurate timeouts (sometimes off by one cycle due to scheduling)
 - Removed ScheduleBlock thumbnail from the lock page (so that it isn't cached as the pages thumbnail)
 - Upgraded modal windows
-- Improved record creation UX by adding "EZ mode"
+- Improved record creation UX, added option to Duplicate a record
 - Fixed annoying bug when entering invalid regex
 
 #### 1.1.6
