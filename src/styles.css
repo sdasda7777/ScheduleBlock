@@ -45,7 +45,7 @@ h1, #settingsButton {
 	margin-top: 5px;
 	margin-right: 5px;
 	float: right;
-	
+
 	font-size: 20px;
 	background: url('../images/cog.png') left center no-repeat;
 	background-size: 30px;
@@ -62,24 +62,34 @@ h1, #settingsButton {
 .widget {
 	margin: 5px;
 	padding: 5px;
-	
+
 	border: 2px solid black;
 }
 
 #tester {
+	margin-left: 20px;
 	max-width: 400px;
 }
-#testerinput1, #testerinput2 {
+#testertitle {
+	font-size: medium;
+}
+#testerinput2 {
+	margin-left: 20px;
 	margin-bottom: 5px;
 	width: 96.8%;
 }
-#testerresult {
-	font-weight: bold;
+#testerresultdiv {
+	margin-left: 20px;
+	display: flex;
+	justify-content: space-between;
 }
 #testerbutton {
-	width: 99%;
+	width: 100px;
 	margin-top: 5px;
 	cursor: pointer;
+}
+#testerresult {
+	font-weight: bold;
 }
 
 #personalMessage {
@@ -139,7 +149,7 @@ h1, #settingsButton {
 	height: 43px;	
 	font-size: 20px;
 	cursor: pointer;
-	
+
 	margin-top: 5px;
 	width: 49%;
 	min-width: 80px;
@@ -173,7 +183,7 @@ h1, #settingsButton {
 	height: 30px;
 	background: url('../images/pencil.png') left center no-repeat;
 	background-size: 25px;
-	
+
 	border-width: 0;
 	cursor: pointer;
 }
@@ -196,7 +206,7 @@ h1, #settingsButton {
 	border: 2px solid black;
 	padding: 1%;
 	margin-top: 5px;
-	
+
 	font-size: 20px;
 }
 
@@ -234,12 +244,12 @@ h1, #settingsButton {
 	max-width: 98%;
 }
 
-#recordEditDelete {
+#recordEditDuplicate, #recordEditDelete {
 	margin-top: 5px;
 	width: 100%;
 	min-width: 150px;
-	
-	height: 43px;	
+
+	height: 43px;
 	font-size: 20px;
 	cursor: pointer;
 }
@@ -248,8 +258,8 @@ h1, #settingsButton {
 	margin-top: 5px;
 	width: 49%;
 	min-width: 80px;
-	
-	height: 43px;	
+
+	height: 43px;
 	font-size: 20px;
 	cursor: pointer;
 }

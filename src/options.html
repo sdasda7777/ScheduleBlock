@@ -13,35 +13,13 @@
 	
 	<div id="widgetParent">
 		<div class="widget">
-			<p id="tableHint">If you're reading this, translations must be broken :(</p>
+			<p id="tableHint">If you're reading this, something broke :( <br> Please report the observed behaviour on GitHub, so we can fix it :) </p>
 			<div id="display"></div>
 			<br>
 			<div id="input-ez">
-				<input type="text" id="newsite-ez" name="newsite-ez" placeholder="Website that you want to be blocked (EZ mode)">
+				<input type="text" id="newsite-ez" name="newsite-ez" placeholder="Website that you want to be blocked">
 				<input type="button" id="newsiteadd-ez" value="Add to the list">
 			</div>
-			<div id="input-regex">
-				<input type="text" id="newsite-regex" name="newsite-regex" placeholder="Regex that matches the site you want to be blocked">
-				<input type="button" id="newsiteadd-regex" value="Add to the list">
-			</div>
-		</div>
-		
-		
-		<div class="widget" id="tester">
-			<h2 id="testertitle">Pattern Tester</h2>
-			<input type="text" id="testerinput1" name="testerinput1" placeholder="Regex pattern to test">
-			<input type="text" id="testerinput2" name="testerinput2" placeholder="String to test against">
-			<label id="testerresultlabel" for="testerresult">Status: </label>
-			<span id="testerresult" result="matching">Matching</span>
-			<input type="button" id="testerbutton" value="Check">
-		</div>
-		
-		
-		<div class="widget" id="personalMessage">
-			<h2 id="personalmessagetitle">Personal Message</h2>
-			<p id="personalmessagecontent">Hey, this is the least intrusive way we could think of contacting you.<br/><br/>
-			We want you to know that we deeply care about your experience with this little extension. If there is any way we could improve it to make your life easier, let us know, either in a review or by creating an issue on project's GitHub page. Same goes for any bugs you might find.<br/><br/>
-			Last but not least, we believe in you, and you've got this.</p>
 		</div>
 	</div>
 	
@@ -95,7 +73,7 @@
 			</div>
 			
 			<div>
-				<input type="button" id="settingsMenuOK" value="OK">
+				<input type="button" id="settingsMenuOK" value="Save">
 				<input type="button" id="settingsMenuCancel" value="Cancel">
 			</div>
 		</div>
@@ -108,6 +86,18 @@
 				<label for="patternInput" id="patternInputLabel">Pattern:</label>
 				</br>
 				<input type="text" id="patternInput" value="pattern-here">
+
+				<details id="tester">
+					<summary id="testertitle">Pattern Tester</summary>
+					<input type="text" id="testerinput2" name="testerinput2" placeholder="String to test against">
+
+					<div id="testerresultdiv">
+						<input type="button" id="testerbutton" value="Check">
+						<label id="testerresultlabel" for="testerresult">Status: </label>
+						<span id="testerresult" result="matching">Matching</span>
+					</div>
+				</details>
+
 			</div>
 			<div id="softLockHoursInputParent">
 				<label for="softLockHoursInput" id="softLockHoursLabel">Soft locked hours:</label>
@@ -147,9 +137,10 @@
 				
 			</div>
 			
+			<input type="button" id="recordEditDuplicate" value="Duplicate">
 			<input type="button" id="recordEditDelete" value="Delete">
 			<div>
-				<input type="button" id="recordEditOK" value="OK">
+				<input type="button" id="recordEditOK" value="Save">
 				<input type="button" id="recordEditCancel" value="Cancel">
 			</div>
 		</div>

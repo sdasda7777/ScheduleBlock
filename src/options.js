@@ -60,7 +60,7 @@ function translateGUI()
 	document.querySelector("#lockScreenBaseLabel").innerText = tp.getTranslatedString(107);
 	document.querySelector("#lockScreenBaseNote").innerText = tp.getTranslatedString(108);
 
-	document.querySelector("#settingsMenuOK").value = tp.getTranslatedString(1);
+	document.querySelector("#settingsMenuOK").value = tp.getTranslatedString(4);
 	document.querySelector("#settingsMenuCancel").value = tp.getTranslatedString(2);
 
 	document.querySelector("#patternInputLabel").innerText
@@ -85,27 +85,22 @@ function translateGUI()
 
 	document.querySelector("#recordEditDelete").value = tp.getTranslatedString(249);
 
-	document.querySelector("#recordEditOK").value = tp.getTranslatedString(1);
+	document.querySelector("#recordEditOK").value = tp.getTranslatedString(4);
 	document.querySelector("#recordEditCancel").value = tp.getTranslatedString(2);
 
 	document.querySelector("#tableHint").innerText = tp.getTranslatedString(201);
 	document.querySelector("#newsite-ez").placeholder = tp.getTranslatedString(349);
 	document.querySelector("#newsiteadd-ez").value = tp.getTranslatedString(351);
-	document.querySelector("#newsite-regex").placeholder = tp.getTranslatedString(350);
-	document.querySelector("#newsiteadd-regex").value = tp.getTranslatedString(351);
 
 	document.querySelector("#testertitle").innerText = tp.getTranslatedString(401);
-	document.querySelector("#testerinput1").placeholder = tp.getTranslatedString(402);
 	document.querySelector("#testerinput2").placeholder = tp.getTranslatedString(403);
-	document.querySelector("#testerresultlabel").innerText = tp.getTranslatedString(404);
-	document.querySelector("#testerresult").innerText
-		= tp.getTranslatedString((testerresult.getAttribute("result") == "matching" ? 406 : 405));
-	document.querySelector("#testerbutton").value = tp.getTranslatedString(407);
-
-	document.querySelector("#personalmessagetitle").innerText
-		= tp.getTranslatedString(451);
-	document.querySelector("#personalmessagecontent").innerHTML
-		= tp.getTranslatedString(452);
+	document.querySelector("#testerresultlabel").innerText = tp.getTranslatedString(421);
+	switch (testerresult.getAttribute("result")) {
+        case "invalid": document.querySelector("#testerresult").innerText = tp.getTranslatedString(424); break;
+        case "matching": document.querySelector("#testerresult").innerText = tp.getTranslatedString(423); break;
+        default: document.querySelector("#testerresult").innerText = tp.getTranslatedString(422);
+	}
+	document.querySelector("#testerbutton").value = tp.getTranslatedString(411);
 
 	constructView();
 }
@@ -113,8 +108,7 @@ function translateGUI()
 /**
  * Adds new record into the storage, guessing from the content of the #newsite-ez element.
  */
-function addSiteEZ()
-{
+function addSiteEZ() {
 	if (document.getElementById("newsite-ez").value !== "")
 	{
 		let regex = document.getElementById("newsite-ez").value.replaceAll(".", "\\.");
@@ -153,7 +147,7 @@ function addSiteEZ()
 			let sending = chrome.runtime.sendMessage(
 				{
 					type: "ScheduleBlock_RecordStorage_CreateNewRecord",
-					regex: regex
+					value: JSON.stringify([{regex}]),
 				}
 			);
 			document.getElementById("newsite-ez").value= "";
@@ -164,29 +158,10 @@ function addSiteEZ()
 }
 
 /**
- * Adds new record into the storage, taking pattern from #newsite-regex element.
- */
-function addSiteRegex()
-{
-	if (document.getElementById("newsite-regex").value !== "" && validateRegexInput({target:document.getElementById("newsite-regex")}, tp))
-	{
-		let sending = chrome.runtime.sendMessage(
-			{
-				type: "ScheduleBlock_RecordStorage_CreateNewRecord",
-				regex: document.getElementById("newsite-regex").value
-			}
-		);
-		document.getElementById("newsite-regex").value= "";
-	}
-}
-
-
-/**
  * Constructs table from given data
  * @param {!string} JSON encoded array of Records
  */
-function contructViewCallback(data)
-{
+function contructViewCallback(data) {
 	let arr = Record.fromJSON(data);
 	let t = document.createElement("table");
 
@@ -270,8 +245,7 @@ function contructViewCallback(data)
 /**
  * Requests data from the BackEnd, answer to which constructs the table
  */
-function constructView()
-{
+function constructView() {
 	let sending = chrome.runtime.sendMessage(
 		{
 			type: "ScheduleBlock_RefreshTable"
@@ -283,8 +257,7 @@ function constructView()
  * Opens edit menu for given Record
  * @param {!string} JSON encoded array containing the Record
  */
-function openRecordEditMenuCallback(data)
-{
+function openRecordEditMenuCallback(data) {
 	currentRecord = Record.fromJSON(data)[0];
 
 	// Set up the first four text inputs
@@ -330,8 +303,7 @@ function openRecordEditMenuCallback(data)
 /**
  * Requests data from the BackEnd, answer to which opens edit menu
  */
-function openRecordEditMenu(e)
-{
+function openRecordEditMenu(e) {
 	let sending = chrome.runtime.sendMessage(
 		{
 			type: "ScheduleBlock_OpenEditMenu",
@@ -344,8 +316,7 @@ function openRecordEditMenu(e)
  * Handles record number modification (i.e. reordering) using keyboard.
  * @param {KeyboardEvent} e - keyup event to be handled
  */
-function recordNumberBoxKeyEventHandler(e)
-{
+function recordNumberBoxKeyEventHandler(e) {
 	if (e.keyCode !== 13) return;
 	
 	e.preventDefault();
@@ -362,28 +333,29 @@ function recordNumberBoxKeyEventHandler(e)
 /**
  * Handles behaviour of the pattern tester "widget".
  */
-function testRegex()
-{
-	let re = document.getElementById("testerinput1").value;
+function testRegex() {
+	let re = document.getElementById("patternInput").value;
 	let str = document.getElementById("testerinput2").value;
 
 	let testerresult = document.querySelector("#testerresult");
-	if(str.match(new RegExp(re)))
-	{
-		console.log("Tester: '" + re + "' matches '" + str + "'");
-		testerresult.setAttribute("result", "matching");
-		testerresult.innerText = tp.getTranslatedString(406);
-	}
-	else
-	{
-		console.log("Tester: '" + re + "' does not match '" + str + "'");
-		testerresult.setAttribute("result", "not_matching");
-		testerresult.innerText = tp.getTranslatedString(405);
+	try {
+		if(str.match(new RegExp(re))) {
+			console.log("Tester: '" + re + "' matches '" + str + "'");
+			testerresult.setAttribute("result", "matching");
+			testerresult.innerText = tp.getTranslatedString(423);
+		} else {
+			console.log("Tester: '" + re + "' does not match '" + str + "'");
+			testerresult.setAttribute("result", "not_matching");
+			testerresult.innerText = tp.getTranslatedString(422);
+		}
+	} catch {
+		console.log("Tester: '" + re + "' is invalid RegEx");
+		testerresult.setAttribute("result", "invalid");
+		testerresult.innerText = tp.getTranslatedString(424);
 	}
 }
 
-export function main()
-{
+export function main() {
 	chrome.runtime.onMessage.addListener(
 		(message)=>{
 			console.log(message);
@@ -441,15 +413,6 @@ export function main()
 		}
 	);
 	document.getElementById("newsiteadd-ez").addEventListener("click", addSiteEZ);
-	document.getElementById("newsite-regex").addEventListener("keyup",
-		e => {
-			if (e.keyCode === 13) {
-				e.preventDefault();
-				addSiteRegex();
-			}
-		}
-	);
-	document.getElementById("newsiteadd-regex").addEventListener("click", addSiteRegex);
 	document.getElementById("testerbutton").addEventListener("click", testRegex);
 	document.getElementById("import").addEventListener("click",
 		() => {
@@ -671,6 +634,44 @@ export function main()
 			}
 		);
 
+		document.getElementById("recordEditDuplicate").addEventListener("click",
+			(e) => {
+				let patternInput = document.getElementById("patternInput");
+				let softhoursInput = document.getElementById("softLockHoursInput");
+				let hardhoursInput = document.getElementById("hardLockHoursInput");
+				let timeoutStringInput = document.getElementById("timeoutStringInput");
+
+				if(!validateRegexInput({target:patternInput}, tp)
+				   || !validateTimeStringInput({target:softhoursInput}, tp)
+				   || !validateTimeStringInput({target:hardhoursInput}, tp)
+				   || !validateTimeoutStringInput({target:timeoutStringInput}, tp))
+					return;
+
+				let sending = chrome.runtime.sendMessage(
+					{
+						type: "ScheduleBlock_RecordStorage_CreateNewRecord",
+						value: Record.toJSON(
+							[
+								new Record(
+									patternInput.value, softhoursInput.value, hardhoursInput.value,
+									timeoutStringInput.value,
+									(document.getElementById("actionInputClose").checked
+									 ? "window.close();"
+									 : document.getElementById("actionInputLockPage").checked
+									   ? "window.location = '$ScheduleBlock_LockScreen$';"
+									   : document.getElementById("actionInputRedirect").checked
+									     ? "window.location = '" + document.getElementById("destinationInput").value + "';"
+										 : document.getElementById("actionInputCustomCodeArea").value
+									)
+								)
+							]
+						)
+					}
+				);
+				document.getElementById("recordEditOverlay").style.display = "none";
+			}
+		);
+
 		document.getElementById("recordEditDelete").addEventListener("click",
 			(e) => {
 				if(confirm(tp.getTranslatedString(305).format(currentRecord.toString())))
@@ -721,8 +722,7 @@ export function main()
 						newValue: Record.toJSON(
 							[
 								new Record(
-									document.getElementById("patternInput").value,
-									softhoursInput.value, hardhoursInput.value,
+									patternInput.value, softhoursInput.value, hardhoursInput.value,
 									timeoutStringInput.value,
 									(document.getElementById("actionInputClose").checked
 									 ? "window.close();"

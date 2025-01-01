@@ -108,7 +108,7 @@ export function main()
 					);
 				}
 				else if(message_type == 6)
-					await recordStorage.createNewRecord(message.regex);
+					await recordStorage.saveNewRecord(Record.fromJSON(message.value)[0]);
 				else if(message_type == 7)
 					await recordStorage.moveRecord(message.id, message.newId);
 				else if(message_type == 8)
